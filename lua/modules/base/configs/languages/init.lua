@@ -276,7 +276,8 @@ function config.nvim_dap_ui()
     vim.api.nvim_create_user_command("DapClose", 'lua require"dap".close()', {})
     vim.api.nvim_create_user_command("DapDisconnect", 'lua require"dap".disconnect()', {})
     vim.api.nvim_create_user_command("DapRestart", 'lua require"dap".restart()', {})
-    vim.api.nvim_create_user_command("DapToggleRepl", 'lua require"dap".repl.toggle()', {})
+    -- vim.api.nvim_create_user_command("DapToggleRepl", 'lua require"dap".repl.toggle()', {})
+    vim.api.nvim_create_user_command("DapToggleRepl", 'lua require"dapui".eval()', {})
     vim.api.nvim_create_user_command("DapGetSession", 'lua require"dap".session()', {})
     vim.api.nvim_create_user_command(
         "DapUIClose",

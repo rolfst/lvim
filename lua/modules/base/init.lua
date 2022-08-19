@@ -481,6 +481,7 @@ modules["simrat39/symbols-outline.nvim"] = {
     config = languages_config.symbols_outline_nvim,
 }
 
+modules["theHamsta/nvim-dap-virtual-text"] = {}
 modules["rcarriga/nvim-dap-ui"] = {
     event = {
         "BufRead",

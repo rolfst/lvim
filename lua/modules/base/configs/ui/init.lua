@@ -220,8 +220,8 @@ function config.which_key_nvim()
         nowait = true,
     }
     local nmappings = {
+        ["/"] = { ":CommentToggle<CR>", "Comment" },
         a = { ":e $HOME/.config/nvim/README.org<CR>", "Open README file" },
-        e = { "<Cmd>NvimTreeToggle<CR>", "NvimTree toggle" },
         b = {
             name = "Buffers",
             n = { "<Cmd>BufSurfForward<CR>", "Next buffer" },
@@ -287,7 +287,7 @@ function config.which_key_nvim()
             n = { "<Cmd>Neogit<CR>", "Neogit" },
             l = { "<Cmd>Lazygit<CR>", "Lazygit" },
         },
-        f = {
+        e = {
             name = "Find & Fold",
             f = { "<Cmd>HopWord<CR>", "Hop Word" },
             ["]"] = { "<Cmd>HopChar1<CR>", "Hop Char1" },
@@ -339,7 +339,7 @@ function config.which_key_nvim()
                 "Toggle search hidden",
             },
         },
-        t = {
+        f = {
             name = "Telescope",
             b = { "<Cmd>Telescope file_browser<CR>", "File browser" },
             f = { "<Cmd>Telescope find_files<CR>", "Find files" },
@@ -356,6 +356,22 @@ function config.which_key_nvim()
             S = { "<Cmd>Telescope git_stash<CR>", "Git stash" },
             i = { "<Cmd>Telescope git_files<CR>", "Git files" },
             M = { "<Cmd>Telescope media_files<CR>", "Media files" },
+        },
+        t = {
+            name = "Test",
+            a = { "<cmd>lua require('neotest').run.attach()<cr>", "Attach" },
+            f = { "<cmd>lua require('neotest').run.run(vim.fn.expand('%'))<cr>", "Run File" },
+            F = { "<cmd>lua require('neotest').run.run({vim.fn.expand('%'), strategy = 'dap'})<cr>", "Debug File" },
+            l = { "<cmd>lua require('neotest').run.run_last()<cr>", "Run Last" },
+            L = { "<cmd>lua require('neotest').run.run_last({ strategy = 'dap' })<cr>", "Debug Last" },
+            n = { "<cmd>lua require('neotest').run.run()<cr>", "Run Nearest" },
+            N = { "<cmd>lua require('neotest').run.run({strategy = 'dap'})<cr>", "Debug Nearest" },
+            o = { "<cmd>lua require('neotest').output.open({ enter = true })<cr>", "Output" },
+            S = { "<cmd>lua require('neotest').run.stop()<cr>", "Stop" },
+            s = { "<cmd>lua require('neotest').summary.toggle()<cr>", "Summary" },
+            p = { "<Plug>PlenaryTestFile", "PlenaryTestFile" },
+            v = { "<cmd>TestVisit<cr>", "Visit" },
+            x = { "<cmd>TestSuite<cr>", "Suite" },
         },
     }
     local vmappings = {

@@ -24,9 +24,10 @@ language_configs["dap"] = function()
             type = "python",
             request = "launch",
             name = "Launch",
-            program = function()
-                return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
-            end,
+            program = "${file}",
+            -- program = function()
+            --     return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+            -- end,
             pythonPath = function()
                 local venv_path = os.getenv("VIRTUAL_ENV")
                 if venv_path then

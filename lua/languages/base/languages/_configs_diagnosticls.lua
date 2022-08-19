@@ -12,7 +12,7 @@ M.config = {
         lua = "luacheck",
         objc = "cpplint",
         objcpp = "cpplint",
-        python = "pylint",
+        python = "yapf",
         sh = "shellcheck",
         vim = "vint",
     },
@@ -145,6 +145,40 @@ M.config = {
             offsetColumn = 1,
             formatLines = 1,
         },
+        yapf = {
+            sourceName = "yapf",
+            command = "yapf",
+            debounce = 100,
+            args = {
+                "--quiet",
+                "--output-format",
+                "text",
+                "--score",
+                "no",
+                "--msg-template",
+                "'{line}:{column}:{category}:{msg} ({msg_id}:{symbol})'",
+                "%file",
+            },
+            formatPattern = {
+                "^(\\d+?):(\\d+?):([a-z]+?):(.*)$",
+                {
+                    line = 1,
+                    column = 2,
+                    security = 3,
+                    message = 4,
+                },
+            },
+            securities = {
+                informational = "hint",
+                refactor = "info",
+                convention = "info",
+                warning = "warning",
+                error = "error",
+                fatal = "error",
+            },
+            offsetColumn = 1,
+            formatLines = 1,
+        },
         -- vim
         -- https://github.com/Vimjas/vint
         -- INSTALL: pip3 install vim-vint
@@ -200,7 +234,7 @@ M.config = {
         json = "prettier",
         lua = "stylua",
         markdown = "prettier",
-        python = "black",
+        python = "yapf",
         sh = "shfmt",
         vim = "prettier",
     },
@@ -230,9 +264,13 @@ M.config = {
         -- https://pypi.org/project/autopep8
         -- INSTALL: pip3 install autopep8
         -- AUTOINSTALL !!!
-        black = {
-            command = "black",
-            args = { "--quiet", "-" },
+        -- black = {
+        --     command = "black",
+        --     args = { "--quiet", "-" },
+        -- },
+        yapf = {
+            command = "yapf",
+            args = { "--quiet" },
         },
         -- sh
         -- https://github.com/mvdan/sh

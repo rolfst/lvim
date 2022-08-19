@@ -21,6 +21,7 @@ language_configs["lsp"] = function()
         ["language"] = "diagnostic-languageserver",
         ["dependencies"] = {
             "black",
+            "yapf",
             "cpplint",
             "luacheck",
             "prettier",

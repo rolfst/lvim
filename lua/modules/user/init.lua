@@ -61,12 +61,87 @@ local modules = {}
 -- Languages ----------------------------------------------------
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
--- local languages_config = require("modules.user.configs.editor")
+local languages_config = require("modules.user.configs.languages")
 
 -- modules["name_of_your/module"] = {
 --     config = languages_config.name_of_your_function
 -- }
-
+--
+-- modules["jose-elias-alvarez/null-ls.nvim"] = {
+--     config = languages_config.nvim_formatters,
+-- }
+modules["mfussenegger/nvim-dap-python"] = {
+    requires = {
+        "mfussenegger/nvim-dap",
+    },
+}
+modules["nvim-neotest/neotest"] = {
+    requires = {
+        { "nvim-lua/plenary.nvim" },
+        { "nvim-treesitter/nvim-treesitter" },
+        { "antoinemadec/FixCursorHold.nvim" },
+        { "nvim-neotest/neotest-python" },
+        { "nvim-neotest/neotest-go" },
+        --   { "haydenmeade/neotest-jest" },
+        {
+            "nvim-neotest/neotest-vim-test",
+            requires = {
+                { "vim-test/vim-test" },
+            },
+        },
+        { "rouge8/neotest-rust" },
+        { "nvim-neotest/neotest-plenary" },
+        { "nvim-treesitter/nvim-treesitter" },
+        {
+            "stevearc/overseer.nvim",
+            opt = true,
+            cmd = {
+                "OverseerToggle",
+                "OverseerOpen",
+                "OverseerRun",
+                "OverseerBuild",
+                "OverseerClose",
+                "OverseerLoadBundle",
+                "OverseerSaveBundle",
+                "OverseerDeleteBundle",
+                "OverseerRunCmd",
+                "OverseerQuickAction",
+                "OverseerTaskAction",
+            },
+            -- overseer.nvim
+            -- consumers = {
+            --     overseer = require("neotest.consumers.overseer"),
+            -- },
+            overseer = {
+                enabled = true,
+                force_default = true,
+            },
+        },
+    },
+    wants = {
+        "plenary.nvim",
+        "nvim-treesitter",
+        "FixCursorHold.nvim",
+        "neotest-python",
+        "neotest-plenary",
+        "neotest-go",
+        -- "neotest-jest",
+        "neotest-vim-test",
+        "neotest-rust",
+        "vim-test",
+        "overseer.nvim",
+    },
+    module = { "neotest", "neotest.async" },
+    cmd = {
+        "TestNearest",
+        "TestFile",
+        "TestSuite",
+        "TestLast",
+        "TestVisit",
+    },
+    disable = false,
+    config = languages_config.nvim_test,
+}
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 -- Completion ---------------------------------------------------
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -75,6 +150,11 @@ local modules = {}
 
 -- modules["name_of_your/module"] = {
 --     config = completion_config.name_of_your_function
+-- }
+
+-- modules["numToStr/Comment.nvim"] = false
+-- modules["terrortylor/nvim-comment"] = {
+--     opt = false,
 -- }
 
 return modules
