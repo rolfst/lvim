@@ -40,8 +40,9 @@ modules["elihunter173/dirbuf.nvim"] = {
     config = ui_config.dirbuf_nvim,
 }
 
-modules["folke/which-key.nvim"] = {
+modules["lvim-tech/which-key.nvim"] = {
     event = "BufWinEnter",
+    branch = "buftype",
     config = ui_config.which_key_nvim,
 }
 
@@ -366,6 +367,24 @@ modules["williamboman/mason.nvim"] = {
     config = languages_config.mason_nvim,
 }
 
+modules["rmagatti/goto-preview"] = {
+    event = {
+        "BufRead",
+    },
+    config = languages_config.goto_preview,
+}
+
+modules["lewis6991/hover.nvim"] = {
+    event = {
+        "BufRead",
+    },
+    config = languages_config.hover_nvim,
+}
+
+modules["folke/lua-dev.nvim"] = {
+    ft = "lua",
+}
+
 modules["simrat39/rust-tools.nvim"] = {
     ft = "rust",
     after = "telescope.nvim",
@@ -451,6 +470,15 @@ modules["nvim-treesitter/nvim-treesitter-context"] = {
     },
     after = "nvim-treesitter",
     config = languages_config.nvim_treesitter_contex,
+}
+
+modules["lvimuser/lsp-inlayhints.nvim"] = {
+    requires = {
+        {
+            "neovim/nvim-lspconfig",
+        },
+    },
+    config = languages_config.lsp_inlayhints_nvim,
 }
 
 modules["SmiteshP/nvim-navic"] = {
