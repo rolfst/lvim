@@ -365,6 +365,12 @@ function config.nvim_colorize_lua()
     })
 end
 
+function config.virtcolumn_nvim()
+    vim.api.nvim_set_option("colorcolumn", "120")
+    vim.g.virtcolumn_char = "▕"
+    vim.g.virtcolumn_priority = 10
+end
+
 function config.cinnamon_nvim()
     require("cinnamon").setup({
         extra_keymaps = true,

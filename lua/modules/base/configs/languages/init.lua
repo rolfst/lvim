@@ -82,6 +82,12 @@ end
 function config.trld_nvim()
     require("trld").setup({
         position = "bottom",
+        highlights = {
+            error = "DiagnosticError",
+            warn = "DiagnosticWarn",
+            info = "DiagnosticInfo",
+            hint = "DiagnosticHint",
+        },
     })
 end
 
@@ -101,6 +107,10 @@ function config.nvim_lightbulb()
         },
     })
     vim.fn.sign_define("LightBulbSign", { text = "", texthl = "LightBulb", linehl = "", numhl = "" })
+end
+
+function config.rest_nvim()
+    require("rest-nvim").setup()
 end
 
 function config.sniprun()
@@ -202,21 +212,6 @@ function config.any_jump_nvim()
     vim.g.any_jump_list_numbers = 1
 end
 
-function config.trouble_nvim()
-    require("trouble").setup({
-        height = 12,
-        mode = "workspace_diagnostics",
-        use_diagnostic_signs = true,
-        signs = {
-            error = "",
-            warning = "",
-            hint = "",
-            information = "",
-            other = "",
-        },
-    })
-end
-
 function config.symbols_outline_nvim()
     require("symbols-outline").setup({
         highlight_hovered_item = true,
@@ -277,13 +272,13 @@ function config.nvim_dap_ui()
         },
     })
     dap.listeners.after.event_initialized["dapui_config"] = function()
-        dapui.open()
+        dapui.open({})
     end
     dap.listeners.before.event_terminated["dapui_config"] = function()
-        dapui.close()
+        dapui.close({})
     end
     dap.listeners.before.event_exited["dapui_config"] = function()
-        dapui.close()
+        dapui.close({})
     end
     vim.fn.sign_define("DapBreakpoint", {
         text = "",
@@ -384,7 +379,7 @@ function config.crates_nvim()
 end
 
 function config.pubspec_assist_nvim()
-    require("pubspec-assist").setup()
+    require("pubspec-assist").setup({})
 end
 
 function config.vimtex()

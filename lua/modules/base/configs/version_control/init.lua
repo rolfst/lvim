@@ -79,8 +79,6 @@ end
 function config.git_blame_nvim()
     vim.g.gitblame_ignored_filetypes = {
         "help",
-        "NvimTree",
-        "Trouble",
         "Outline",
         "git",
         "dapui_scopes",
@@ -90,6 +88,10 @@ function config.git_blame_nvim()
         "NeogitStatus",
         "dashboard",
     }
+end
+
+function config.octo_nvim()
+    require("octo").setup()
 end
 
 return config

@@ -30,7 +30,7 @@ keymaps["normal"] = {
     { "<C-Right>", ":vertical resize +2<CR>" }, -- Resize width +
     { "<C-Up>", ":resize -2<CR>" }, -- Resize height -
     { "<C-Down>", ":resize +2<CR>" }, -- Resize height +
-    { "<S-x>", ":NvimTreeToggle<CR>" }, -- Nvim tree explorer
+    { "<S-x>", ":Neotree left<CR>" }, -- Neotree explorer
     { "<S-m>", ":MarkdownPreview<CR>" }, -- Markdown preview
     { "<A-,>", ":Telescope find_files<CR>" }, -- Search files with Telescope
     { "<A-.>", ":Telescope live_grep<CR>" }, -- Search word with Telescope
@@ -42,6 +42,7 @@ keymaps["normal"] = {
     { "<A-[>", ":GitSignsPrevHunk<CR>" }, -- Git signs prev hunk
     { "<A-;>", ":GitSignsPreviewHunk<CR>" }, -- Git signs preview hunk
     { "<A-s>", ":Spectre<CR>" }, -- Replace in multiple files
+    { "gw", ":WindowPicker<CR>" }, -- Window picker
     { "gr", ":LspRename<CR>" }, -- Lsp rename
     { "gf", ":LspFormatting<CR>" }, -- Lsp format code
     { "ga", ":LspCodeAction<CR>" }, -- Lsp code action
@@ -61,8 +62,11 @@ keymaps["normal"] = {
     { "to", ":e ~/Org/notes/notes.org<CR>" }, -- Open org notes
     { "th", ":Telescope howdoi<CR>" }, -- Telescope howdoi
     { "tt", ":Telescope tmux sessions<CR>" }, -- Telescope tmux session
+    { "trr", "<Plug>RestNvim<CR>" }, -- Rest nvim
+    { "trp", "<Plug>RestNvimPreview<CR>" }, -- Rest nvim preview
+    { "trl", "<Plug>RestNvimLast<CR>" }, -- Rest nvim last
     { "<A-c>", ":LspLine<CR>" }, -- Lsp current line
-    { "<A-e>", ":TroubleToggle<CR>" }, -- Trouble toggle
+    { "<A-e>", ":Neotree diagnostics reveal bottom<CR>" }, -- Neotree diagnostics
     { "<A-1>", "<Cmd>DapToggleBreakpoint<CR>" }, -- Toggle breakpoint
     { "<A-2>", "<Cmd>DapStartContinue<CR>" }, -- Start / continue
     { "<A-3>", "<Cmd>DapStepInto<CR>" }, -- Step into

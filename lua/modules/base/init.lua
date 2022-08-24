@@ -6,6 +6,8 @@ local modules = {}
 
 modules["nvim-lua/plenary.nvim"] = {}
 
+modules["lewis6991/impatient.nvim"] = {}
+
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 -- UI -----------------------------------------------------------
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -27,12 +29,22 @@ modules["goolord/alpha-nvim"] = {
     config = ui_config.alpha_nvim,
 }
 
-modules["kyazdani42/nvim-tree.lua"] = {
+modules["s1n7ax/nvim-window-picker"] = {
+    config = ui_config.nvim_window_picker,
+}
+
+modules["nvim-neo-tree/neo-tree.nvim"] = {
+    branch = "v2.x",
     requires = {
-        "kyazdani42/nvim-web-devicons",
+        "nvim-lua/plenary.nvim",
+        "kyazdani42/nvim-web-devicons", -- not strictly required, but recommended
+        "MunifTanjim/nui.nvim",
+        {
+            "mrbjarksen/neo-tree-diagnostics.nvim",
+            module = "neo-tree.sources.diagnostics",
+        },
     },
-    cmd = "NvimTreeToggle",
-    config = ui_config.nvim_tree_lua,
+    config = ui_config.neo_tree_nvim,
 }
 
 modules["elihunter173/dirbuf.nvim"] = {
@@ -46,7 +58,12 @@ modules["lvim-tech/which-key.nvim"] = {
     config = ui_config.which_key_nvim,
 }
 
+local commit = nil
+if vim.fn.has("nvim-0.8") == 0 then
+    commit = "7b4aabc2c55d50fbd4a4923e847079d6fa9a8613"
+end
 modules["rebelot/heirline.nvim"] = {
+    commit = commit,
     after = "lvim-colorscheme",
     config = ui_config.heirline_nvim,
 }
@@ -249,6 +266,13 @@ modules["norcalli/nvim-colorizer.lua"] = {
     config = editor_config.nvim_colorize_lua,
 }
 
+modules["xiyaowong/virtcolumn.nvim"] = {
+    event = {
+        "BufRead",
+    },
+    config = editor_config.virtcolumn_nvim,
+}
+
 modules["declancm/cinnamon.nvim"] = {
     event = {
         "BufRead",
@@ -344,6 +368,16 @@ modules["sindrets/diffview.nvim"] = {
         "DiffviewToggleFiles",
         "DiffviewRefresh",
     },
+}
+
+modules["pwntester/octo.nvim"] = {
+    after = "lvim-colorscheme",
+    requires = {
+        "nvim-lua/plenary.nvim",
+        "nvim-telescope/telescope.nvim",
+        "kyazdani42/nvim-web-devicons",
+    },
+    config = version_control_config.octo_nvim,
 }
 
 modules["mbbill/undotree"] = {
@@ -445,6 +479,11 @@ modules["kosayoda/nvim-lightbulb"] = {
     config = languages_config.nvim_lightbulb,
 }
 
+modules["NTBBloodbath/rest.nvim"] = {
+    ft = "http",
+    config = languages_config.rest_nvim,
+}
+
 modules["michaelb/sniprun"] = {
     requires = {
         "neovim/nvim-lspconfig",
@@ -495,13 +534,6 @@ modules["pechorin/any-jump.vim"] = {
         "BufRead",
     },
     config = languages_config.any_jump_nvim,
-}
-
-modules["folke/trouble.nvim"] = {
-    requires = {
-        "kyazdani42/nvim-web-devicons",
-    },
-    config = languages_config.trouble_nvim,
 }
 
 modules["simrat39/symbols-outline.nvim"] = {
