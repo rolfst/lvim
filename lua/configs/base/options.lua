@@ -17,7 +17,7 @@ M.global = function()
     vim.opt.clipboard = "unnamedplus"
     vim.opt.wildignorecase = true
     vim.opt.wildignore =
-    ".git,.hg,.svn,*.pyc,*.o,*.out,*.jpg,*.jpeg,*.png,*.gif,*.zip,**/tmp/**,*.DS_Store,**/node_modules/**,**/bower_modules/**"
+        ".git,.hg,.svn,*.pyc,*.o,*.out,*.jpg,*.jpeg,*.png,*.gif,*.zip,**/tmp/**,*.DS_Store,**/node_modules/**,**/bower_modules/**"
     vim.opt.backup = false
     vim.opt.writebackup = false
     vim.opt.swapfile = false
@@ -78,8 +78,8 @@ M.global = function()
     vim.opt.showbreak = "↳  "
     vim.opt.listchars = "tab:» ,nbsp:+,trail:·,extends:→,precedes:←"
     vim.opt.fillchars = "eob: "
-    vim.opt.pumblend = 10
-    vim.opt.winblend = 10
+    vim.opt.pumblend = 0
+    vim.opt.winblend = 0
     vim.opt.undofile = true
     vim.opt.synmaxcol = 2500
     vim.opt.formatoptions = "1jcroql"

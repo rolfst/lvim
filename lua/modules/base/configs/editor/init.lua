@@ -1,17 +1,20 @@
 local config = {}
 
 function config.telescope_nvim()
-    local loader = require("packer").loader
+    local telescope_status_ok, telescope = pcall(require, "telescope")
+    if not telescope_status_ok then
+        return
+    end
     if not packer_plugins["telescope-fzf-native.nvim"].loaded then
+        local loader = require("packer").loader
         loader(
             "telescope-fzf-native.nvim"
-            .. " telescope-media-files.nvim"
-            .. " telescope-file-browser.nvim"
-            .. " telescope-tmux.nvim"
-            .. " howdoi.nvim"
+                .. " telescope-media-files.nvim"
+                .. " telescope-file-browser.nvim"
+                .. " telescope-tmux.nvim"
+                .. " howdoi.nvim"
         )
     end
-    local telescope = require("telescope")
     telescope.setup({
         defaults = {
             prompt_prefix = "   ",
@@ -55,7 +58,7 @@ function config.telescope_nvim()
             path_display = { shorten = 5 },
             winblend = 0,
             border = {},
-            borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+            borderchars = { " ", " ", " ", " ", " ", " ", " ", " " },
             color_devicons = true,
             set_env = { ["COLORTERM"] = "truecolor" },
             file_previewer = require("telescope.previewers").vim_buffer_cat.new,
@@ -96,16 +99,98 @@ function config.telescope_nvim()
     telescope.load_extension("howdoi")
 end
 
+function config.rg_nvim()
+    local rg_status_ok, rg = pcall(require, "rg")
+    if not rg_status_ok then
+        return
+    end
+    rg.setup({
+        default_keybindings = {
+            enable = true,
+            modes = { "n", "v" },
+            binding = "te",
+        },
+    })
+end
+
+function config.nvim_hlslens()
+    local hlslens_status_ok, hlslens = pcall(require, "hlslens")
+    if not hlslens_status_ok then
+        return
+    end
+    hlslens.setup({
+        override_lens = function(render, posList, nearest, idx, relIdx)
+            local sfw = vim.v.searchforward == 1
+            local indicator, text, chunks
+            local absRelIdx = math.abs(relIdx)
+            if absRelIdx > 1 then
+                indicator = ("%d%s"):format(absRelIdx, sfw ~= (relIdx > 1) and "" or "")
+            elseif absRelIdx == 1 then
+                indicator = sfw ~= (relIdx == 1) and "" or ""
+            else
+                indicator = ""
+            end
+
+            local lnum, col = unpack(posList[idx])
+            if nearest then
+                local cnt = #posList
+                if indicator ~= "" then
+                    text = ("[%s %d/%d]"):format(indicator, idx, cnt)
+                else
+                    text = ("[%d/%d]"):format(idx, cnt)
+                end
+                chunks = { { " ", "Ignore" }, { text, "HlSearchLensNear" } }
+            else
+                text = ("[%s %d]"):format(indicator, idx)
+                chunks = { { " ", "Ignore" }, { text, "HlSearchLens" } }
+            end
+            render.setVirt(0, lnum - 1, col - 1, chunks, nearest)
+        end,
+    })
+    local kopts = { noremap = true, silent = true }
+    vim.api.nvim_set_keymap(
+        "n",
+        "n",
+        [[<Cmd>execute('normal! ' . v:count1 . 'n')<CR><Cmd>lua require('hlslens').start()<CR>]],
+        kopts
+    )
+    vim.api.nvim_set_keymap(
+        "n",
+        "N",
+        [[<Cmd>execute('normal! ' . v:count1 . 'N')<CR><Cmd>lua require('hlslens').start()<CR>]],
+        kopts
+    )
+    vim.api.nvim_set_keymap("n", "*", [[*<Cmd>lua require('hlslens').start()<CR>]], kopts)
+    vim.api.nvim_set_keymap("n", "#", [[#<Cmd>lua require('hlslens').start()<CR>]], kopts)
+    vim.api.nvim_set_keymap("n", "g*", [[g*<Cmd>lua require('hlslens').start()<CR>]], kopts)
+    vim.api.nvim_set_keymap("n", "g#", [[g#<Cmd>lua require('hlslens').start()<CR>]], kopts)
+end
+
 function config.nvim_bqf()
-    require("bqf").setup({
+    local bqf_status_ok, bqf = pcall(require, "bqf")
+    if not bqf_status_ok then
+        return
+    end
+    bqf.setup({
         preview = {
             border_chars = { "│", "│", "─", "─", "┌", "┐", "└", "┘", "█" },
         },
     })
 end
 
+function config.nvim_pqf()
+    local pqf_status_ok, pqf = pcall(require, "pqf")
+    if not pqf_status_ok then
+        return
+    end
+    pqf.setup()
+end
+
 function config.tabby_nvim()
-    local util = require("tabby.util")
+    local tabby_util_status_ok, tabby_util = pcall(require, "tabby.util")
+    if not tabby_util_status_ok then
+        return
+    end
     local hl_tabline = {
         color_01 = "#242B30",
         color_02 = "#A7C080",
@@ -156,7 +241,7 @@ function config.tabby_nvim()
                         hl = { fg = hl_tabline.color_02, bg = hl_tabline.color_01, style = "bold" },
                     },
                 })
-                local wins = util.tabpage_list_wins(current_tab)
+                local wins = tabby_util.tabpage_list_wins(current_tab)
                 local top_win = vim.api.nvim_tabpage_get_win(current_tab)
                 for _, winid in ipairs(wins) do
                     local icon = " "
@@ -185,23 +270,72 @@ function config.tabby_nvim()
         table.insert(coms, { type = "text", text = { " ", hl = { bg = hl_tabline.color_01, style = "bold" } } })
         return coms
     end
-
-    require("tabby").setup({
+    local tabby_status_ok, tabby = pcall(require, "tabby")
+    if not tabby_status_ok then
+        return
+    end
+    tabby.setup({
         components = components,
     })
 end
 
 function config.nvim_gomove()
-    require("gomove").setup()
+    local gomove_status_ok, gomove = pcall(require, "gomove")
+    if not gomove_status_ok then
+        return
+    end
+    gomove.setup()
 end
 
-function config.vim_slime()
-    vim.g.slime_target = "tmux"
+function config.nvim_treesitter_textsubjects()
+    local nvim_treesitter_configs_status_ok, nvim_treesitter_configs = pcall(require, "nvim-treesitter.configs")
+    if not nvim_treesitter_configs_status_ok then
+        return
+    end
+    nvim_treesitter_configs.setup({
+        textsubjects = {
+            enable = true,
+            prev_selection = ",",
+            keymaps = {
+                ["ms"] = "textsubjects-smart",
+                ["mo"] = "textsubjects-container-outer",
+                ["mi"] = "textsubjects-container-inner",
+            },
+        },
+    })
+end
+
+function config.rest_nvim()
+    local rest_nvim_status_ok, rest_nvim = pcall(require, "rest-nvim")
+    if not rest_nvim_status_ok then
+        return
+    end
+    rest_nvim.setup()
+end
+
+function config.sniprun()
+    local sniprun_status_ok, sniprun = pcall(require, "sniprun")
+    if not sniprun_status_ok then
+        return
+    end
+    sniprun.setup()
+end
+
+function config.code_runner_nvim()
+    local code_runner_status_ok, code_runner = pcall(require, "code_runner")
+    if not code_runner_status_ok then
+        return
+    end
+    code_runner.setup({})
 end
 
 function config.nvim_spectre()
+    local spectre_status_ok, spectre = pcall(require, "spectre")
+    if not spectre_status_ok then
+        return
+    end
     vim.api.nvim_create_user_command("Spectre", "lua require('spectre').open()", {})
-    require("spectre").setup({
+    spectre.setup({
         color_devicons = true,
         line_sep_start = "-----------------------------------------",
         result_padding = "|  ",
@@ -291,68 +425,36 @@ function config.nvim_spectre()
 end
 
 function config.comment_nvim()
-    require("Comment").setup()
+    local comment_status_ok, comment = pcall(require, "Comment")
+    if not comment_status_ok then
+        return
+    end
+    comment.setup()
 end
 
-function config.vim_bookmarks()
-    vim.g.bookmark_no_default_key_mappings = 1
-    vim.g.bookmark_sign = ""
-end
-
-function config.vim_doge()
-    vim.g.doge_mapping = "<Leader>*"
-end
-
-function config.nvim_autopairs()
-    local autopairs = require("nvim-autopairs")
-    local Rule = require("nvim-autopairs.rule")
-    local cond = require("nvim-autopairs.conds")
-    autopairs.setup({
-        check_ts = true,
-        ts_config = {
-            lua = {
-                "string",
-            },
-            javascript = {
-                "template_string",
-            },
-            java = false,
-        },
+function config.neogen()
+    local neogen_status_ok, neogen = pcall(require, "neogen")
+    if not neogen_status_ok then
+        return
+    end
+    neogen.setup({
+        snippet_engine = "luasnip",
     })
-    autopairs.add_rule(Rule("$$", "$$", "tex"))
-    autopairs.add_rules({
-        Rule("$", "$", { "tex", "latex" })
-            :with_pair(cond.not_after_regex_check("%%"))
-            :with_pair(cond.not_before_regex_check("xxx", 3))
-            :with_move(cond.none())
-            :with_del(cond.not_after_regex_check("xx"))
-            :with_cr(cond.none()),
-    })
-    autopairs.add_rules({
-        Rule("$$", "$$", "tex"):with_pair(function(opts)
-            print(vim.inspect(opts))
-            if opts.line == "aa $$" then
-                return false
-            end
-        end),
-    })
-    local ts_conds = require("nvim-autopairs.ts-conds")
-    autopairs.add_rules({
-        Rule("%", "%", "lua"):with_pair(ts_conds.is_ts_node({ "string", "comment" })),
-        Rule("$", "$", "lua"):with_pair(ts_conds.is_not_ts_node({ "function" })),
-    })
-end
-
-function config.nvim_ts_autotag()
-    require("nvim-ts-autotag").setup()
-end
-
-function config.nvim_surround()
-    require("nvim-surround").setup()
+    vim.api.nvim_create_user_command("NeogenFile", "lua require('neogen').generate({ type = 'file' })", {})
+    vim.api.nvim_create_user_command("NeogenClass", "lua require('neogen').generate({ type = 'class' })", {})
+    vim.api.nvim_create_user_command("NeogenFunction", "lua require('neogen').generate({ type = 'func' })", {})
+    vim.api.nvim_create_user_command("NeogenType", "lua require('neogen').generate({ type = 'type' })", {})
+    local opts = { noremap = true, silent = true }
+    vim.api.nvim_set_keymap("i", "<C-l>", ":lua require('neogen').jump_next<CR>", opts)
+    vim.api.nvim_set_keymap("i", "<C-h>", ":lua require('neogen').jump_prev<CR>", opts)
 end
 
 function config.nvim_colorize_lua()
-    require("colorizer").setup({
+    local colorizer_status_ok, colorizer = pcall(require, "colorizer")
+    if not colorizer_status_ok then
+        return
+    end
+    colorizer.setup({
         "*",
     }, {
         RGB = true,
@@ -372,7 +474,11 @@ function config.virtcolumn_nvim()
 end
 
 function config.cinnamon_nvim()
-    require("cinnamon").setup({
+    local cinnamon_status_ok, cinnamon = pcall(require, "cinnamon")
+    if not cinnamon_status_ok then
+        return
+    end
+    cinnamon.setup({
         extra_keymaps = true,
         extended_keymaps = true,
     })
@@ -383,11 +489,19 @@ function config.suda_vim()
 end
 
 function config.hop_nvim()
-    require("hop").setup()
+    local hop_status_ok, hop = pcall(require, "hop")
+    if not hop_status_ok then
+        return
+    end
+    hop.setup()
 end
 
 function config.todo_comments_nvim()
-    require("todo-comments").setup({
+    local todo_comments_status_ok, todo_comments = pcall(require, "todo-comments")
+    if not todo_comments_status_ok then
+        return
+    end
+    todo_comments.setup({
         colors = {
             error = { "#F05F4E", "#F05F4E" },
             warning = { "#F2994B", "#F2994B" },
@@ -399,7 +513,11 @@ function config.todo_comments_nvim()
 end
 
 function config.pretty_fold_nvim()
-    require("pretty-fold").setup({
+    local pretty_fold_status_ok, pretty_fold = pcall(require, "pretty-fold")
+    if not pretty_fold_status_ok then
+        return
+    end
+    pretty_fold.setup({
         fill_char = "─",
         sections = {
             left = {
@@ -413,7 +531,11 @@ function config.pretty_fold_nvim()
         },
         ft_ignore = { "org" },
     })
-    require("fold-preview").setup({
+    local fold_preview_status_ok, fold_preview = pcall(require, "fold-preview")
+    if not fold_preview_status_ok then
+        return
+    end
+    fold_preview.setup({
         default_keybindings = false,
     })
     local map = require("fold-preview").mapping

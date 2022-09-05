@@ -37,6 +37,8 @@ configs["base_events"] = function()
             "dapui_stacks",
             "dapui_watches",
             "NeogitStatus",
+            "org",
+            "octo",
         },
         command = "setlocal nonumber norelativenumber colorcolumn=0 nocursorcolumn",
         group = group,
@@ -55,8 +57,8 @@ configs["base_events"] = function()
                 callback = function(args)
                     local buf = args.buf
                     local buftype = vim.tbl_contains({
-                        "prompt",
                         "nofile",
+                        "prompt",
                         "help",
                         "quickfix",
                     }, vim.bo[buf].buftype)
@@ -81,12 +83,14 @@ configs["base_events"] = function()
                         "dapui_stacks",
                         "dapui_watches",
                         "calendar",
+                        "neo-tree",
+                        "neo-tree-popup",
                     }, vim.bo[buf].filetype)
                     if buftype or filetype then
                         vim.opt_local.winbar = nil
                     end
                 end,
-                group = "LvimIDE",
+                group = group,
             }
         )
     end
@@ -104,6 +108,7 @@ end
 configs["base_commands"] = function()
     vim.api.nvim_create_user_command("SetGlobalPath", 'lua require("core.funcs").set_global_path()', {})
     vim.api.nvim_create_user_command("SetWindowPath", 'lua require("core.funcs").set_window_path()', {})
+    vim.api.nvim_create_user_command("SudoWrite", 'lua require("core.funcs").sudo_write()', {})
 end
 
 configs["base_keymaps"] = function()
