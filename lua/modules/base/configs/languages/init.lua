@@ -447,6 +447,12 @@ function config.nvim_dap_ui()
         'lua require"dap".close(); require"dap".disconnect(); require"dapui".close()',
         {}
     )
+    vim.api.nvim_create_user_command(
+        "DapToggleConditionalBreakpoint",
+        'lua require("dap").set_breakpoint(vim.fn.input "[DAP] condition >)',
+        {}
+    )
+    vim.api.nvim_create_user_command("DapEval", 'lua require"dapui".eval(vim.fn.input "[DAP] Expression > ")', {})
 end
 
 function config.vim_dadbod_ui()

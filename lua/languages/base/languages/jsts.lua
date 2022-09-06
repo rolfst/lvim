@@ -23,7 +23,7 @@ language_configs["dap"] = function()
     -- dap.adapters.chrome = {
     --     type = "executable",
     --     command = "node",
-    --     args = { global.mason_path .. "packages/chrome-debug-adapter/out/src/chromeDebug.js" },
+    --     args = { global.mason_path .. "/packages/chrome-debug-adapter/out/src/chromeDebug.js" },
     -- }
     -- dap.configurations.javascript = {
     --     {
@@ -56,11 +56,7 @@ language_configs["dap"] = function()
     dap.adapters.node2 = {
         type = "executable",
         command = "node",
-<<<<<<< HEAD
-        args = { global.mason_path .. "packages/node-debug2-adapter/out/src/nodeDebug.js" },
-=======
-        args = { global.mason_path .. "/packages/chrome-debug-adapter/out/src/chromeDebug.js" },
->>>>>>> 4b23b6b521879edc0bae493ef0baea2dfa59d306
+        args = { global.mason_path .. "/packages/node-debug2-adapter/out/src/nodeDebug.js" },
     }
     dap.configurations.javascript = {
         {
