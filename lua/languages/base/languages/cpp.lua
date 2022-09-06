@@ -11,9 +11,9 @@ language_configs["lsp"] = function()
         ["language"] = "cpp",
         ["dap"] = { "cpptools" },
         ["clangd"] = { "clangd", clangd_config },
-        -- ["dependencies"] = {
-        --     "cpplint",
-        -- },
+        ["dependencies"] = {
+            "cpplint",
+        },
     })
 end
 
@@ -21,7 +21,7 @@ language_configs["dap"] = function()
     dap.adapters.cppdbg = {
         id = "cppdbg",
         type = "executable",
-        command = global.mason_path .. "packages/cpptools/extension/debugAdapters/bin/OpenDebugAD7",
+        command = global.mason_path .. "/packages/cpptools/extension/debugAdapters/bin/OpenDebugAD7",
     }
     dap.configurations.cpp = {
         {
