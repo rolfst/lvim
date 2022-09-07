@@ -61,6 +61,7 @@ function config.null_ls_nvim()
             diagnostics.vint,
             diagnostics.yamllint,
             formatting.black,
+            formatting.yapf,
             formatting.cbfmt,
             formatting.prettierd,
             formatting.shfmt,
