@@ -1,5 +1,15 @@
 local config = {}
 
+function config.vim_ctrlspace()
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "ctrlspace" },
+        callback = function()
+            vim.api.nvim_win_set_option(0, "winhighlight", "SignColumn:LvimFocusNormal")
+        end,
+        group = "LvimIDE",
+    })
+end
+
 function config.telescope_nvim()
     local telescope_status_ok, telescope = pcall(require, "telescope")
     if not telescope_status_ok then
@@ -8,11 +18,7 @@ function config.telescope_nvim()
     if not packer_plugins["telescope-fzf-native.nvim"].loaded then
         local loader = require("packer").loader
         loader(
-            "telescope-fzf-native.nvim"
-                .. " telescope-media-files.nvim"
-                .. " telescope-file-browser.nvim"
-                .. " telescope-tmux.nvim"
-                .. " howdoi.nvim"
+            "telescope-fzf-native.nvim" .. " telescope-file-browser.nvim" .. " telescope-tmux.nvim" .. " howdoi.nvim"
         )
     end
     telescope.setup({
@@ -85,15 +91,11 @@ function config.telescope_nvim()
                 override_file_sorter = true,
                 case_mode = "smart_case",
             },
-            media_files = {
-                filetypes = { "png", "webp", "jpg", "jpeg" },
-                find_cmd = "rg",
-            },
             file_browser = {},
         },
     })
     telescope.load_extension("fzf")
-    telescope.load_extension("media_files")
+    -- telescope.load_extension("media_files")
     telescope.load_extension("file_browser")
     telescope.load_extension("tmux")
     telescope.load_extension("howdoi")
@@ -468,6 +470,20 @@ function config.nvim_colorize_lua()
         hsl_fn = true,
         css = true,
         css_fn = true,
+    })
+end
+
+function config.color_picker_nvim()
+    local color_picker_status_ok, color_picker = pcall(require, "color-picker")
+    if not color_picker_status_ok then
+        return
+    end
+    color_picker.setup({})
+    vim.api.nvim_create_autocmd("BufWritePost", {
+        callback = function()
+            vim.api.nvim_command("ColorizerAttachToBuffer")
+        end,
+        group = "LvimIDE",
     })
 end
 

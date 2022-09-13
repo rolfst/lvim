@@ -26,74 +26,33 @@ configs["base_events"] = function()
         command = "setlocal ts=2 sw=2",
         group = group,
     })
-    vim.api.nvim_create_autocmd("FileType", {
-        pattern = {
-            "help",
-            "calendar",
-            "Outline",
-            "git",
-            "dapui_scopes",
-            "dapui_breakpoints",
-            "dapui_stacks",
-            "dapui_watches",
-            "NeogitStatus",
-            "org",
-            "octo",
-        },
-        command = "setlocal nonumber norelativenumber colorcolumn=0 nocursorcolumn",
-        group = group,
-    })
-    vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "ctrlspace" },
-        callback = function()
-            vim.api.nvim_win_set_option(0, "winhighlight", "SignColumn:LvimFocusNormal")
+    vim.api.nvim_create_autocmd({ "BufWinEnter", "BufWinLeave" }, {
+        callback = function(args)
+            local buf = args.buf
+            local buftype = vim.tbl_contains({ "prompt", "nofile", "help", "quickfix" }, vim.bo[buf].buftype)
+            local filetype = vim.tbl_contains({
+                "calendar",
+                "Outline",
+                "git",
+                "dapui_scopes",
+                "dapui_breakpoints",
+                "dapui_stacks",
+                "dapui_watches",
+                "NeogitStatus",
+                "org",
+                "octo",
+                "tex",
+                "toggleterm",
+            }, vim.bo[buf].filetype)
+            if buftype or filetype then
+                vim.opt_local.number = false
+                vim.opt_local.relativenumber = false
+                vim.opt_local.cursorcolumn = false
+                vim.opt_local.colorcolumn = "0"
+            end
         end,
         group = group,
     })
-    if vim.fn.has("nvim-0.8") == 1 then
-        vim.api.nvim_create_autocmd(
-            { "CursorMoved", "BufWinEnter", "BufFilePost", "InsertEnter", "BufWritePost", "TabClosed" },
-            {
-                callback = function(args)
-                    local buf = args.buf
-                    local buftype = vim.tbl_contains({
-                        "nofile",
-                        "prompt",
-                        "help",
-                        "quickfix",
-                    }, vim.bo[buf].buftype)
-                    local filetype = vim.tbl_contains({
-                        "ctrlspace",
-                        "ctrlspace_help",
-                        "packer",
-                        "undotree",
-                        "diff",
-                        "Outline",
-                        "LvimHelper",
-                        "floaterm",
-                        "dashboard",
-                        "vista",
-                        "spectre_panel",
-                        "DiffviewFiles",
-                        "flutterToolsOutline",
-                        "log",
-                        "qf",
-                        "dapui_scopes",
-                        "dapui_breakpoints",
-                        "dapui_stacks",
-                        "dapui_watches",
-                        "calendar",
-                        "neo-tree",
-                        "neo-tree-popup",
-                    }, vim.bo[buf].filetype)
-                    if buftype or filetype then
-                        vim.opt_local.winbar = nil
-                    end
-                end,
-                group = group,
-            }
-        )
-    end
 end
 
 configs["base_languages"] = function()

@@ -4,9 +4,9 @@
 
   LVIM IDE is a modular Neovim configuration written in LUA with full customization
 
-  Current version - 2.2.00 (2022-09-06)
+  Current version - 2.2.28 (2022-09-12)
 
-  Startup time: 087.262 (107 plugins)
+  108 plugins
 
 **  SCREENSHOTS
 
@@ -76,8 +76,54 @@
 **  INSTALL
 
     #+begin_src bash
-
     git clone https://github.com/lvim-tech/lvim.git ~/.config/nvim
+    #+end_src
+
+    + For osx bigsur bug
+        Issue: [[https://github.com/wbthomason/packer.nvim/issues/180][Luarocks fails to install on macOS BigSur #180]]
+        Uncoment these lines in *lua/init.lua*:
+
+    #+begin_src lua
+    if vim.fn.has("mac") == 1 then
+        vim.fn.setenv("MACOSX_DEPLOYMENT_TARGET", "10.15")
+    end
+    #+end_src
+
+**  SNAPSHOTS 
+
+    + Snap folder: *~/.config/nvim/.snapshots/* 
+
+    + Default snapshot file: *default* 
+
+    + Show current snapshot: 
+
+    #+begin_src bash
+
+    :PackerShowCurrentSnapshot
+
+    #+end_src
+
+    + Create new snapshot: 
+
+    #+begin_src bash
+
+    :PackerSnapshot
+
+    #+end_src
+
+    + Choice file to rollback: 
+
+    #+begin_src bash
+
+    :PackerChoiceSnapshotToRollback
+
+    #+end_src
+
+    Then restart LVIM IDE and run:
+
+    #+begin_src bash
+
+    :PackerSync
 
     #+end_src
 

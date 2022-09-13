@@ -239,7 +239,7 @@ function config.which_key_nvim()
             group = "+",
         },
         window = {
-            border = "single",
+            border = { " ", " ", " ", " ", " ", " ", " ", " " },
             position = "bottom",
             margin = {
                 0,
@@ -453,7 +453,6 @@ function config.which_key_nvim()
             s = { "<Cmd>Telescope git_status<CR>", "Git status" },
             S = { "<Cmd>Telescope git_stash<CR>", "Git stash" },
             i = { "<Cmd>Telescope git_files<CR>", "Git files" },
-            M = { "<Cmd>Telescope media_files<CR>", "Media files" },
         },
         T = {
             name = "Test",
@@ -496,6 +495,7 @@ function config.heirline_nvim()
     local colors = LVIM_COLORS()
     local align = { provider = "%=" }
     local space = { provider = " " }
+    local mode
     local vi_mode = {
         init = function(self)
             self.mode = vim.fn.mode(1)
@@ -564,7 +564,7 @@ function config.heirline_nvim()
             return "   %(" .. self.mode_names[self.mode] .. "%)"
         end,
         hl = function(self)
-            local mode = self.mode:sub(1, 1)
+            mode = self.mode:sub(1, 1)
             return { fg = self.mode_colors[mode], bold = true }
         end,
         update = {
@@ -611,7 +611,10 @@ function config.heirline_nvim()
             end
         end,
         hl = function()
-            return { fg = colors.color_05 }
+            return {
+                fg = vi_mode.static.mode_colors[mode],
+                bold = true,
+            }
         end,
     }
     local file_name = {
@@ -625,7 +628,12 @@ function config.heirline_nvim()
             end
             return filename .. " "
         end,
-        hl = { fg = colors.color_05, bold = true },
+        hl = function()
+            return {
+                fg = vi_mode.static.mode_colors[mode],
+                bold = true,
+            }
+        end,
     }
     local file_flags = {
         {
@@ -642,15 +650,8 @@ function config.heirline_nvim()
                     return "  "
                 end
             end,
-            hl = { fg = colors.color_02 },
+            hl = { fg = colors.color_05 },
         },
-    }
-    local file_name_modifer = {
-        hl = function()
-            if vim.bo.modified then
-                return { fg = colors.color_05, bold = true, force = true }
-            end
-        end,
     }
     local file_size = {
         provider = function()
@@ -662,14 +663,14 @@ function config.heirline_nvim()
             local file_size = require("core.funcs").file_size(fsize)
             return "  " .. file_size
         end,
-        hl = { fg = colors.color_03 },
+        hl = { fg = colors.color_05 },
     }
     file_name_block = heirline_utils.insert(
         file_name_block,
         space,
         space,
         file_icon,
-        heirline_utils.insert(file_name_modifer, file_name),
+        file_name,
         file_size,
         unpack(file_flags),
         { provider = "%<" }
@@ -978,6 +979,45 @@ function config.heirline_nvim()
     }
     if vim.fn.has("nvim-0.8") == 1 then
         heirline.setup(status_lines, win_bars)
+        vim.api.nvim_create_autocmd("User", {
+            pattern = "HeirlineInitWinbar",
+            callback = function(args)
+                local buf = args.buf
+                local buftype = vim.tbl_contains({
+                    "nofile",
+                    "prompt",
+                    "help",
+                    "quickfix",
+                }, vim.bo[buf].buftype)
+                local filetype = vim.tbl_contains({
+                    "ctrlspace",
+                    "ctrlspace_help",
+                    "packer",
+                    "undotree",
+                    "diff",
+                    "Outline",
+                    "LvimHelper",
+                    "floaterm",
+                    "dashboard",
+                    "vista",
+                    "spectre_panel",
+                    "DiffviewFiles",
+                    "flutterToolsOutline",
+                    "log",
+                    "qf",
+                    "dapui_scopes",
+                    "dapui_breakpoints",
+                    "dapui_stacks",
+                    "dapui_watches",
+                    "calendar",
+                    "neo-tree",
+                    "neo-tree-popup",
+                }, vim.bo[buf].filetype)
+                if buftype or filetype then
+                    vim.opt_local.winbar = nil
+                end
+            end,
+        })
     else
         heirline.setup(status_lines)
     end
@@ -1166,6 +1206,14 @@ function config.neozoom_lua()
     end, NOREF_NOERR_TRUNC)
 end
 
+function config.stay_in_place()
+    local stay_in_place_status_ok, stay_in_place = pcall(require, "stay-in-place")
+    if not stay_in_place_status_ok then
+        return
+    end
+    stay_in_place.setup({})
+end
+
 function config.indent_blankline_nvim()
     local indent_blankline_status_ok, indent_blankline = pcall(require, "indent_blankline")
     if not indent_blankline_status_ok then
@@ -1225,6 +1273,7 @@ function config.nvim_notify()
         return
     end
     notify.setup({
+        background_colour = "#2A3339",
         icons = {
             DEBUG = " ",
             ERROR = " ",

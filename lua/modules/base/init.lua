@@ -2,11 +2,10 @@ local funcs = require("core.funcs")
 local modules = {}
 local plugins_snapshot = {}
 
-if funcs.file_exists(_G.LVIM_SNAPSHOT) then
-    local content = vim.fn.readfile(_G.LVIM_SNAPSHOT)
-    plugins_snapshot = vim.fn.json_decode(content)
+local read_json_file = funcs.read_json_file(_G.LVIM_SNAPSHOT)
+if read_json_file ~= nil then
+    plugins_snapshot = read_json_file
 end
-
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 -- UTILS -----------------------------------------------------------
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -81,8 +80,7 @@ modules["elihunter173/dirbuf.nvim"] = {
     config = ui_config.dirbuf_nvim,
 }
 
-modules["lvim-tech/which-key.nvim"] = {
-    branch = "buftype",
+modules["folke/which-key.nvim"] = {
     commit = funcs.get_commit("which-key.nvim", plugins_snapshot),
     event = "BufWinEnter",
     config = ui_config.which_key_nvim,
@@ -127,6 +125,14 @@ modules["nyngwang/NeoZoom.lua"] = {
     commit = funcs.get_commit("NeoZoom.lua", plugins_snapshot),
     config = ui_config.neozoom_lua,
     cmd = "NeoZoomToggle",
+}
+
+modules["gbprod/stay-in-place.nvim"] = {
+    commit = funcs.get_commit("stay-in-place.nvim", plugins_snapshot),
+    event = {
+        "BufRead",
+    },
+    config = ui_config.stay_in_place,
 }
 
 modules["lukas-reineke/indent-blankline.nvim"] = {
@@ -174,11 +180,6 @@ modules["nvim-telescope/telescope.nvim"] = {
             "nvim-telescope/telescope-fzf-native.nvim",
             commit = funcs.get_commit("telescope-fzf-native.nvim", plugins_snapshot),
             run = "make",
-            opt = true,
-        },
-        {
-            "nvim-telescope/telescope-media-files.nvim",
-            commit = funcs.get_commit("telescope-media-files.nvim", plugins_snapshot),
             opt = true,
         },
         {
@@ -338,6 +339,14 @@ modules["norcalli/nvim-colorizer.lua"] = {
     config = editor_config.nvim_colorize_lua,
 }
 
+modules["ziontee113/color-picker.nvim"] = {
+    commit = funcs.get_commit("color-picker.nvim", plugins_snapshot),
+    event = {
+        "BufRead",
+    },
+    config = editor_config.color_picker_nvim,
+}
+
 modules["xiyaowong/virtcolumn.nvim"] = {
     commit = funcs.get_commit("virtcolumn.nvim", plugins_snapshot),
     event = {
@@ -431,13 +440,8 @@ modules["f-person/git-blame.nvim"] = {
 
 modules["sindrets/diffview.nvim"] = {
     commit = funcs.get_commit("diffview.nvim", plugins_snapshot),
-    cmd = {
-        "DiffviewOpen",
-        "DiffviewFileHistory",
-        "DiffviewFocusFiles",
-        "DiffviewToggleFiles",
-        "DiffviewRefresh",
-    },
+    after = "lvim-colorscheme",
+    config = version_control_config.diffview_nvim,
 }
 
 modules["pwntester/octo.nvim"] = {

@@ -3,6 +3,8 @@ local keymaps = {}
 keymaps["normal"] = {
     { "<space><space>", ":CtrlSpace<CR>" }, -- CtrlSpace
     { "<F1>", ":TTOne<CR>" }, -- Toggleterm one open
+    { "u", "u:ColorizerAttachToBuffer<CR>" }, -- Toggleterm one open
+    { "<C-r>", "<C-r>:ColorizerAttachToBuffer<CR>" }, -- Toggleterm one open
     { "<F2>", ":TTTwo<CR>" }, -- Toggleterm two open
     { "<F3>", ":TTThree<CR>" }, -- Toggleterm three open
     { "<F4>", ":TTFloat<CR>" }, -- Toggleterm float open
@@ -16,6 +18,8 @@ keymaps["normal"] = {
     { "<C-c>x", "<C-w>c" }, -- Close current window
     { "<C-c>o", "<C-w>o" }, -- Close other windows
     { "<C-c>d", ":bdelete<CR>" }, -- BDelete
+    { "<C-c>p", ":PickColor<CR>" }, -- Pick color
+    { "<C-c>P", ":PickColorInsert<CR>" }, -- Pick color insert
     { "<C-n>", ":BufSurfForward<CR>" }, -- Next buffer
     { "<C-p>", ":BufSurfBack<CR>" }, -- Previews buffer
     { "<C-c>b", ":GitBlameToggle<CR>" }, -- Git blame toggle
