@@ -370,7 +370,6 @@ function config.which_key_nvim()
             f = { "<Cmd>NeogenFunction<CR>", "Function" },
             t = { "<Cmd>NeogenType<CR>", "Type" },
         },
-<<<<<<< Updated upstream
         p = {
             name = "Packer",
             c = { "<cmd>PackerCompile<CR>", "Compile" },
@@ -383,7 +382,7 @@ function config.which_key_nvim()
             name = "Path",
             g = { "<Cmd>SetGlobalPath<CR>", "Set global path" },
             w = { "<Cmd>SetWindowPath<CR>", "Set window path" },
-=======
+        },
         w = {
             name = "Find & Fold",
             f = { "<Cmd>HopWord<CR>", "Hop Word" },
@@ -396,7 +395,6 @@ function config.which_key_nvim()
             e = { "<Cmd>:set foldmethod=expr<CR>", "Expr" },
             d = { "<Cmd>:set foldmethod=diff<CR>", "Diff" },
             M = { "<Cmd>:set foldmethod=marker<CR>", "Marker" },
->>>>>>> Stashed changes
         },
         s = {
             name = "Spectre",
@@ -841,7 +839,7 @@ function config.heirline_nvim()
             local extension = vim.fn.expand("%:e")
             if not isempty(filename) then
                 local f_icon, f_icon_color =
-                require("nvim-web-devicons").get_icon_color(filename, extension, { default = true })
+                    require("nvim-web-devicons").get_icon_color(filename, extension, { default = true })
                 local hl_group_2 = "FileIconColor" .. extension
                 vim.api.nvim_set_hl(0, hl_group_2, { fg = f_icon_color, bg = colors.status_line_bg })
                 if isempty(f_icon) then
