@@ -47,15 +47,19 @@ keymaps["normal"] = {
     { "<A-;>", ":GitSignsPreviewHunk<CR>" }, -- Git signs preview hunk
     { "<A-s>", ":Spectre<CR>" }, -- Replace in multiple files
     { "gw", ":WindowPicker<CR>" }, -- Window picker
+    { "gd", ":LspDefinition<CR>" }, -- Lsp definition
+    { "gt", ":LspTypeDefinition<CR>" }, -- Lsp type definition
+    { "gR", ":LspReferences<CR>" }, -- Lsp references
+    { "gi", ":LspImplementation<CR>" }, -- Lsp implementation
     { "gr", ":LspRename<CR>" }, -- Lsp rename
     { "gf", ":LspFormatting<CR>" }, -- Lsp format code
     { "ga", ":LspCodeAction<CR>" }, -- Lsp code action
     { "gL", ":LspCodeLensRefresh<CR>" }, -- Lsp code lens refresh
     { "gl", ":LspCodeLensRun<CR>" }, -- Lsp code lens run
-    { "gpd", ":LspDefinition<CR>" }, -- Lsp definition
-    { "gpt", ":LspTypeDefinition<CR>" }, -- Lsp type definition
-    { "gpr", ":LspReferences<CR>" }, -- Lsp references
-    { "gpi", ":LspImplementation<CR>" }, -- Lsp implementation
+    { "gpd", ":LspPreviewDefinition<CR>" }, -- Lsp definition
+    { "gpt", ":LspPreviewTypeDefinition<CR>" }, -- Lsp type definition
+    { "gpr", ":LspPreviewReferences<CR>" }, -- Lsp references
+    { "gpi", ":LspPreviewImplementation<CR>" }, -- Lsp implementation
     { "gps", ":LspSignatureHelp<CR>" }, -- Lsp signsture help
     { "gpp", ":LspCloseAll<CR>" }, -- Lsp close all
     { "gh", ":Hover<CR>" }, -- Lsp hover
