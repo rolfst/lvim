@@ -64,6 +64,7 @@ function config.alpha_nvim()
         button("A-/", "  File explorer", ":Telescope file_browser<CR>"),
         button("A-,", "  Search file", ":Telescope find_files<CR>"),
         button("A-.", "  Search in files", ":Telescope live_grep<CR>"),
+        button("A-o", "  Recently used Files", ":Telescope old_files<CR>"),
         button("F11", "  Help", ":LvimHelper<CR>"),
         button("q", "  Quit", "<Cmd>qa<CR>"),
     }
@@ -383,19 +384,6 @@ function config.which_key_nvim()
             g = { "<Cmd>SetGlobalPath<CR>", "Set global path" },
             w = { "<Cmd>SetWindowPath<CR>", "Set window path" },
         },
-        w = {
-            name = "Find & Fold",
-            f = { "<Cmd>HopWord<CR>", "Hop Word" },
-            ["]"] = { "<Cmd>HopChar1<CR>", "Hop Char1" },
-            ["["] = { "<Cmd>HopChar2<CR>", "Hop Char2" },
-            l = { "<Cmd>HopLine<CR>", "Hop Line" },
-            s = { "<Cmd>HopLineStart<CR>", "Hop Line Start" },
-            m = { "<Cmd>:set foldmethod=manual<CR>", "Manual (default)" },
-            i = { "<Cmd>:set foldmethod=indent<CR>", "Indent" },
-            e = { "<Cmd>:set foldmethod=expr<CR>", "Expr" },
-            d = { "<Cmd>:set foldmethod=diff<CR>", "Diff" },
-            M = { "<Cmd>:set foldmethod=marker<CR>", "Marker" },
-        },
         s = {
             name = "Spectre",
             d = {
@@ -438,11 +426,12 @@ function config.which_key_nvim()
         t = {
             name = "Telescope",
             b = { "<Cmd>Telescope file_browser<CR>", "File browser" },
+            c = { "<Cmd>Telescope commands<CR>", "Commands" },
             f = { "<Cmd>Telescope find_files<CR>", "Find files" },
             w = { "<Cmd>Telescope live_grep<CR>", "Live grep" },
             u = { "<Cmd>Telescope buffers<CR>", "Buffers" },
             m = { "<Cmd>Telescope marks<CR>", "Marks" },
-            o = { "<Cmd>Telescope commands<CR>", "Commands" },
+            o = { "<Cmd>Telescope oldfiles<CR>", "Recent files" },
             y = { "<Cmd>Telescope symbols<CR>", "Symbols" },
             n = { "<Cmd>Telescope quickfix<CR>", "Quickfix" },
             c = { "<Cmd>Telescope git_commits<CR>", "Git commits" },

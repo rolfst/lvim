@@ -84,6 +84,7 @@ keymaps["normal"] = {
     { "<A-0>", "<Cmd>DapToggleRepl<CR>" }, --  eval valueRepl
     { "<A-C-1>", "<Cmd>DapToggleConditionalBreakpoint<CR>" }, --  eval valueRepl
     { "<A-c-0>", "<Cmd>DapEval<CR>" }, --  eval valueRepl
+    { "<A-o>", "<Cmd>Telescope oldfiles<CR>" },
     { "zp", "<Cmd>FoldPreview<CR>" }, -- Fix indent + fold lines
     { "zo", "zo:IndentBlanklineRefresh<CR>" }, -- Fix indent + fold lines
     { "zO", "zO:IndentBlanklineRefresh<CR>" }, -- Fix indent + fold lines
