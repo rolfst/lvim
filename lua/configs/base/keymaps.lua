@@ -3,8 +3,6 @@ local keymaps = {}
 keymaps["normal"] = {
     { "<space><space>", ":CtrlSpace<CR>" }, -- CtrlSpace
     { "<F1>", ":TTOne<CR>" }, -- Toggleterm one open
-    { "u", "u:ColorizerAttachToBuffer<CR>" }, -- Toggleterm one open
-    { "<C-r>", "<C-r>:ColorizerAttachToBuffer<CR>" }, -- Toggleterm one open
     { "<F2>", ":TTTwo<CR>" }, -- Toggleterm two open
     { "<F3>", ":TTThree<CR>" }, -- Toggleterm three open
     { "<F4>", ":TTFloat<CR>" }, -- Toggleterm float open
@@ -47,19 +45,23 @@ keymaps["normal"] = {
     { "<A-;>", ":GitSignsPreviewHunk<CR>" }, -- Git signs preview hunk
     { "<A-s>", ":Spectre<CR>" }, -- Replace in multiple files
     { "gw", ":WindowPicker<CR>" }, -- Window picker
-    { "gr", ":LspRename<CR>" }, -- Lsp rename
+    { "gd", ":LspDefinition<CR>" }, -- Lsp definition
+    { "gt", ":LspTypeDefinition<CR>" }, -- Lsp type definition
+    { "gr", ":LspReferences<CR>" }, -- Lsp references
+    { "gi", ":LspImplementation<CR>" }, -- Lsp implementation
+    { "ge", ":LspRename<CR>" }, -- Lsp rename
     { "gf", ":LspFormatting<CR>" }, -- Lsp format code
     { "ga", ":LspCodeAction<CR>" }, -- Lsp code action
+    { "gs", ":LspSignatureHelp<CR>" }, -- Lsp signsture help
     { "gL", ":LspCodeLensRefresh<CR>" }, -- Lsp code lens refresh
     { "gl", ":LspCodeLensRun<CR>" }, -- Lsp code lens run
-    { "gpd", ":LspDefinition<CR>" }, -- Lsp definition
-    { "gpt", ":LspTypeDefinition<CR>" }, -- Lsp type definition
-    { "gpr", ":LspReferences<CR>" }, -- Lsp references
-    { "gpi", ":LspImplementation<CR>" }, -- Lsp implementation
-    { "gps", ":LspSignatureHelp<CR>" }, -- Lsp signsture help
-    { "gpp", ":LspCloseAll<CR>" }, -- Lsp close all
-    { "gh", ":Hover<CR>" }, -- Lsp hover
-    { "gs", ":SnipRun<CR>" }, -- Snip run
+    { "gpd", ":LspPreviewDefinition<CR>" }, -- Lsp definition
+    { "gpt", ":LspPreviewTypeDefinition<CR>" }, -- Lsp type definition
+    { "gpr", ":LspPreviewReferences<CR>" }, -- Lsp references
+    { "gpi", ":LspPreviewImplementation<CR>" }, -- Lsp implementation
+    { "gpp", ":LspPreviewCloseAll<CR>" }, -- Lsp close all
+    { "gh", ":LspHover<CR>" }, -- Lsp hover
+    { "gS", ":SnipRun<CR>" }, -- Snip run
     { "gP", ":hardcopy<CR>" }, -- Print file
     { "tn", ":tabn<CR>" }, -- Tab next
     { "tp", ":tabp<CR>" }, -- Tab prev
