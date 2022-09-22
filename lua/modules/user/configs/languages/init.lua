@@ -16,10 +16,4 @@ function config.nvim_test()
     })
 end
 
--- function config.nvim_formatters()
---     require("null-ls").setup({
---         sources = require("null-ls").builtins.formatting.yapf,
---     })
--- end
-
 return config
