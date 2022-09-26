@@ -83,6 +83,8 @@ modules["nvim-neotest/neotest"] = {
         { "nvim-neotest/neotest-python" },
         { "nvim-neotest/neotest-go" },
         --   { "haydenmeade/neotest-jest" },
+        { "adrigzr/neotest-mocha" },
+
         {
             "nvim-neotest/neotest-vim-test",
             requires = {

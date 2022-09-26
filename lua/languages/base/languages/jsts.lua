@@ -58,6 +58,11 @@ language_configs["dap"] = function()
         command = "node",
         args = { global.mason_path .. "/packages/node-debug2-adapter/out/src/nodeDebug.js" },
     }
+    dap.adapters["pwa-node"] = {
+        type = "executable",
+        command = "node",
+        args = { global.mason_path .. "/packages/node-debug2-adapter/out/src/nodeDebug.js" },
+    }
     dap.configurations.javascript = {
         {
             name = "Launch",
