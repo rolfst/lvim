@@ -5,6 +5,7 @@ function config.nvim_test()
         adapters = {
             require("neotest-python")({
                 dap = { justMyCode = false },
+                ignore_file_types = { "javascript", "typescript" },
             }),
             require("neotest-plenary"),
             -- require("neotest-jest"),
