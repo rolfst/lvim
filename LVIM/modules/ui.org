@@ -50,6 +50,235 @@
     end
     #+end_src
 
+**   [[https://github.com/folke/noice.nvim][noice.nvim]]
+
+    + INIT
+
+    #+begin_src lua
+    modules["folke/noice.nvim"] = {
+        commit = funcs.get_commit("nui.nvim", plugins_snapshot),
+        event = "VimEnter",
+        config = ui_config.noice_nvim,
+    }
+    #+end_src
+
+    + CONFIG
+
+    #+begin_src lua
+    function config.noice_nvim()
+        local noice_config_status_ok, noice_config = pcall(require, "noice.config")
+        if not noice_config_status_ok then
+            return
+        end
+        local noice_hacks_status_ok, noice_hacks = pcall(require, "noice.hacks")
+        if not noice_hacks_status_ok then
+            return
+        end
+        local noice_commands_status_ok, noice_commands = pcall(require, "noice.commands")
+        if not noice_commands_status_ok then
+            return
+        end
+        local noice_router_status_ok, noice_router = pcall(require, "noice.router")
+        if not noice_router_status_ok then
+            return
+        end
+        local noice_ui_status_ok, noice_ui = pcall(require, "noice.ui")
+        if not noice_ui_status_ok then
+            return
+        end
+        noice_config.setup({
+            debug = false,
+            throttle = 1000 / 30,
+            cmdline = {
+                enabled = true,
+                menu = "popup",
+                icons = {
+                    ["/"] = { icon = " ", hl_group = "DiagnosticWarn" },
+                    ["?"] = { icon = " ", hl_group = "DiagnosticWarn" },
+                    [":"] = { icon = " ", hl_group = "DiagnosticInfo", firstc = false },
+                },
+            },
+            history = {
+                view = "split",
+                opts = {
+                    enter = true,
+                },
+                filter = { event = "msg_show", ["not"] = { kind = { "search_count", "echo" } } },
+            },
+            views = {
+                notify = {
+                    render = "notify",
+                    level = vim.log.levels.INFO,
+                    replace = true,
+                },
+                split = {
+                    render = "split",
+                    enter = false,
+                    relative = "editor",
+                    position = "bottom",
+                    size = "20%",
+                    close = {
+                        keys = { "q", "<esc>" },
+                    },
+                    win_options = {
+                        winhighlight = "Normal:NuiBody,FloatBorder:NuiBorder",
+                    },
+                },
+                popup = {
+                    render = "popup",
+                    close = {
+                        events = { "BufLeave" },
+                        keys = { "q", "<esc>" },
+                    },
+                    enter = true,
+                    border = { " ", " ", " ", " ", " ", " ", " ", " " },
+                    position = "50%",
+                    size = {
+                        width = "80%",
+                        height = "60%",
+                    },
+                    win_options = {
+                        winhighlight = "Normal:NuiBody,FloatBorder:NuiBorder",
+                    },
+                },
+                cmdline = {
+                    render = "popup",
+                    relative = "editor",
+                    position = {
+                        row = "100%",
+                        col = 0,
+                    },
+                    size = {
+                        height = "auto",
+                        width = "100%",
+                    },
+                    border = { " ", " ", " ", " ", " ", " ", " ", " " },
+                    win_options = {
+                        winhighlight = "Normal:MsgArea",
+                    },
+                },
+                fancy_cmdline = {
+                    render = "popup",
+                    relative = "editor",
+                    focusable = true,
+                    position = {
+                        row = "50%",
+                        col = "50%",
+                    },
+                    size = {
+                        min_width = 60,
+                        width = "auto",
+                        height = "auto",
+                    },
+                    border = {
+                        style = { " ", " ", " ", " ", " ", " ", " ", " " },
+                        padding = { 0, 1, 0, 1 },
+                        text = {
+                            top = " Command Line ",
+                        },
+                    },
+                    win_options = {
+                        winhighlight = "Normal:NuiBody,FloatBorder:NuiBorder",
+                    },
+                    filter_options = {
+                        {
+                            filter = { event = "cmdline", find = "^%s*[/?]" },
+                            opts = {
+                                border = {
+                                    text = {
+                                        top = " Search ",
+                                    },
+                                },
+                                win_options = {
+                                    winhighlight = "Normal:NuiBody,FloatBorder:NuiBorder",
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            routes = {
+                {
+                    view = "fancy_cmdline",
+                    filter = {
+                        any = {
+                            { event = "cmdline" },
+                            { event = "msg_show", kind = "confirm" },
+                            { event = "msg_show", kind = "confirm_sub" },
+                            { event = "msg_show", kind = { "echo", "echomsg", "" }, before_input = true },
+                        },
+                    },
+                    opts = {
+                        filter_options = {
+                            {
+                                filter = { event = "cmdline" },
+                                opts = { buf_options = { filetype = "vim" } },
+                            },
+                        },
+                    },
+                },
+                {
+                    view = "split",
+                    filter = {
+                        any = {
+                            { event = "msg_history_show" },
+                        },
+                    },
+                },
+                {
+                    view = "virtualtext",
+                    filter = {
+                        event = "msg_show",
+                        kind = "search_count",
+                    },
+                    opts = { hl_group = "DiagnosticVirtualTextInfo" },
+                },
+                {
+                    filter = {
+                        any = {
+                            { event = { "msg_showmode", "msg_showcmd", "msg_ruler" } },
+                            { event = "msg_show", kind = "search_count" },
+                        },
+                    },
+                    opts = { skip = true },
+                },
+                {
+                    view = "notify",
+                    filter = {
+                        event = "noice",
+                        kind = { "stats", "debug" },
+                    },
+                    opts = { buf_options = { filetype = "lua" }, replace = true },
+                },
+                {
+                    view = "notify",
+                    filter = {
+                        event = "msg_show",
+                        kind = "emsg",
+                    },
+                    opts = { level = vim.log.levels.ERROR, replace = false, title = "Error" },
+                },
+                {
+                    view = "notify",
+                    filter = {
+                        event = "msg_show",
+                        kind = "wmsg",
+                    },
+                    opts = { level = vim.log.levels.WARN, replace = false, title = "Warning" },
+                },
+                {
+                    view = "notify",
+                    filter = {},
+                },
+            },
+        })
+        noice_hacks.setup()
+        noice_commands.setup()
+        noice_router.setup()
+        noice_ui.setup()
+    end
+    #+end_src
+
 **   [[https://github.com/goolord/alpha-nvim][alpha-nvim]]
 
     + INIT
@@ -145,69 +374,6 @@
     end
     #+end_src
 
-**   [[https://github.com/s1n7ax/nvim-window-picker][nvim-window-picker]]
-
-    + REQUIRES:
-        *  [[https://github.com/kyazdani42/nvim-web-devicons][nvim-web-devicons]]
-
-    + INIT
-
-    #+begin_src lua
-    modules["s1n7ax/nvim-window-picker"] = {
-        commit = funcs.get_commit("nvim-window-picker", plugins_snapshot),
-        config = ui_config.nvim_window_picker,
-    }
-    #+end_src
-
-    + CONFIG
-
-    #+begin_src lua
-    function config.nvim_window_picker()
-        local window_picker_status_ok, window_picker = pcall(require, "window-picker")
-        if not window_picker_status_ok then
-            return
-        end
-        local filters = window_picker.filter_windows
-        local function special_autoselect(windows)
-            windows = filters(windows)
-            if windows == nil then
-                windows = {}
-            end
-            if #windows > 1 then
-                return windows
-            end
-            local curr_win = vim.api.nvim_get_current_win()
-            for index, window in ipairs(windows) do
-                if window == curr_win then
-                    table.remove(windows, index)
-                end
-            end
-            return windows
-        end
-        local function focus_window()
-            window_picker.pick_window()
-            if type(window) == "number" then
-                vim.api.nvim_set_current_win(window)
-            end
-        end
-        window_picker.setup({
-            autoselect_one = false,
-            include_current_win = true,
-            filter_func = special_autoselect,
-            filter_rules = {
-                bo = {
-                    filetype = {},
-                    buftype = {},
-                },
-            },
-            fg_color = "#20262A",
-            current_win_hl_color = "#20262A",
-            other_win_hl_color = "#95b365",
-        })
-        vim.api.nvim_create_user_command("WindowPicker", focus_window, {})
-    end
-    #+end_src
-
 **   [[https://github.com/nvim-neo-tree/neo-tree.nvim][neo-tree.nvim]]
 
     + REQUIRES:
@@ -287,6 +453,11 @@
             window = {
                 mappings = {
                     ["Z"] = "expand_all_nodes",
+                    w = function(state)
+                        local node = state.tree:get_node()
+                        require("configs.base.ui.window-picker").pick()
+                        vim.cmd("edit " .. vim.fn.fnameescape(node.path))
+                    end,
                 },
             },
             filesystem = {
@@ -1067,50 +1238,46 @@
                 navic,
             },
         }
-        if vim.fn.has("nvim-0.8") == 1 then
-            heirline.setup(status_lines, win_bars)
-            vim.api.nvim_create_autocmd("User", {
-                pattern = "HeirlineInitWinbar",
-                callback = function(args)
-                    local buf = args.buf
-                    local buftype = vim.tbl_contains({
-                        "nofile",
-                        "prompt",
-                        "help",
-                        "quickfix",
-                    }, vim.bo[buf].buftype)
-                    local filetype = vim.tbl_contains({
-                        "ctrlspace",
-                        "ctrlspace_help",
-                        "packer",
-                        "undotree",
-                        "diff",
-                        "Outline",
-                        "LvimHelper",
-                        "floaterm",
-                        "dashboard",
-                        "vista",
-                        "spectre_panel",
-                        "DiffviewFiles",
-                        "flutterToolsOutline",
-                        "log",
-                        "qf",
-                        "dapui_scopes",
-                        "dapui_breakpoints",
-                        "dapui_stacks",
-                        "dapui_watches",
-                        "calendar",
-                        "neo-tree",
-                        "neo-tree-popup",
-                    }, vim.bo[buf].filetype)
-                    if buftype or filetype then
-                        vim.opt_local.winbar = nil
-                    end
-                end,
-            })
-        else
-            heirline.setup(status_lines)
-        end
+        heirline.setup(status_lines, win_bars)
+        vim.api.nvim_create_autocmd("User", {
+            pattern = "HeirlineInitWinbar",
+            callback = function(args)
+                local buf = args.buf
+                local buftype = vim.tbl_contains({
+                    "nofile",
+                    "prompt",
+                    "help",
+                    "quickfix",
+                }, vim.bo[buf].buftype)
+                local filetype = vim.tbl_contains({
+                    "ctrlspace",
+                    "ctrlspace_help",
+                    "packer",
+                    "undotree",
+                    "diff",
+                    "Outline",
+                    "LvimHelper",
+                    "floaterm",
+                    "dashboard",
+                    "vista",
+                    "spectre_panel",
+                    "DiffviewFiles",
+                    "flutterToolsOutline",
+                    "log",
+                    "qf",
+                    "dapui_scopes",
+                    "dapui_breakpoints",
+                    "dapui_stacks",
+                    "dapui_watches",
+                    "calendar",
+                    "neo-tree",
+                    "neo-tree-popup",
+                }, vim.bo[buf].filetype)
+                if buftype or filetype then
+                    vim.opt_local.winbar = nil
+                end
+            end,
+        })
     end
     #+end_src
 

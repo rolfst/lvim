@@ -99,51 +99,6 @@ function config.alpha_nvim()
     })
 end
 
-function config.nvim_window_picker()
-    local window_picker_status_ok, window_picker = pcall(require, "window-picker")
-    if not window_picker_status_ok then
-        return
-    end
-    local filters = window_picker.filter_windows
-    local function special_autoselect(windows)
-        windows = filters(windows)
-        if windows == nil then
-            windows = {}
-        end
-        if #windows > 1 then
-            return windows
-        end
-        local curr_win = vim.api.nvim_get_current_win()
-        for index, window in ipairs(windows) do
-            if window == curr_win then
-                table.remove(windows, index)
-            end
-        end
-        return windows
-    end
-    local function focus_window()
-        window_picker.pick_window()
-        if type(window) == "number" then
-            vim.api.nvim_set_current_win(window)
-        end
-    end
-    window_picker.setup({
-        autoselect_one = false,
-        include_current_win = true,
-        filter_func = special_autoselect,
-        filter_rules = {
-            bo = {
-                filetype = {},
-                buftype = {},
-            },
-        },
-        fg_color = "#20262A",
-        current_win_hl_color = "#20262A",
-        other_win_hl_color = "#95b365",
-    })
-    vim.api.nvim_create_user_command("WindowPicker", focus_window, {})
-end
-
 function config.neo_tree_nvim()
     local neo_tree_status_ok, neo_tree = pcall(require, "neo-tree")
     if not neo_tree_status_ok then
@@ -194,6 +149,11 @@ function config.neo_tree_nvim()
         window = {
             mappings = {
                 ["Z"] = "expand_all_nodes",
+                w = function(state)
+                    local node = state.tree:get_node()
+                    require("configs.base.ui.window-picker").pick()
+                    vim.cmd("edit " .. vim.fn.fnameescape(node.path))
+                end,
             },
         },
         filesystem = {
@@ -964,50 +924,46 @@ function config.heirline_nvim()
             navic,
         },
     }
-    if vim.fn.has("nvim-0.8") == 1 then
-        heirline.setup(status_lines, win_bars)
-        vim.api.nvim_create_autocmd("User", {
-            pattern = "HeirlineInitWinbar",
-            callback = function(args)
-                local buf = args.buf
-                local buftype = vim.tbl_contains({
-                    "nofile",
-                    "prompt",
-                    "help",
-                    "quickfix",
-                }, vim.bo[buf].buftype)
-                local filetype = vim.tbl_contains({
-                    "ctrlspace",
-                    "ctrlspace_help",
-                    "packer",
-                    "undotree",
-                    "diff",
-                    "Outline",
-                    "LvimHelper",
-                    "floaterm",
-                    "dashboard",
-                    "vista",
-                    "spectre_panel",
-                    "DiffviewFiles",
-                    "flutterToolsOutline",
-                    "log",
-                    "qf",
-                    "dapui_scopes",
-                    "dapui_breakpoints",
-                    "dapui_stacks",
-                    "dapui_watches",
-                    "calendar",
-                    "neo-tree",
-                    "neo-tree-popup",
-                }, vim.bo[buf].filetype)
-                if buftype or filetype then
-                    vim.opt_local.winbar = nil
-                end
-            end,
-        })
-    else
-        heirline.setup(status_lines)
-    end
+    heirline.setup(status_lines, win_bars)
+    vim.api.nvim_create_autocmd("User", {
+        pattern = "HeirlineInitWinbar",
+        callback = function(args)
+            local buf = args.buf
+            local buftype = vim.tbl_contains({
+                "nofile",
+                "prompt",
+                "help",
+                "quickfix",
+            }, vim.bo[buf].buftype)
+            local filetype = vim.tbl_contains({
+                "ctrlspace",
+                "ctrlspace_help",
+                "packer",
+                "undotree",
+                "diff",
+                "Outline",
+                "LvimHelper",
+                "floaterm",
+                "dashboard",
+                "vista",
+                "spectre_panel",
+                "DiffviewFiles",
+                "flutterToolsOutline",
+                "log",
+                "qf",
+                "dapui_scopes",
+                "dapui_breakpoints",
+                "dapui_stacks",
+                "dapui_watches",
+                "calendar",
+                "neo-tree",
+                "neo-tree-popup",
+            }, vim.bo[buf].filetype)
+            if buftype or filetype then
+                vim.opt_local.winbar = nil
+            end
+        end,
+    })
 end
 
 function config.fm_nvim()
@@ -1257,7 +1213,7 @@ function config.nvim_notify()
         return
     end
     notify.setup({
-        background_colour = "#2A3339",
+        background_colour = "#20262A",
         icons = {
             DEBUG = " ",
             ERROR = " ",

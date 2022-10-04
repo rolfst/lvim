@@ -4,9 +4,9 @@
 
   LVIM IDE is a modular Neovim configuration written in LUA with full customization
 
-  Current version - 2.2.45 (2022-09-21)
+  Current version - 2.2.67 (2022-10-03)
 
-  108 plugins
+  107 plugins
 
 **  SCREENSHOTS
 
@@ -46,7 +46,7 @@
 
 **  INTRODUCTION
 
-    * Neovim 0.7.0+
+    * Neovim 0.8.0+ (for NEOVIM < 0.8 use branch NEOVIM-0.7)
     * Add or remove plugins, rewrite all plugins
     * Add or remove settings, rewrite all settings
     * Dynamic LSP activation
@@ -58,7 +58,7 @@
 
 **  REQUIREMENTS
 
-    * [[https://github.com/neovim/neovim/wiki/Installing-Neovim][neovim >= 0.7.0]]
+    * [[https://github.com/neovim/neovim/wiki/Installing-Neovim][neovim >= 0.8.0]]
     * [[https://github.com/neovim/pynvim][pynvim]]
     * [[https://github.com/mhinz/neovim-remote][neovim-remote]]
     * [[https://nodejs.org/en/][nodejs]]
