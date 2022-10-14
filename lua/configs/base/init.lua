@@ -12,6 +12,16 @@ configs["base_vim"] = function()
     options.global()
 end
 
+configs["base_options"] = function()
+    vim.g.indent_blankline_char = "▏"
+    vim.g.indentLine_char = "▏"
+    vim.g.gitblame_enabled = 0
+    vim.g.gitblame_highlight_group = "CursorLine"
+    pcall(function()
+        vim.opt.splitkeep = "screen"
+    end)
+end
+
 configs["base_events"] = function()
     vim.api.nvim_create_autocmd("FileType", {
         pattern = {
@@ -88,16 +98,9 @@ configs["base_keymaps"] = function()
     funcs.keymaps("x", { noremap = false, silent = true }, keymaps.visual)
 end
 
-configs["base_common"] = function()
-    vim.g.indent_blankline_char = "▏"
-    vim.g.indentLine_char = "▏"
-    vim.g.gitblame_enabled = 0
-    vim.g.gitblame_highlight_group = "CursorLine"
-end
-
 configs["base_ctrlspace_pre_config"] = function()
     vim.g.ctrlspace_use_tablineend = 1
-    vim.g.CtrlSpaceLoadLastWorkspaceOnStart = 1
+    vim.g.CtrlSpaceLoadLastWorkspaceOnStart = 0
     vim.g.CtrlSpaceSaveWorkspaceOnSwitch = 1
     vim.g.CtrlSpaceSaveWorkspaceOnExit = 1
     vim.g.CtrlSpaceUseTabline = 0

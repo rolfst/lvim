@@ -52,7 +52,7 @@ function config.telescope_nvim()
             },
             generic_sorter = require("telescope.sorters").get_generic_fuzzy_sorter,
             path_display = { shorten = 5 },
-            winblend = 0,
+            winblend = 8,
             border = {},
             borderchars = { " ", " ", " ", " ", " ", " ", " ", " " },
             color_devicons = true,
@@ -85,7 +85,6 @@ function config.telescope_nvim()
         },
     })
     telescope.load_extension("fzf")
-    -- telescope.load_extension("media_files")
     telescope.load_extension("file_browser")
     telescope.load_extension("tmux")
     telescope.load_extension("howdoi")
@@ -269,6 +268,63 @@ function config.tabby_nvim()
     tabby.setup({
         components = components,
     })
+end
+
+function config.nvim_lastplace()
+    local nvim_lastplace_status_ok, nvim_lastplace = pcall(require, "nvim-lastplace")
+    if not nvim_lastplace_status_ok then
+        return
+    end
+    nvim_lastplace.setup({
+        lastplace_ignore_buftype = { "quickfix", "nofile", "help" },
+        lastplace_ignore_filetype = { "gitcommit", "gitrebase", "svn", "hgcommit" },
+        lastplace_open_folds = true,
+    })
+end
+
+function config.dial_nvim()
+    local dial_config_status_ok, dial_config = pcall(require, "dial.config")
+    if not dial_config_status_ok then
+        return
+    end
+    local dial_augend_status_ok, dial_augend = pcall(require, "dial.augend")
+    if not dial_augend_status_ok then
+        return
+    end
+    dial_config.augends:register_group({
+        default = {
+            dial_augend.integer.alias.decimal,
+            dial_augend.integer.alias.hex,
+            dial_augend.date.alias["%Y/%m/%d"],
+            dial_augend.constant.new({
+                elements = { "true", "false" },
+                word = true,
+                cyclic = true,
+            }),
+            dial_augend.constant.new({
+                elements = { "True", "False" },
+                word = true,
+                cyclic = true,
+            }),
+            dial_augend.constant.new({
+                elements = { "and", "or" },
+                word = true,
+                cyclic = true,
+            }),
+            dial_augend.constant.new({
+                elements = { "&&", "||" },
+                word = false,
+                cyclic = true,
+            }),
+        },
+    })
+    local opts = { noremap = true, silent = true }
+    vim.api.nvim_set_keymap("n", "<C-a>", "<Plug>(dial-increment)", opts)
+    vim.api.nvim_set_keymap("n", "<C-x>", "<Plug>(dial-decrement)", opts)
+    vim.api.nvim_set_keymap("v", "<C-a>", "<Plug>(dial-increment)", opts)
+    vim.api.nvim_set_keymap("v", "<C-x>", "<Plug>(dial-decrement)", opts)
+    vim.api.nvim_set_keymap("v", "g<C-a>", "<Plug>(dial-increment)", opts)
+    vim.api.nvim_set_keymap("v", "g<C-x>", "<Plug>(dial-decrement)", opts)
 end
 
 function config.nvim_gomove()

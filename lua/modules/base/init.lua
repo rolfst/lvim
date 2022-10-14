@@ -40,13 +40,21 @@ modules["MunifTanjim/nui.nvim"] = {
 
 modules["rcarriga/nvim-notify"] = {
     commit = funcs.get_commit("nvim-notify", plugins_snapshot),
-    after = "lvim-colorscheme",
     config = ui_config.nvim_notify,
 }
 
 modules["folke/noice.nvim"] = {
+    requires = {
+        {
+            "MunifTanjim/nui.nvim",
+            commit = funcs.get_commit("nui.nvim", plugins_snapshot),
+        },
+        {
+            "rcarriga/nvim-notify",
+            commit = funcs.get_commit("nvim-notify", plugins_snapshot),
+        },
+    },
     commit = funcs.get_commit("noice.nvim", plugins_snapshot),
-    event = "VimEnter",
     config = ui_config.noice_nvim,
 }
 
@@ -95,7 +103,27 @@ modules["folke/which-key.nvim"] = {
 
 modules["rebelot/heirline.nvim"] = {
     commit = funcs.get_commit("heirline.nvim", plugins_snapshot),
-    after = "lvim-colorscheme",
+    requires = {
+        {
+            "lvim-tech/lvim-colorscheme",
+            commit = funcs.get_commit("lvim-colorscheme", plugins_snapshot),
+        },
+        {
+            "folke/noice.nvim",
+            requires = {
+                {
+                    "MunifTanjim/nui.nvim",
+                    commit = funcs.get_commit("nui.nvim", plugins_snapshot),
+                },
+                {
+                    "rcarriga/nvim-notify",
+                    commit = funcs.get_commit("nvim-notify", plugins_snapshot),
+                },
+            },
+            commit = funcs.get_commit("noice.nvim", plugins_snapshot),
+        },
+    },
+    after = { "lvim-colorscheme", "noice.nvim" },
     config = ui_config.heirline_nvim,
 }
 
@@ -170,7 +198,7 @@ local editor_config = require("modules.base.configs.editor")
 
 modules["vim-ctrlspace/vim-ctrlspace"] = {
     commit = funcs.get_commit("vim-ctrlspace", plugins_snapshot),
-    cmd = "CtrlSpace",
+    -- cmd = "CtrlSpace",
 }
 
 modules["nvim-telescope/telescope.nvim"] = {
@@ -239,6 +267,22 @@ modules["https://gitlab.com/yorickpeterse/nvim-pqf"] = {
 modules["nanozuki/tabby.nvim"] = {
     commit = funcs.get_commit("tabby.nvim", plugins_snapshot),
     config = editor_config.tabby_nvim,
+}
+
+modules["ethanholz/nvim-lastplace"] = {
+    commit = funcs.get_commit("nvim-lastplace", plugins_snapshot),
+    event = {
+        "BufRead",
+    },
+    config = editor_config.nvim_lastplace,
+}
+
+modules["monaqa/dial.nvim"] = {
+    commit = funcs.get_commit("dial.nvim", plugins_snapshot),
+    event = {
+        "BufRead",
+    },
+    config = editor_config.dial_nvim,
 }
 
 modules["booperlv/nvim-gomove"] = {
@@ -509,12 +553,17 @@ modules["lewis6991/hover.nvim"] = {
     config = languages_config.hover_nvim,
 }
 
-modules["lvim-tech/fidget.nvim"] = {
+modules["j-hui/fidget.nvim"] = {
     commit = funcs.get_commit("fidget.nvim", plugins_snapshot),
     event = {
         "BufRead",
     },
     config = languages_config.fidget_nvim,
+}
+
+modules["mfussenegger/nvim-jdtls"] = {
+    commit = funcs.get_commit("nvim-jdtls", plugins_snapshot),
+    ft = "java",
 }
 
 modules["folke/lua-dev.nvim"] = {
@@ -606,16 +655,6 @@ modules["nvim-treesitter/nvim-treesitter"] = {
     config = languages_config.nvim_treesitter,
 }
 
-modules["nvim-treesitter/nvim-treesitter-context"] = {
-    commit = funcs.get_commit("nvim-treesitter-context", plugins_snapshot),
-    requires = {
-        "nvim-treesitter/nvim-treesitter-context",
-        commit = funcs.get_commit("nvim-treesitter-context", plugins_snapshot),
-    },
-    after = "nvim-treesitter",
-    config = languages_config.nvim_treesitter_contex,
-}
-
 modules["lvimuser/lsp-inlayhints.nvim"] = {
     commit = funcs.get_commit("lsp-inlayhints.nvim", plugins_snapshot),
     requires = {
@@ -658,6 +697,11 @@ modules["rcarriga/nvim-dap-ui"] = {
         {
             "mfussenegger/nvim-dap",
             commit = funcs.get_commit("nvim-dap", plugins_snapshot),
+        },
+        {
+            "mxsdev/nvim-dap-vscode-js",
+            commit = funcs.get_commit("nvim-dap-vscode-js", plugins_snapshot),
+            config = languages_config.nvim_dap_vscode_js,
         },
         {
             "jbyuki/one-small-step-for-vimkind",

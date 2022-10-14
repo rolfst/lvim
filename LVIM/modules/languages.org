@@ -79,24 +79,8 @@
         if not null_ls_status_ok then
             return
         end
-        local formatting = null_ls.builtins.formatting
-        local diagnostics = null_ls.builtins.diagnostics
         null_ls.setup({
             debug = false,
-            sources = {
-                diagnostics.flake8,
-                diagnostics.golangci_lint,
-                diagnostics.luacheck,
-                diagnostics.rubocop,
-                diagnostics.shellcheck,
-                diagnostics.vint,
-                diagnostics.yamllint,
-                formatting.black,
-                formatting.cbfmt,
-                formatting.prettierd,
-                formatting.shfmt,
-                formatting.stylua,
-            },
             on_attach = function(client, bufnr)
                 if client.server_capabilities.documentFormattingProvider then
                     vim.api.nvim_create_autocmd("BufWritePre", {
@@ -201,12 +185,12 @@
     end
     #+end_src
 
-**   [[https://github.com/lvim-tech/fidget.nvim][fidget.nvim]]
+**   [[https://github.com/j-hui/fidget.nvim][fidget.nvim]]
 
     + INIT
 
     #+begin_src lua
-    modules["lvim-tech/fidget.nvim"] = {
+    modules["j-hui/fidget.nvim"] = {
         commit = funcs.get_commit("fidget.nvim", plugins_snapshot),
         event = {
             "BufRead",
@@ -245,6 +229,16 @@
     end
     #+end_src
 
+**   [[https://github.com/mfussenegger/nvim-jdtls][nvim-jdtls]]
+
+    + INIT
+
+    #+begin_src lua
+    modules["mfussenegger/nvim-jdtls"] = {
+        commit = funcs.get_commit("nvim-jdtls", plugins_snapshot),
+        ft = "java",
+    }
+    #+end_src
 
 **   [[https://github.com/folke/lua-dev.nvim][lua-dev.nvim]]
 
@@ -524,52 +518,6 @@
     end
     #+end_src
 
-**   [[https://github.com/nvim-treesitter/nvim-treesitter-context][nvim-treesitter-context]]
-
-    + REQUIRES:
-        *  [[https://github.com/nvim-treesitter/nvim-treesitter][nvim-treesitter]]
-
-    + INIT
-
-    #+begin_src lua
-    modules["nvim-treesitter/nvim-treesitter-context"] = {
-        commit = funcs.get_commit("nvim-treesitter-context", plugins_snapshot),
-        requires = {
-            "nvim-treesitter/nvim-treesitter",
-            commit = funcs.get_commit("nvim-treesitter-context", plugins_snapshot),
-        },
-        after = "nvim-treesitter",
-        config = languages_config.nvim_treesitter_contex,
-    }
-    #+end_src
-
-    + CONFIG
-
-    #+begin_src lua
-    function config.nvim_treesitter_contex()
-        local treesitter_context_status_ok, treesitter_context = pcall(require, "treesitter-context")
-        if not treesitter_context_status_ok then
-            return
-        end
-        treesitter_context.setup({
-            enable = true,
-            max_lines = 10,
-            patterns = {
-                default = {
-                    "class",
-                    "function",
-                    "method",
-                    "for",
-                    "while",
-                    "if",
-                    "switch",
-                    "case",
-                },
-            },
-        })
-    end
-    #+end_src
-
 **   [[https://github.com/lvimuser/lsp-inlayhints.nvim][lsp-inlayhints.nvim]]
 
     + REQUIRES:
@@ -626,11 +574,13 @@
 
     #+begin_src lua
     function config.nvim_navic()
+        local icons = require("configs.base.ui.icons")
         local nvim_navic_status_ok, nvim_navic = pcall(require, "nvim-navic")
         if not nvim_navic_status_ok then
             return
         end
         nvim_navic.setup({
+            icons = icons.lsp,
             highlight = true,
             separator = " ➤ ",
         })
@@ -678,11 +628,13 @@
 
     #+begin_src lua
     function config.symbols_outline_nvim()
+        local icons = require("configs.base.ui.icons")
         local symbols_outline_status_ok, symbols_outline = pcall(require, "symbols-outline")
         if not symbols_outline_status_ok then
             return
         end
         symbols_outline.setup({
+            symbols = icons.outline,
             highlight_hovered_item = true,
             show_guides = true,
         })
@@ -707,6 +659,11 @@
             {
                 "mfussenegger/nvim-dap",
                 commit = funcs.get_commit("nvim-dap", plugins_snapshot),
+            },
+            {
+                "mxsdev/nvim-dap-vscode-js",
+                commit = funcs.get_commit("nvim-dap-vscode-js", plugins_snapshot),
+                config = languages_config.nvim_dap_vscode_js,
             },
             {
                 "jbyuki/one-small-step-for-vimkind",
@@ -827,10 +784,17 @@
     #+end_src
 
     #+begin_src lua
-    function config.dapinstall()
-        local path_debuggers = vim.fn.stdpath("data") .. "/dapinstall/"
-        require("dap-install").setup({
-            installation_path = path_debuggers,
+    function config.nvim_dap_vscode_js()
+        local global = require("core.global")
+        local dap_vscode_js_status_ok, dap_vscode_js = pcall(require, "dap-vscode-js")
+        if not dap_vscode_js_status_ok then
+            return
+        end
+        dap_vscode_js.setup({
+            node_path = "node", -- Path of node executable. Defaults to $NODE_PATH, and then "node"
+            debugger_path = global.mason_path .. "/bin/vscode-js-debug", -- Path to vscode-js-debug installation.
+            debugger_cmd = { "js-debug-adapter" }, -- Command to use to launch the debug server. Takes precedence over `node_path` and `debugger_path`.
+            adapters = { "pwa-node", "pwa-chrome", "pwa-msedge", "node-terminal", "pwa-extensionHost" }, -- which adapters to register in nvim-dap
         })
     end
     #+end_src

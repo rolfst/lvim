@@ -82,6 +82,18 @@ function config.noice_nvim()
                 [":"] = { icon = " ", hl_group = "DiagnosticInfo", firstc = false },
             },
         },
+        popupmenu = {
+            enabled = true,
+            backend = "nui",
+        },
+        history = {
+            view = "split",
+            opts = { enter = true },
+            filter = { event = "msg_show", ["not"] = { kind = { "search_count", "echo" } } },
+        },
+        notify = {
+            enabled = false,
+        },
         views = {
             popupmenu = {
                 zindex = 65,
@@ -200,6 +212,29 @@ function config.noice_nvim()
                     },
                 },
             },
+            confirm = {
+                backend = "popup",
+                relative = "editor",
+                focusable = false,
+                enter = false,
+                zindex = 60,
+                format = { "{confirm}" },
+                position = {
+                    row = "50%",
+                    col = "50%",
+                },
+                size = "auto",
+                border = {
+                    style = "rounded",
+                    padding = { 0, 1, 0, 1 },
+                    text = {
+                        top = " Confirm ",
+                    },
+                },
+                win_options = {
+                    winhighlight = "Normal:NuiBody,FloatBorder:NuiBorder",
+                },
+            },
         },
         routes = {
             {
@@ -271,9 +306,9 @@ function config.alpha_nvim()
         local v = vim.version()
         local datetime = os.date(" %d-%m-%Y   %H:%M:%S")
         local platform
-        if global.os == "Linux" then
+        if global.os == "linux" then
             platform = " Linux"
-        elseif global.os == "macOS" then
+        elseif global.os == "mac" then
             platform = " macOS"
         else
             platform = ""
@@ -411,13 +446,13 @@ function config.which_key_nvim()
             marks = true,
             registers = true,
             presets = {
-                operators = true,
-                motions = true,
-                text_objects = true,
-                windows = true,
-                nav = true,
-                z = true,
-                g = true,
+                operators = false,
+                motions = false,
+                text_objects = false,
+                windows = false,
+                nav = false,
+                z = false,
+                g = false,
             },
             spelling = {
                 enabled = true,
@@ -656,6 +691,7 @@ function config.which_key_nvim()
 end
 
 function config.heirline_nvim()
+    local colors = require("configs.base.ui.colors")
     local heirline_status_ok, heirline = pcall(require, "heirline")
     if not heirline_status_ok then
         return
@@ -668,7 +704,6 @@ function config.heirline_nvim()
     if not heirline_utils_status_ok then
         return
     end
-    local colors = LVIM_COLORS()
     local align = { provider = "%=" }
     local space = { provider = " " }
     local mode
@@ -753,26 +788,23 @@ function config.heirline_nvim()
         end,
     }
     local work_dir = {
-        provider = function(self)
-            self.icon = "    "
+        provider = function()
+            local icon = "    "
             local cwd = vim.fn.getcwd(0)
-            self.cwd = vim.fn.fnamemodify(cwd, ":~")
+            cwd = vim.fn.fnamemodify(cwd, ":~")
+            if not heirline_conditions.width_percent_below(#cwd, 0.25) then
+                cwd = vim.fn.pathshorten(cwd)
+            end
+            local trail = cwd:sub(-1) == "/" and "" or "/"
+            return icon .. cwd .. trail
         end,
         hl = { fg = colors.color_05, bold = true },
-        heirline_utils.make_flexible_component(1, {
-            provider = function(self)
-                local trail = self.cwd:sub(-1) == "/" and "" or "/"
-                return self.icon .. self.cwd .. trail
+        on_click = {
+            callback = function()
+                vim.cmd("Neotree position=left")
             end,
-        }, {
-            provider = function(self)
-                local cwd = vim.fn.pathshorten(self.cwd)
-                local trail = self.cwd:sub(-1) == "/" and "" or "/"
-                return self.icon .. cwd .. trail
-            end,
-        }, {
-            provider = "",
-        }),
+            name = "heirline_browser",
+        },
     }
     local file_icon = {
         init = function(self)
@@ -890,6 +922,19 @@ function config.heirline_nvim()
             end,
             hl = { fg = colors.color_03 },
         },
+        on_click = {
+            callback = function()
+                vim.defer_fn(function()
+                    vim.cmd("Lazygit")
+                end, 100)
+            end,
+            name = "heirline_git",
+        },
+    }
+    local noice_mode = {
+        condition = require("noice").api.statusline.mode.has,
+        provider = require("noice").api.statusline.mode.get,
+        hl = { fg = colors.color_02, bold = true },
     }
     local diagnostics = {
         condition = heirline_conditions.has_diagnostics,
@@ -930,6 +975,12 @@ function config.heirline_nvim()
             end,
             hl = { fg = colors.color_05 },
         },
+        on_click = {
+            callback = function()
+                vim.cmd("Neotree diagnostics position=bottom")
+            end,
+            name = "heirline_diagnostics",
+        },
     }
     local lsp_active = {
         condition = heirline_conditions.lsp_attached,
@@ -942,6 +993,14 @@ function config.heirline_nvim()
             return "  " .. table.concat(names, ", ")
         end,
         hl = { fg = colors.color_05, bold = true },
+        on_click = {
+            callback = function()
+                vim.defer_fn(function()
+                    vim.cmd("LspInfo")
+                end, 100)
+            end,
+            name = "heirline_LSP",
+        },
     }
     local is_lsp_active = {
         condition = heirline_conditions.lsp_attached,
@@ -1042,7 +1101,82 @@ function config.heirline_nvim()
     }
     local navic = {
         condition = require("nvim-navic").is_available,
-        provider = require("nvim-navic").get_location,
+        static = {
+            type_hl = {
+                File = "Directory",
+                Module = "Include",
+                Namespace = "TSNamespace",
+                Package = "Include",
+                Class = "Struct",
+                Method = "Method",
+                Property = "TSProperty",
+                Field = "TSField",
+                Constructor = "TSConstructor ",
+                Enum = "TSField",
+                Interface = "Type",
+                Function = "Function",
+                Variable = "TSVariable",
+                Constant = "Constant",
+                String = "String",
+                Number = "Number",
+                Boolean = "Boolean",
+                Array = "TSField",
+                Object = "Type",
+                Key = "TSKeyword",
+                Null = "Comment",
+                EnumMember = "TSField",
+                Struct = "Struct",
+                Event = "Keyword",
+                Operator = "Operator",
+                TypeParameter = "Type",
+            },
+            enc = function(line, col, winnr)
+                return bit.bor(bit.lshift(line, 16), bit.lshift(col, 6), winnr)
+            end,
+            dec = function(c)
+                local line = bit.rshift(c, 16)
+                local col = bit.band(bit.rshift(c, 6), 1023)
+                local winnr = bit.band(c, 63)
+                return line, col, winnr
+            end,
+        },
+        init = function(self)
+            local data = require("nvim-navic").get_data() or {}
+            local children = {}
+            for i, d in ipairs(data) do
+                local pos = self.enc(d.scope.start.line, d.scope.start.character, self.winnr)
+                local child = {
+                    {
+                        provider = d.icon,
+                        hl = self.type_hl[d.type],
+                    },
+                    {
+                        provider = d.name:gsub("%%", "%%%%"):gsub("%s*->%s*", ""),
+                        on_click = {
+                            minwid = pos,
+                            callback = function(_, minwid)
+                                -- decode
+                                local line, col, winnr = self.dec(minwid)
+                                vim.api.nvim_win_set_cursor(vim.fn.win_getid(winnr), { line, col })
+                            end,
+                            name = "heirline_navic",
+                        },
+                    },
+                }
+                if #data > 1 and i < #data then
+                    table.insert(child, {
+                        provider = " ➤ ",
+                        hl = { fg = colors.color_01 },
+                    })
+                end
+                table.insert(children, child)
+            end
+            self.child = self:new(children, 1)
+        end,
+        provider = function(self)
+            return self.child:eval()
+        end,
+        update = "CursorMoved",
     }
     local terminal_name = {
         provider = function()
@@ -1068,8 +1202,8 @@ function config.heirline_nvim()
         end,
         static = {
             mode_color = function(self)
-                local mode = heirline_conditions.is_active() and vim.fn.mode() or "n"
-                return self.mode_colors[mode]
+                local mode_color = heirline_conditions.is_active() and vim.fn.mode() or "n"
+                return self.mode_colors[mode_color]
             end,
         },
         {
@@ -1077,6 +1211,8 @@ function config.heirline_nvim()
             work_dir,
             file_name_block,
             git,
+            space,
+            noice_mode,
             align,
             diagnostics,
             lsp_active,
@@ -1120,6 +1256,7 @@ function config.heirline_nvim()
                         "dapui_breakpoints",
                         "dapui_stacks",
                         "dapui_watches",
+                        "dapui_console",
                         "calendar",
                         "neo-tree",
                         "neo-tree-popup",

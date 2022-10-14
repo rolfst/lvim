@@ -43,26 +43,8 @@ function config.null_ls_nvim()
     if not null_ls_status_ok then
         return
     end
-    local formatting = null_ls.builtins.formatting
-    local diagnostics = null_ls.builtins.diagnostics
     null_ls.setup({
         debug = false,
-        sources = {
-            diagnostics.cpplint,
-            diagnostics.flake8,
-            diagnostics.golangci_lint,
-            diagnostics.luacheck,
-            diagnostics.rubocop,
-            diagnostics.shellcheck,
-            diagnostics.vint,
-            diagnostics.yamllint,
-            formatting.black,
-            formatting.yapf,
-            formatting.cbfmt,
-            formatting.prettierd,
-            formatting.shfmt,
-            formatting.stylua,
-        },
         on_attach = function(client, bufnr)
             if client.server_capabilities.documentFormattingProvider then
                 vim.api.nvim_create_autocmd("BufWritePre", {
@@ -82,6 +64,9 @@ function config.goto_preview()
         return
     end
     goto_preview.setup({
+        width = 160,
+        height = 25,
+        border = { " ", " ", " ", " ", " ", " ", " ", " " }, -- Border characters of the floating window
         references = {
             telescope = lib.has_telescope and lib.telescope.themes.get_dropdown({
                 layout_config = {
@@ -93,12 +78,12 @@ function config.goto_preview()
                         return math.min(max_lines, 15)
                     end,
                 },
+                winblend = 8,
                 border = {},
                 borderchars = { " ", " ", " ", " ", " ", " ", " ", " " },
                 hide_preview = false,
             }) or nil,
         },
-        border = { " ", " ", " ", " ", " ", " ", " ", " " }, -- Border characters of the floating window
     })
     vim.api.nvim_create_user_command(
         "LspPreviewDefinition",
@@ -273,29 +258,6 @@ function config.nvim_treesitter()
     })
 end
 
-function config.nvim_treesitter_contex()
-    local treesitter_context_status_ok, treesitter_context = pcall(require, "treesitter-context")
-    if not treesitter_context_status_ok then
-        return
-    end
-    treesitter_context.setup({
-        enable = true,
-        max_lines = 10,
-        patterns = {
-            default = {
-                "class",
-                "function",
-                "method",
-                "for",
-                "while",
-                "if",
-                "switch",
-                "case",
-            },
-        },
-    })
-end
-
 function config.lsp_inlayhints_nvim()
     local lsp_inlayhints_status_ok, lsp_inlayhints = pcall(require, "lsp-inlayhints")
     if not lsp_inlayhints_status_ok then
@@ -321,11 +283,13 @@ function config.lsp_inlayhints_nvim()
 end
 
 function config.nvim_navic()
+    local icons = require("configs.base.ui.icons")
     local nvim_navic_status_ok, nvim_navic = pcall(require, "nvim-navic")
     if not nvim_navic_status_ok then
         return
     end
     nvim_navic.setup({
+        icons = icons.lsp,
         highlight = true,
         separator = " ➤ ",
     })
@@ -338,11 +302,13 @@ function config.any_jump_nvim()
 end
 
 function config.symbols_outline_nvim()
+    local icons = require("configs.base.ui.icons")
     local symbols_outline_status_ok, symbols_outline = pcall(require, "symbols-outline")
     if not symbols_outline_status_ok then
         return
     end
     symbols_outline.setup({
+        symbols = icons.outline,
         highlight_hovered_item = true,
         show_guides = true,
     })
@@ -458,6 +424,20 @@ function config.nvim_dap_ui()
         {}
     )
     vim.api.nvim_create_user_command("DapEval", 'lua require"dapui".eval(vim.fn.input "[DAP] Expression > ")', {})
+end
+
+function config.nvim_dap_vscode_js()
+    local global = require("core.global")
+    local dap_vscode_js_status_ok, dap_vscode_js = pcall(require, "dap-vscode-js")
+    if not dap_vscode_js_status_ok then
+        return
+    end
+    dap_vscode_js.setup({
+        node_path = "node", -- Path of node executable. Defaults to $NODE_PATH, and then "node"
+        debugger_path = global.mason_path .. "/bin/vscode-js-debug", -- Path to vscode-js-debug installation.
+        debugger_cmd = { "js-debug-adapter" }, -- Command to use to launch the debug server. Takes precedence over `node_path` and `debugger_path`.
+        adapters = { "pwa-node", "pwa-chrome", "pwa-msedge", "node-terminal", "pwa-extensionHost" }, -- which adapters to register in nvim-dap
+    })
 end
 
 function config.vim_dadbod_ui()

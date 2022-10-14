@@ -1,5 +1,4 @@
 local global = require("core.global")
-local select = require("configs.base.ui.select")
 
 local M = {}
 
@@ -149,12 +148,10 @@ M.file_size = function(size, options)
     local function isNan(num)
         return num ~= num
     end
-
     local function roundNumber(num, digits)
         local fmt = "%." .. digits .. "f"
         return tonumber(fmt:format(num))
     end
-
     local o = {}
     for key, value in pairs(options or {}) do
         o[key] = value
@@ -164,7 +161,6 @@ M.file_size = function(size, options)
             o[name] = default
         end
     end
-
     setDefault("bits", false)
     setDefault("unix", false)
     setDefault("base", 2)
@@ -212,7 +208,6 @@ M.file_size = function(size, options)
         }
         if o.unix then
             result[2] = result[2]:sub(1, 1)
-
             if result[2] == "b" or result[2] == "B" then
                 result = {
                     math.floor(result[1]),
@@ -282,6 +277,7 @@ M.get_highlight = function(hlname)
 end
 
 M.quit = function()
+    local select = require("configs.base.ui.select")
     local status = true
     for _, v in ipairs(vim.api.nvim_list_bufs()) do
         if vim.bo[v].modified then
@@ -304,20 +300,6 @@ M.quit = function()
     else
         vim.cmd("qa")
     end
-end
-
-_G.LVIM_COLORS = function()
-    return {
-        color_01 = M.get_highlight("CursorLineNr").fg,
-        color_02 = M.get_highlight("DiagnosticError").fg,
-        color_03 = M.get_highlight("DiagnosticWarn").fg,
-        color_04 = M.get_highlight("DiagnosticHint").fg,
-        color_05 = M.get_highlight("DiagnosticInfo").fg,
-        status_line_bg = M.get_highlight("StatusLine").bg,
-        status_line_fg = M.get_highlight("StatusLine").fg,
-        status_line_nc_bg = M.get_highlight("StatusLineNC").bg,
-        status_line_nc_fg = M.get_highlight("StatusLineNC").fg,
-    }
 end
 
 return M
