@@ -30,6 +30,7 @@ local null_ls_builtins = {
     prettierd = formatting.prettierd,
     shfmt = formatting.shfmt,
     stylua = formatting.stylua,
+    yapf = formatting.yapf,
 }
 
 M.setup_languages = function(packages_data)
