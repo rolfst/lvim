@@ -523,10 +523,12 @@ function config.color_picker_nvim()
     })
 end
 
-function config.virtcolumn_nvim()
-    vim.api.nvim_set_option("colorcolumn", "120")
-    vim.g.virtcolumn_char = "▕"
-    vim.g.virtcolumn_priority = 10
+function config.lvim_colorcolumn()
+    local lvim_colorcolumn_status_ok, lvim_colorcolumn = pcall(require, "lvim-colorcolumn")
+    if not lvim_colorcolumn_status_ok then
+        return
+    end
+    lvim_colorcolumn.setup()
 end
 
 function config.cinnamon_nvim()

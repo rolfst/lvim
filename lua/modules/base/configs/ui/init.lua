@@ -74,6 +74,7 @@ function config.noice_nvim()
     end
     noice.setup({
         cmdline = {
+            enabled = true,
             view = "cmdline_popup",
             opts = { buf_options = { filetype = "vim" } },
             icons = {
@@ -81,6 +82,9 @@ function config.noice_nvim()
                 ["?"] = { icon = " ", hl_group = "DiagnosticWarn" },
                 [":"] = { icon = " ", hl_group = "DiagnosticInfo", firstc = false },
             },
+        },
+        messages = {
+            enabled = true,
         },
         popupmenu = {
             enabled = true,
@@ -94,10 +98,16 @@ function config.noice_nvim()
         notify = {
             enabled = false,
         },
+        hacks = {
+            skip_duplicate_messages = false,
+        },
         views = {
             popupmenu = {
                 zindex = 65,
                 position = "auto",
+                size = {
+                    width = "auto",
+                },
                 win_options = {
                     winhighlight = {
                         Normal = "NuiBody",
@@ -106,11 +116,15 @@ function config.noice_nvim()
                         PmenuMatch = "Special",
                     },
                 },
+                border = {
+                    padding = { 0, 1 },
+                },
             },
             notify = {
                 backend = "notify",
                 level = vim.log.levels.INFO,
                 replace = true,
+                format = "notify",
             },
             split = {
                 backend = "split",
@@ -122,7 +136,8 @@ function config.noice_nvim()
                     keys = { "q", "<esc>" },
                 },
                 win_options = {
-                    winhighlight = "Normal:NuiBody,FloatBorder:NuiBorder",
+                    winhighlight = { Normal = "NuiBody", FloatBorder = "NuiBorder" },
+                    wrap = true,
                 },
             },
             vsplit = {
@@ -135,7 +150,7 @@ function config.noice_nvim()
                     keys = { "q", "<esc>" },
                 },
                 win_options = {
-                    winhighlight = "Normal:NuiBody,FloatBorder:NuiBorder",
+                    winhighlight = { Normal = "NuiBody", FloatBorder = "NuiBorder" },
                 },
             },
             popup = {
@@ -145,14 +160,16 @@ function config.noice_nvim()
                     keys = { "q", "<esc>" },
                 },
                 enter = true,
-                border = { " ", " ", " ", " ", " ", " ", " ", " " },
+                border = {
+                    style = "single",
+                },
                 position = "50%",
                 size = {
                     width = "80%",
                     height = "60%",
                 },
                 win_options = {
-                    winhighlight = "Normal:NuiBody,FloatBorder:NuiBorder",
+                    winhighlight = { Normal = "NuiBody", FloatBorder = "NuiBorder" },
                 },
             },
             cmdline = {
@@ -166,9 +183,16 @@ function config.noice_nvim()
                     height = "auto",
                     width = "100%",
                 },
-                border = { " ", " ", " ", " ", " ", " ", " ", " " },
+                border = {
+                    style = "none",
+                },
                 win_options = {
-                    winhighlight = "Normal:NuiBody,FloatBorder:NuiBorder",
+                    winhighlight = {
+                        Normal = "NuiBody",
+                        FloatBorder = "NuiBorder",
+                        IncSearch = "IncSearch",
+                        Search = "Search",
+                    },
                 },
             },
             cmdline_popup = {
@@ -182,6 +206,7 @@ function config.noice_nvim()
                     col = "50%",
                 },
                 size = {
+                    min_width = 60,
                     width = "auto",
                     height = "auto",
                 },
@@ -193,7 +218,12 @@ function config.noice_nvim()
                     },
                 },
                 win_options = {
-                    winhighlight = "Normal:NuiBody,FloatBorder:NuiBorder",
+                    winhighlight = {
+                        Normal = "NuiBody",
+                        FloatBorder = "NuiBorder",
+                        IncSearch = "IncSearch",
+                        Search = "Search",
+                    },
                     cursorline = false,
                 },
                 filter_options = {
@@ -206,7 +236,12 @@ function config.noice_nvim()
                                 },
                             },
                             win_options = {
-                                winhighlight = "Normal:NuiBody,FloatBorder:NuiBorder",
+                                winhighlight = {
+                                    Normal = "NuiBody",
+                                    FloatBorder = "NuiBorder",
+                                    IncSearch = "IncSearch",
+                                    Search = "Search",
+                                },
                             },
                         },
                     },
@@ -216,6 +251,7 @@ function config.noice_nvim()
                 backend = "popup",
                 relative = "editor",
                 focusable = false,
+                align = "center",
                 enter = false,
                 zindex = 60,
                 format = { "{confirm}" },
@@ -225,14 +261,17 @@ function config.noice_nvim()
                 },
                 size = "auto",
                 border = {
-                    style = "rounded",
+                    style = { " ", " ", " ", " ", " ", " ", " ", " " },
                     padding = { 0, 1, 0, 1 },
                     text = {
-                        top = " Confirm ",
+                        top = " CONFIRM: ",
                     },
                 },
                 win_options = {
-                    winhighlight = "Normal:NuiBody,FloatBorder:NuiBorder",
+                    winhighlight = {
+                        Normal = "NuiBody",
+                        FloatBorder = "NuiBorder",
+                    },
                 },
             },
         },
@@ -242,7 +281,7 @@ function config.noice_nvim()
                 filter = { event = "cmdline" },
             },
             {
-                view = "cmdline_popup",
+                view = "confirm",
                 filter = {
                     any = {
                         { event = "msg_show", kind = "confirm" },
@@ -364,6 +403,49 @@ function config.alpha_nvim()
     })
 end
 
+function config.nvim_window_picker()
+    local window_picker_status_ok, window_picker = pcall(require, "window-picker")
+    if not window_picker_status_ok then
+        return
+    end
+    local function focus_window()
+        local picked_window_id = window_picker.pick_window() or vim.api.nvim_get_current_win()
+        vim.api.nvim_set_current_win(picked_window_id)
+    end
+    local filters = window_picker.filter_windows
+    local function special_autoselect(windows)
+        windows = filters(windows)
+        if windows == nil then
+            windows = {}
+        end
+        if #windows > 1 then
+            return windows
+        end
+        local curr_win = vim.api.nvim_get_current_win()
+        for index, window in ipairs(windows) do
+            if window == curr_win then
+                table.remove(windows, index)
+            end
+        end
+        return windows
+    end
+    window_picker.setup({
+        autoselect_one = false,
+        include_current_win = true,
+        filter_func = special_autoselect,
+        filter_rules = {
+            bo = {
+                filetype = {},
+                buftype = {},
+            },
+        },
+        fg_color = "#20262A",
+        current_win_hl_color = "#20262A",
+        other_win_hl_color = "#95b365",
+    })
+    vim.api.nvim_create_user_command("WindowPicker", focus_window, {})
+end
+
 function config.neo_tree_nvim()
     local neo_tree_status_ok, neo_tree = pcall(require, "neo-tree")
     if not neo_tree_status_ok then
@@ -414,11 +496,6 @@ function config.neo_tree_nvim()
         window = {
             mappings = {
                 ["Z"] = "expand_all_nodes",
-                w = function(state)
-                    local node = state.tree:get_node()
-                    require("configs.base.ui.window-picker").pick()
-                    vim.cmd("edit " .. vim.fn.fnameescape(node.path))
-                end,
             },
         },
         filesystem = {
@@ -691,7 +768,9 @@ function config.which_key_nvim()
 end
 
 function config.heirline_nvim()
-    local colors = require("configs.base.ui.colors")
+    local get_colors = require("configs.base.ui.colors")
+    local colors = get_colors.colors()
+    local icons = require("configs.base.ui.icons")
     local heirline_status_ok, heirline = pcall(require, "heirline")
     if not heirline_status_ok then
         return
@@ -762,9 +841,9 @@ function config.heirline_nvim()
                 V = colors.color_03,
                 ["\22"] = colors.color_03,
                 c = colors.color_03,
-                s = colors.purple,
-                S = colors.purple,
-                ["\19"] = colors.purple,
+                s = colors.color_02,
+                S = colors.color_02,
+                ["\19"] = colors.color_02,
                 R = colors.color_03,
                 r = colors.color_03,
                 ["!"] = colors.color_02,
@@ -1081,7 +1160,6 @@ function config.heirline_nvim()
                 vim.api.nvim_set_hl(0, hl_group_2, { fg = f_icon_color, bg = colors.status_line_bg })
                 if isempty(f_icon) then
                     f_icon = ""
-                    f_icon_color = ""
                 end
                 return "%#"
                     .. hl_group_2
@@ -1102,34 +1180,7 @@ function config.heirline_nvim()
     local navic = {
         condition = require("nvim-navic").is_available,
         static = {
-            type_hl = {
-                File = "Directory",
-                Module = "Include",
-                Namespace = "TSNamespace",
-                Package = "Include",
-                Class = "Struct",
-                Method = "Method",
-                Property = "TSProperty",
-                Field = "TSField",
-                Constructor = "TSConstructor ",
-                Enum = "TSField",
-                Interface = "Type",
-                Function = "Function",
-                Variable = "TSVariable",
-                Constant = "Constant",
-                String = "String",
-                Number = "Number",
-                Boolean = "Boolean",
-                Array = "TSField",
-                Object = "Type",
-                Key = "TSKeyword",
-                Null = "Comment",
-                EnumMember = "TSField",
-                Struct = "Struct",
-                Event = "Keyword",
-                Operator = "Operator",
-                TypeParameter = "Type",
-            },
+            type_hl = icons.hl,
             enc = function(line, col, winnr)
                 return bit.bor(bit.lshift(line, 16), bit.lshift(col, 6), winnr)
             end,
@@ -1155,7 +1206,6 @@ function config.heirline_nvim()
                         on_click = {
                             minwid = pos,
                             callback = function(_, minwid)
-                                -- decode
                                 local line, col, winnr = self.dec(minwid)
                                 vim.api.nvim_win_set_cursor(vim.fn.win_getid(winnr), { line, col })
                             end,
@@ -1330,6 +1380,23 @@ function config.heirline_nvim()
             end
         end,
     })
+    vim.api.nvim_create_augroup("Heirline", { clear = true })
+    vim.api.nvim_create_autocmd("ColorScheme", {
+        callback = function()
+            get_colors = require("configs.base.ui.colors")
+            colors = get_colors.colors()
+            heirline_utils.on_colorscheme(colors)
+        end,
+        group = "Heirline",
+    })
+    vim.api.nvim_create_autocmd("VimEnter", {
+        callback = function()
+            get_colors = require("configs.base.ui.colors")
+            colors = get_colors.colors()
+            heirline_utils.on_colorscheme(colors)
+        end,
+        group = "Heirline",
+    })
 end
 
 function config.fm_nvim()
@@ -1340,7 +1407,7 @@ function config.fm_nvim()
     fm_nvim.setup({
         ui = {
             float = {
-                border = "single",
+                border = { " ", " ", " ", " ", " ", " ", " ", " " },
                 float_hl = "NormalFloat",
                 border_hl = "FloatBorder",
                 height = 0.95,
@@ -1362,7 +1429,7 @@ function config.toggleterm_nvim()
         count = 4,
         direction = "float",
         float_opts = {
-            border = "single",
+            border = { " ", " ", " ", " ", " ", " ", " ", " " },
             winblend = 0,
             width = vim.o.columns - 20,
             height = vim.o.lines - 9,

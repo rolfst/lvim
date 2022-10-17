@@ -44,6 +44,7 @@ modules["rcarriga/nvim-notify"] = {
 }
 
 modules["folke/noice.nvim"] = {
+    commit = funcs.get_commit("noice.nvim", plugins_snapshot),
     requires = {
         {
             "MunifTanjim/nui.nvim",
@@ -54,7 +55,6 @@ modules["folke/noice.nvim"] = {
             commit = funcs.get_commit("nvim-notify", plugins_snapshot),
         },
     },
-    commit = funcs.get_commit("noice.nvim", plugins_snapshot),
     config = ui_config.noice_nvim,
 }
 
@@ -62,6 +62,11 @@ modules["goolord/alpha-nvim"] = {
     commit = funcs.get_commit("alpha-nvim", plugins_snapshot),
     event = "VimEnter",
     config = ui_config.alpha_nvim,
+}
+
+modules["s1n7ax/nvim-window-picker"] = {
+    commit = funcs.get_commit("nvim-window-picker", plugins_snapshot),
+    config = ui_config.nvim_window_picker,
 }
 
 modules["nvim-neo-tree/neo-tree.nvim"] = {
@@ -101,6 +106,7 @@ modules["folke/which-key.nvim"] = {
     config = ui_config.which_key_nvim,
 }
 
+<<<<<<< HEAD
 modules["rebelot/heirline.nvim"] = false
 -- modules["rebelot/heirline.nvim"] = {
 --     commit = funcs.get_commit("heirline.nvim", plugins_snapshot),
@@ -127,6 +133,29 @@ modules["rebelot/heirline.nvim"] = false
 --     after = { "lvim-colorscheme", "noice.nvim" },
 --     config = ui_config.heirline_nvim,
 -- }
+=======
+modules["rebelot/heirline.nvim"] = {
+    commit = funcs.get_commit("heirline.nvim", plugins_snapshot),
+    event = "VimEnter",
+    requires = {
+        {
+            "folke/noice.nvim",
+            requires = {
+                {
+                    "MunifTanjim/nui.nvim",
+                    commit = funcs.get_commit("nui.nvim", plugins_snapshot),
+                },
+                {
+                    "rcarriga/nvim-notify",
+                    commit = funcs.get_commit("nvim-notify", plugins_snapshot),
+                },
+            },
+            commit = funcs.get_commit("noice.nvim", plugins_snapshot),
+        },
+    },
+    config = ui_config.heirline_nvim,
+}
+>>>>>>> production
 
 modules["is0n/fm-nvim"] = {
     commit = funcs.get_commit("fm-nvim", plugins_snapshot),
@@ -181,7 +210,7 @@ modules["lukas-reineke/indent-blankline.nvim"] = {
 
 modules["lvim-tech/lvim-focus"] = {
     commit = funcs.get_commit("lvim-focus", plugins_snapshot),
-    after = "lvim-colorscheme",
+    event = "VimEnter",
     config = ui_config.lvim_focus,
 }
 
@@ -393,12 +422,12 @@ modules["ziontee113/color-picker.nvim"] = {
     config = editor_config.color_picker_nvim,
 }
 
-modules["xiyaowong/virtcolumn.nvim"] = {
-    commit = funcs.get_commit("virtcolumn.nvim", plugins_snapshot),
+modules["lvim-tech/lvim-colorcolumn"] = {
+    commit = funcs.get_commit("lvim-colorcolumn", plugins_snapshot),
     event = {
         "BufRead",
     },
-    config = editor_config.virtcolumn_nvim,
+    config = editor_config.lvim_colorcolumn,
 }
 
 modules["declancm/cinnamon.nvim"] = {
@@ -486,13 +515,13 @@ modules["f-person/git-blame.nvim"] = {
 
 modules["sindrets/diffview.nvim"] = {
     commit = funcs.get_commit("diffview.nvim", plugins_snapshot),
-    after = "lvim-colorscheme",
+    event = "VimEnter",
     config = version_control_config.diffview_nvim,
 }
 
 modules["pwntester/octo.nvim"] = {
     commit = funcs.get_commit("octo.nvim", plugins_snapshot),
-    after = "lvim-colorscheme",
+    event = "VimEnter",
     requires = {
         {
             "nvim-lua/plenary.nvim",
@@ -554,22 +583,15 @@ modules["lewis6991/hover.nvim"] = {
     config = languages_config.hover_nvim,
 }
 
-modules["j-hui/fidget.nvim"] = {
-    commit = funcs.get_commit("fidget.nvim", plugins_snapshot),
-    event = {
-        "BufRead",
-    },
-    config = languages_config.fidget_nvim,
-}
-
 modules["mfussenegger/nvim-jdtls"] = {
     commit = funcs.get_commit("nvim-jdtls", plugins_snapshot),
     ft = "java",
 }
 
-modules["folke/lua-dev.nvim"] = {
-    commit = funcs.get_commit("lua-dev.nvim", plugins_snapshot),
+modules["folke/neodev.nvim"] = {
+    commit = funcs.get_commit("neodev.nvim", plugins_snapshot),
     ft = "lua",
+    config = languages_config.neodev_nvim,
 }
 
 modules["simrat39/rust-tools.nvim"] = {

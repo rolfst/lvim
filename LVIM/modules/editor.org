@@ -934,27 +934,29 @@
     end
     #+end_src
 
-**   [[https://github.com/xiyaowong/virtcolumn.nvim][virtcolumn.nvim]]
+**   [[https://github.com/lvim-tech/lvim-colorcolumn][lvim-colorcolumn]]
 
     + INIT
 
     #+begin_src lua
-    modules["xiyaowong/virtcolumn.nvim"] = {
-        commit = funcs.get_commit("virtcolumn.nvim", plugins_snapshot),
+    modules["lvim-tech/lvim-colorcolumn"] = {
+        commit = funcs.get_commit("lvim-colorcolumn", plugins_snapshot),
         event = {
             "BufRead",
         },
-        config = editor_config.virtcolumn_nvim,
+        config = editor_config.lvim_colorcolumn,
     }
     #+end_src
 
     + CONFIG
 
     #+begin_src lua
-    function config.virtcolumn_nvim()
-        vim.api.nvim_set_option("colorcolumn", "120")
-        vim.g.virtcolumn_char = "▕"
-        vim.g.virtcolumn_priority = 10
+    function config.lvim_colorcolumn()
+        local lvim_colorcolumn_status_ok, lvim_colorcolumn = pcall(require, "lvim-colorcolumn")
+        if not lvim_colorcolumn_status_ok then
+            return
+        end
+        lvim_colorcolumn.setup()
     end
     #+end_src
 

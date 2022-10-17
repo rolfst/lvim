@@ -25,13 +25,17 @@ end
 configs["base_events"] = function()
     vim.api.nvim_create_autocmd("FileType", {
         pattern = {
-            "dart",
-            "ruby",
-            "yaml",
             "c",
             "cpp",
+            "css",
+            "dart",
+            "haskell",
+            "less",
             "objc",
             "objcpp",
+            "ruby",
+            "scss",
+            "yaml",
         },
         command = "setlocal ts=2 sw=2",
         group = group,
@@ -90,7 +94,6 @@ configs["base_commands"] = function()
     vim.api.nvim_create_user_command("SetWindowPath", 'lua require("core.funcs").set_window_path()', {})
     vim.api.nvim_create_user_command("SudoWrite", 'lua require("core.funcs").sudo_write()', {})
     vim.api.nvim_create_user_command("Quit", 'lua require("core.funcs").quit()', {})
-    vim.api.nvim_create_user_command("WindowPicker", 'lua require("configs.base.ui.window-picker").pick()', {})
 end
 
 configs["base_keymaps"] = function()
