@@ -1,16 +1,7 @@
 local config = {}
 
 function config.lvim_colorscheme()
-    vim.g.lvim_sidebars = {
-        "qf",
-        "Outline",
-        "terminal",
-        "packer",
-        "calendar",
-        "spectre_panel",
-        "ctrlspace",
-        "neo-tree",
-    }
+    require("lvim-colorscheme").setup()
     vim.cmd("colorscheme lvim")
 end
 
@@ -26,7 +17,7 @@ function config.nvim_notify()
     end
     notify.setup({
         minimum_width = 80,
-        background_colour = "#20262A",
+        background_colour = _G.LVIM_COLORS.bg,
         icons = {
             DEBUG = " ",
             ERROR = " ",
@@ -98,6 +89,11 @@ function config.noice_nvim()
         notify = {
             enabled = false,
         },
+        lsp_progress = {
+            enabled = true,
+            format = "lsp_progress",
+            format_done = "lsp_progress_done",
+        },
         hacks = {
             skip_duplicate_messages = false,
         },
@@ -110,8 +106,8 @@ function config.noice_nvim()
                 },
                 win_options = {
                     winhighlight = {
-                        Normal = "NuiBody",
-                        FloatBorder = "NuiBorder",
+                        Normal = "NoiceBody",
+                        FloatBorder = "NoiceBorder",
                         CursorLine = "PmenuSel",
                         PmenuMatch = "Special",
                     },
@@ -136,7 +132,7 @@ function config.noice_nvim()
                     keys = { "q", "<esc>" },
                 },
                 win_options = {
-                    winhighlight = { Normal = "NuiBody", FloatBorder = "NuiBorder" },
+                    winhighlight = { Normal = "NoiceBody", FloatBorder = "NoiceBorder" },
                     wrap = true,
                 },
             },
@@ -150,7 +146,7 @@ function config.noice_nvim()
                     keys = { "q", "<esc>" },
                 },
                 win_options = {
-                    winhighlight = { Normal = "NuiBody", FloatBorder = "NuiBorder" },
+                    winhighlight = { Normal = "NoiceBody", FloatBorder = "NoiceBorder" },
                 },
             },
             popup = {
@@ -169,7 +165,7 @@ function config.noice_nvim()
                     height = "60%",
                 },
                 win_options = {
-                    winhighlight = { Normal = "NuiBody", FloatBorder = "NuiBorder" },
+                    winhighlight = { Normal = "NoiceBody", FloatBorder = "NoiceBorder" },
                 },
             },
             cmdline = {
@@ -188,8 +184,32 @@ function config.noice_nvim()
                 },
                 win_options = {
                     winhighlight = {
-                        Normal = "NuiBody",
-                        FloatBorder = "NuiBorder",
+                        Normal = "NoiceBody",
+                        FloatBorder = "NoiceBorder",
+                        IncSearch = "IncSearch",
+                        Search = "Search",
+                    },
+                },
+            },
+            mini = {
+                backend = "mini",
+                relative = "editor",
+                align = "right",
+                timeout = 2000,
+                reverse = false,
+                position = {
+                    row = -1,
+                    col = "100%",
+                },
+                size = "auto",
+                border = {
+                    style = "none",
+                },
+                zindex = 1000,
+                win_options = {
+                    winblend = 0,
+                    winhighlight = {
+                        Normal = "NoiceBody",
                         IncSearch = "IncSearch",
                         Search = "Search",
                     },
@@ -219,8 +239,8 @@ function config.noice_nvim()
                 },
                 win_options = {
                     winhighlight = {
-                        Normal = "NuiBody",
-                        FloatBorder = "NuiBorder",
+                        Normal = "NoiceBody",
+                        FloatBorder = "NoiceBorder",
                         IncSearch = "IncSearch",
                         Search = "Search",
                     },
@@ -237,8 +257,8 @@ function config.noice_nvim()
                             },
                             win_options = {
                                 winhighlight = {
-                                    Normal = "NuiBody",
-                                    FloatBorder = "NuiBorder",
+                                    Normal = "NoiceBody",
+                                    FloatBorder = "NoiceBorder",
                                     IncSearch = "IncSearch",
                                     Search = "Search",
                                 },
@@ -269,10 +289,16 @@ function config.noice_nvim()
                 },
                 win_options = {
                     winhighlight = {
-                        Normal = "NuiBody",
-                        FloatBorder = "NuiBorder",
+                        Normal = "NoiceBody",
+                        FloatBorder = "NoiceBorder",
                     },
                 },
+            },
+            text = {
+                hl_group = "NoiceText",
+            },
+            data = {
+                hl_group = "NoiceData",
             },
         },
         routes = {
@@ -315,11 +341,22 @@ function config.noice_nvim()
                 opts = { buf_options = { filetype = "lua" }, replace = true },
             },
             {
+                view = "mini",
+                filter = { event = "lsp" },
+            },
+            {
                 view = "notify",
                 filter = {},
                 opts = { title = "LVIM IDE" },
             },
         },
+    })
+    vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
+        pattern = { "noice" },
+        callback = function()
+            vim.opt_local.wrap = false
+        end,
+        group = "LvimIDE",
     })
 end
 
@@ -439,9 +476,9 @@ function config.nvim_window_picker()
                 buftype = {},
             },
         },
-        fg_color = "#20262A",
-        current_win_hl_color = "#20262A",
-        other_win_hl_color = "#95b365",
+        fg_color = _G.LVIM_COLORS.bg,
+        current_win_hl_color = _G.LVIM_COLORS.bg,
+        other_win_hl_color = _G.LVIM_COLORS.color_01,
     })
     vim.api.nvim_create_user_command("WindowPicker", focus_window, {})
 end
@@ -768,8 +805,6 @@ function config.which_key_nvim()
 end
 
 function config.heirline_nvim()
-    local get_colors = require("configs.base.ui.colors")
-    local colors = get_colors.colors()
     local icons = require("configs.base.ui.icons")
     local heirline_status_ok, heirline = pcall(require, "heirline")
     if not heirline_status_ok then
@@ -835,19 +870,19 @@ function config.heirline_nvim()
                 t = "T",
             },
             mode_colors = {
-                n = colors.color_01,
-                i = colors.color_02,
-                v = colors.color_03,
-                V = colors.color_03,
-                ["\22"] = colors.color_03,
-                c = colors.color_03,
-                s = colors.color_02,
-                S = colors.color_02,
-                ["\19"] = colors.color_02,
-                R = colors.color_03,
-                r = colors.color_03,
-                ["!"] = colors.color_02,
-                t = colors.color_02,
+                n = _G.LVIM_COLORS.color_01,
+                i = _G.LVIM_COLORS.color_02,
+                v = _G.LVIM_COLORS.color_03,
+                V = _G.LVIM_COLORS.color_03,
+                ["\22"] = _G.LVIM_COLORS.color_03,
+                c = _G.LVIM_COLORS.color_03,
+                s = _G.LVIM_COLORS.color_02,
+                S = _G.LVIM_COLORS.color_02,
+                ["\19"] = _G.LVIM_COLORS.color_02,
+                R = _G.LVIM_COLORS.color_03,
+                r = _G.LVIM_COLORS.color_03,
+                ["!"] = _G.LVIM_COLORS.color_02,
+                t = _G.LVIM_COLORS.color_02,
             },
         },
         provider = function(self)
@@ -877,7 +912,7 @@ function config.heirline_nvim()
             local trail = cwd:sub(-1) == "/" and "" or "/"
             return icon .. cwd .. trail
         end,
-        hl = { fg = colors.color_05, bold = true },
+        hl = { fg = _G.LVIM_COLORS.color_05, bold = true },
         on_click = {
             callback = function()
                 vim.cmd("Neotree position=left")
@@ -929,7 +964,7 @@ function config.heirline_nvim()
                     return " "
                 end
             end,
-            hl = { fg = colors.color_02 },
+            hl = { fg = _G.LVIM_COLORS.color_02 },
         },
         {
             provider = function()
@@ -937,7 +972,7 @@ function config.heirline_nvim()
                     return "  "
                 end
             end,
-            hl = { fg = colors.color_05 },
+            hl = { fg = _G.LVIM_COLORS.color_05 },
         },
     }
     local file_size = {
@@ -950,7 +985,7 @@ function config.heirline_nvim()
             local file_size = require("core.funcs").file_size(fsize)
             return "  " .. file_size
         end,
-        hl = { fg = colors.color_05 },
+        hl = { fg = _G.LVIM_COLORS.color_05 },
     }
     file_name_block = heirline_utils.insert(
         file_name_block,
@@ -970,7 +1005,7 @@ function config.heirline_nvim()
                 or self.status_dict.removed ~= 0
                 or self.status_dict.changed ~= 0
         end,
-        hl = { fg = colors.color_03 },
+        hl = { fg = _G.LVIM_COLORS.color_03 },
         {
             provider = "  ",
         },
@@ -985,21 +1020,21 @@ function config.heirline_nvim()
                 local count = self.status_dict.added or 0
                 return count > 0 and ("  " .. count)
             end,
-            hl = { fg = colors.color_01 },
+            hl = { fg = _G.LVIM_COLORS.color_01 },
         },
         {
             provider = function(self)
                 local count = self.status_dict.removed or 0
                 return count > 0 and ("  " .. count)
             end,
-            hl = { fg = colors.color_02 },
+            hl = { fg = _G.LVIM_COLORS.color_02 },
         },
         {
             provider = function(self)
                 local count = self.status_dict.changed or 0
                 return count > 0 and ("  " .. count)
             end,
-            hl = { fg = colors.color_03 },
+            hl = { fg = _G.LVIM_COLORS.color_03 },
         },
         on_click = {
             callback = function()
@@ -1013,7 +1048,7 @@ function config.heirline_nvim()
     local noice_mode = {
         condition = require("noice").api.statusline.mode.has,
         provider = require("noice").api.statusline.mode.get,
-        hl = { fg = colors.color_02, bold = true },
+        hl = { fg = _G.LVIM_COLORS.color_02, bold = true },
     }
     local diagnostics = {
         condition = heirline_conditions.has_diagnostics,
@@ -1034,25 +1069,25 @@ function config.heirline_nvim()
             provider = function(self)
                 return self.errors > 0 and (self.error_icon .. self.errors .. " ")
             end,
-            hl = { fg = colors.color_02 },
+            hl = { fg = _G.LVIM_COLORS.color_02 },
         },
         {
             provider = function(self)
                 return self.warnings > 0 and (self.warn_icon .. self.warnings .. " ")
             end,
-            hl = { fg = colors.color_03 },
+            hl = { fg = _G.LVIM_COLORS.color_03 },
         },
         {
             provider = function(self)
                 return self.info > 0 and (self.info_icon .. self.info .. " ")
             end,
-            hl = { fg = colors.color_04 },
+            hl = { fg = _G.LVIM_COLORS.color_04 },
         },
         {
             provider = function(self)
                 return self.hints > 0 and (self.hint_icon .. self.hints .. " ")
             end,
-            hl = { fg = colors.color_05 },
+            hl = { fg = _G.LVIM_COLORS.color_05 },
         },
         on_click = {
             callback = function()
@@ -1071,7 +1106,7 @@ function config.heirline_nvim()
             end
             return "  " .. table.concat(names, ", ")
         end,
-        hl = { fg = colors.color_05, bold = true },
+        hl = { fg = _G.LVIM_COLORS.color_05, bold = true },
         on_click = {
             callback = function()
                 vim.defer_fn(function()
@@ -1081,13 +1116,27 @@ function config.heirline_nvim()
             name = "heirline_LSP",
         },
     }
+    local lsp_progress = {
+        provider = function()
+            local lsp = vim.lsp.util.get_progress_messages()[1]
+            if lsp then
+                local name = lsp.name or ""
+                local msg = lsp.message or ""
+                local percentage = lsp.percentage or 0
+                local title = lsp.title or ""
+                return string.format(" %%<%s: %s %s (%s%%%%) ", name, title, msg, percentage)
+            end
+            return ""
+        end,
+        hl = { fg = _G.LVIM_COLORS.color_01, bold = true },
+    }
     local is_lsp_active = {
         condition = heirline_conditions.lsp_attached,
         update = { "LspAttach", "LspDetach" },
         provider = function()
             return "  "
         end,
-        hl = { fg = colors.color_03, bold = true },
+        hl = { fg = _G.LVIM_COLORS.color_03, bold = true },
     }
     local file_type = {
         provider = function()
@@ -1096,7 +1145,7 @@ function config.heirline_nvim()
                 return string.upper(filetype)
             end
         end,
-        hl = { fg = colors.color_03, bold = true },
+        hl = { fg = _G.LVIM_COLORS.color_03, bold = true },
     }
     local file_encoding = {
         provider = function()
@@ -1105,7 +1154,7 @@ function config.heirline_nvim()
                 return " " .. enc:upper()
             end
         end,
-        hl = { fg = colors.color_04, bold = true },
+        hl = { fg = _G.LVIM_COLORS.color_04, bold = true },
     }
     local file_format = {
         provider = function()
@@ -1119,14 +1168,14 @@ function config.heirline_nvim()
                 return symbols[format]
             end
         end,
-        hl = { fg = colors.color_04, bold = true },
+        hl = { fg = _G.LVIM_COLORS.color_04, bold = true },
     }
     local spell = {
         condition = function()
             return vim.wo.spell
         end,
         provider = "  SPELL",
-        hl = { bold = true, fg = colors.color_03 },
+        hl = { bold = true, fg = _G.LVIM_COLORS.color_03 },
     }
     local scroll_bar = {
         provider = function()
@@ -1137,18 +1186,17 @@ function config.heirline_nvim()
             local index = math.ceil(line_ratio * #chars)
             return "  " .. chars[index]
         end,
-        hl = { fg = colors.color_02 },
+        hl = { fg = _G.LVIM_COLORS.color_02 },
     }
     local file_icon_name = {
         provider = function()
             local function isempty(s)
                 return s == nil or s == ""
             end
-
             local hl_group_1 = "FileTextColor"
             vim.api.nvim_set_hl(0, hl_group_1, {
-                fg = colors.color_01,
-                bg = colors.status_line_bg,
+                fg = _G.LVIM_COLORS.color_01,
+                bg = _G.LVIM_COLORS.bg,
                 bold = true,
             })
             local filename = vim.fn.expand("%:t")
@@ -1157,7 +1205,7 @@ function config.heirline_nvim()
                 local f_icon, f_icon_color =
                     require("nvim-web-devicons").get_icon_color(filename, extension, { default = true })
                 local hl_group_2 = "FileIconColor" .. extension
-                vim.api.nvim_set_hl(0, hl_group_2, { fg = f_icon_color, bg = colors.status_line_bg })
+                vim.api.nvim_set_hl(0, hl_group_2, { fg = f_icon_color, bg = _G.LVIM_COLORS.bg })
                 if isempty(f_icon) then
                     f_icon = ""
                 end
@@ -1175,7 +1223,7 @@ function config.heirline_nvim()
                     .. "  "
             end
         end,
-        hl = { fg = colors.color_02 },
+        hl = { fg = _G.LVIM_COLORS.color_02 },
     }
     local navic = {
         condition = require("nvim-navic").is_available,
@@ -1216,7 +1264,7 @@ function config.heirline_nvim()
                 if #data > 1 and i < #data then
                     table.insert(child, {
                         provider = " ➤ ",
-                        hl = { fg = colors.color_01 },
+                        hl = { fg = _G.LVIM_COLORS.color_01 },
                     })
                 end
                 table.insert(children, child)
@@ -1233,20 +1281,20 @@ function config.heirline_nvim()
             local tname, _ = vim.api.nvim_buf_get_name(0):gsub(".*:", "")
             return " " .. tname
         end,
-        hl = { fg = colors.color_02, bold = true },
+        hl = { fg = _G.LVIM_COLORS.color_02, bold = true },
     }
     local status_lines = {
         fallthrough = false,
         hl = function()
             if heirline_conditions.is_active() then
                 return {
-                    fg = colors.status_line_fg,
-                    bg = colors.status_line_bg,
+                    bg = _G.LVIM_COLORS.bg,
+                    fg = _G.LVIM_COLORS.color_01,
                 }
             else
                 return {
-                    fg = colors.status_line_nc_fg,
-                    bg = colors.status_line_nc_bg,
+                    bg = _G.LVIM_COLORS.bg,
+                    fg = _G.LVIM_COLORS.color_01,
                 }
             end
         end,
@@ -1265,6 +1313,7 @@ function config.heirline_nvim()
             noice_mode,
             align,
             diagnostics,
+            -- lsp_progress,
             lsp_active,
             is_lsp_active,
             file_type,
@@ -1383,17 +1432,7 @@ function config.heirline_nvim()
     vim.api.nvim_create_augroup("Heirline", { clear = true })
     vim.api.nvim_create_autocmd("ColorScheme", {
         callback = function()
-            get_colors = require("configs.base.ui.colors")
-            colors = get_colors.colors()
-            heirline_utils.on_colorscheme(colors)
-        end,
-        group = "Heirline",
-    })
-    vim.api.nvim_create_autocmd("VimEnter", {
-        callback = function()
-            get_colors = require("configs.base.ui.colors")
-            colors = get_colors.colors()
-            heirline_utils.on_colorscheme(colors)
+            heirline_utils.on_colorscheme(_G.LVIM_COLORS)
         end,
         group = "Heirline",
     })
