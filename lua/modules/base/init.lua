@@ -106,34 +106,6 @@ modules["folke/which-key.nvim"] = {
     config = ui_config.which_key_nvim,
 }
 
-<<<<<<< HEAD
-modules["rebelot/heirline.nvim"] = false
--- modules["rebelot/heirline.nvim"] = {
---     commit = funcs.get_commit("heirline.nvim", plugins_snapshot),
---     requires = {
---         {
---             "lvim-tech/lvim-colorscheme",
---             commit = funcs.get_commit("lvim-colorscheme", plugins_snapshot),
---         },
---         {
---             "folke/noice.nvim",
---             requires = {
---                 {
---                     "MunifTanjim/nui.nvim",
---                     commit = funcs.get_commit("nui.nvim", plugins_snapshot),
---                 },
---                 {
---                     "rcarriga/nvim-notify",
---                     commit = funcs.get_commit("nvim-notify", plugins_snapshot),
---                 },
---             },
---             commit = funcs.get_commit("noice.nvim", plugins_snapshot),
---         },
---     },
---     after = { "lvim-colorscheme", "noice.nvim" },
---     config = ui_config.heirline_nvim,
--- }
-=======
 modules["rebelot/heirline.nvim"] = {
     commit = funcs.get_commit("heirline.nvim", plugins_snapshot),
     event = "VimEnter",
@@ -155,7 +127,6 @@ modules["rebelot/heirline.nvim"] = {
     },
     config = ui_config.heirline_nvim,
 }
->>>>>>> production
 
 modules["is0n/fm-nvim"] = {
     commit = funcs.get_commit("fm-nvim", plugins_snapshot),
