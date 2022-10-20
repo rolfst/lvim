@@ -9,7 +9,9 @@ function config.nvim_test()
             }),
             require("neotest-plenary"),
             -- require("neotest-jest"),
-            require("neotest-mocha"),
+            require("neotest-mocha")({
+                ignore_file_types = { "python", "lua", "rust" },
+            }),
             require("neotest-vim-test")({
                 ignore_file_types = { "python", "lua", "rust" },
             }),

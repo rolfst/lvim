@@ -125,6 +125,7 @@ modules["nvim-neotest/neotest"] = {
         "nvim-treesitter",
         "FixCursorHold.nvim",
         "neotest-python",
+        "neotest-mocha",
         "neotest-plenary",
         "neotest-go",
         -- "neotest-jest",
