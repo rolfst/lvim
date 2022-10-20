@@ -1,7 +1,18 @@
 local config = {}
 
 function config.lvim_colorscheme()
-    require("lvim-colorscheme").setup()
+    require("lvim-colorscheme").setup({
+        sidebars = {
+            "qf",
+            "Outline",
+            "terminal",
+            "packer",
+            "calendar",
+            "spectre_panel",
+            "ctrlspace",
+            "neo-tree",
+        },
+    })
     vim.cmd("colorscheme lvim")
 end
 
@@ -89,11 +100,11 @@ function config.noice_nvim()
         notify = {
             enabled = false,
         },
-        lsp_progress = {
-            enabled = true,
-            format = "lsp_progress",
-            format_done = "lsp_progress_done",
-        },
+        -- lsp_progress = {
+        --     enabled = true,
+        --     format = "lsp_progress",
+        --     format_done = "lsp_progress_done",
+        -- },
         hacks = {
             skip_duplicate_messages = false,
         },
@@ -1313,7 +1324,7 @@ function config.heirline_nvim()
             noice_mode,
             align,
             diagnostics,
-            -- lsp_progress,
+            lsp_progress,
             lsp_active,
             is_lsp_active,
             file_type,
