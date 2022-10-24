@@ -3,7 +3,9 @@ local config = {}
 function config.lvim_colorscheme()
     require("lvim-colorscheme").setup({
         sidebars = {
+            "dbui",
             "qf",
+            "pqf",
             "Outline",
             "terminal",
             "packer",
@@ -79,10 +81,11 @@ function config.noice_nvim()
             enabled = true,
             view = "cmdline_popup",
             opts = { buf_options = { filetype = "vim" } },
-            icons = {
-                ["/"] = { icon = " ", hl_group = "DiagnosticWarn" },
-                ["?"] = { icon = " ", hl_group = "DiagnosticWarn" },
-                [":"] = { icon = " ", hl_group = "DiagnosticInfo", firstc = false },
+            format = {
+                cmdline = { pattern = "^:", icon = " " },
+                search = { pattern = "^[?/]", icon = " ", conceal = false },
+                filter = { pattern = "^:%s*!", icon = "$", opts = { buf_options = { filetype = "sh" } } },
+                lua = { pattern = "^:%s*lua%s+", icon = "", opts = { buf_options = { filetype = "lua" } } },
             },
         },
         messages = {
@@ -100,14 +103,14 @@ function config.noice_nvim()
         notify = {
             enabled = false,
         },
-        -- lsp_progress = {
-        --     enabled = true,
-        --     format = "lsp_progress",
-        --     format_done = "lsp_progress_done",
-        -- },
-        hacks = {
-            skip_duplicate_messages = false,
+        lsp_progress = {
+            enabled = true,
+            format = "lsp_progress",
+            format_done = "lsp_progress_done",
+            throttle = 1000 / 30,
+            view = "mini",
         },
+        throttle = 1000 / 30,
         views = {
             popupmenu = {
                 zindex = 65,
@@ -205,7 +208,7 @@ function config.noice_nvim()
             mini = {
                 backend = "mini",
                 relative = "editor",
-                align = "right",
+                align = "message-right",
                 timeout = 2000,
                 reverse = false,
                 position = {
@@ -216,7 +219,7 @@ function config.noice_nvim()
                 border = {
                     style = "none",
                 },
-                zindex = 1000,
+                zindex = 60,
                 win_options = {
                     winblend = 0,
                     winhighlight = {
@@ -305,12 +308,6 @@ function config.noice_nvim()
                     },
                 },
             },
-            text = {
-                hl_group = "NoiceText",
-            },
-            data = {
-                hl_group = "NoiceData",
-            },
         },
         routes = {
             {
@@ -346,10 +343,47 @@ function config.noice_nvim()
             {
                 view = "notify",
                 filter = {
+                    event = "msg_show",
+                    kind = { "", "echo", "echomsg" },
+                },
+                opts = {
+                    replace = true,
+                    merge = true,
+                    title = "LVIM IDE",
+                },
+            },
+            {
+                view = "notify",
+                filter = { error = true },
+                opts = {
+                    title = "ERROR",
+                },
+            },
+            {
+                view = "notify",
+                filter = { warning = true },
+                opts = {
+                    title = "WARNING",
+                },
+            },
+            {
+                view = "notify",
+                filter = { event = "notify" },
+                opts = {
+                    title = "LVIM IDE",
+                },
+            },
+            {
+                view = "notify",
+                filter = {
                     event = "noice",
                     kind = { "stats", "debug" },
                 },
-                opts = { buf_options = { filetype = "lua" }, replace = true },
+                opts = {
+                    buf_options = { filetype = "lua" },
+                    replace = true,
+                    title = "LVIM IDE",
+                },
             },
             {
                 view = "mini",
@@ -358,7 +392,9 @@ function config.noice_nvim()
             {
                 view = "notify",
                 filter = {},
-                opts = { title = "LVIM IDE" },
+                opts = {
+                    title = "LVIM IDE",
+                },
             },
         },
     })
@@ -509,6 +545,17 @@ function config.neo_tree_nvim()
             "git_status",
             "diagnostics",
         },
+        source_selector = {
+            winbar = true,
+            separator = "",
+            content_layout = "center",
+            tab_labels = {
+                filesystem = "  DIR  ",
+                buffers = "  BUF  ",
+                git_status = " GIT  ",
+                diagnostics = "  LSP  ",
+            },
+        },
         default_component_configs = {
             container = {
                 enable_character_fade = true,
@@ -542,6 +589,8 @@ function config.neo_tree_nvim()
             },
         },
         window = {
+            position = "left",
+            width = 40,
             mappings = {
                 ["Z"] = "expand_all_nodes",
             },
@@ -1050,7 +1099,7 @@ function config.heirline_nvim()
         on_click = {
             callback = function()
                 vim.defer_fn(function()
-                    vim.cmd("Lazygit")
+                    vim.cmd("Neogit")
                 end, 100)
             end,
             name = "heirline_git",
@@ -1271,11 +1320,12 @@ function config.heirline_nvim()
                             name = "heirline_navic",
                         },
                     },
+                    hl = { bg = _G.LVIM_COLORS.bg },
                 }
                 if #data > 1 and i < #data then
                     table.insert(child, {
                         provider = " ➤ ",
-                        hl = { fg = _G.LVIM_COLORS.color_01 },
+                        hl = { bg = _G.LVIM_COLORS.bg, fg = _G.LVIM_COLORS.color_01 },
                     })
                 end
                 table.insert(children, child)
@@ -1285,6 +1335,7 @@ function config.heirline_nvim()
         provider = function(self)
             return self.child:eval()
         end,
+        hl = { bg = _G.LVIM_COLORS.bg, fg = _G.LVIM_COLORS.color_06, bold = true },
         update = "CursorMoved",
     }
     local terminal_name = {
@@ -1324,7 +1375,7 @@ function config.heirline_nvim()
             noice_mode,
             align,
             diagnostics,
-            lsp_progress,
+            -- lsp_progress,
             lsp_active,
             is_lsp_active,
             file_type,

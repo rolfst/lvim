@@ -15,7 +15,20 @@
 
     #+begin_src lua
     function config.lvim_colorscheme()
-        require("lvim-colorscheme").setup()
+        require("lvim-colorscheme").setup({
+            sidebars = {
+                "dbui",
+                "qf",
+                "pqf",
+                "Outline",
+                "terminal",
+                "packer",
+                "calendar",
+                "spectre_panel",
+                "ctrlspace",
+                "neo-tree",
+            },
+        })
         vim.cmd("colorscheme lvim")
     end
     #+end_src
@@ -578,6 +591,17 @@
                 "git_status",
                 "diagnostics",
             },
+            source_selector = {
+                winbar = true,
+                separator = "",
+                content_layout = "center",
+                tab_labels = {
+                    filesystem = "  DIR  ",
+                    buffers = "  BUF  ",
+                    git_status = " GIT  ",
+                    diagnostics = "  LSP  ",
+                },
+            },
             default_component_configs = {
                 container = {
                     enable_character_fade = true,
@@ -611,13 +635,10 @@
                 },
             },
             window = {
+                position = "left",
+                width = 40,
                 mappings = {
                     ["Z"] = "expand_all_nodes",
-                    w = function(state)
-                        local node = state.tree:get_node()
-                        require("configs.base.ui.window-picker").pick()
-                        vim.cmd("edit " .. vim.fn.fnameescape(node.path))
-                    end,
                 },
             },
             filesystem = {

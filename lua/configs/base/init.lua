@@ -19,6 +19,7 @@ configs["base_colors"] = function()
         color_03 = "#F2994B",
         color_04 = "#2AA198",
         color_05 = "#00839F",
+        color_06 = "#83A598",
         bg = "#20262A",
         fg = "#4C5D67",
     }
@@ -39,15 +40,11 @@ configs["base_events"] = function()
         pattern = {
             "c",
             "cpp",
-            "css",
             "dart",
             "haskell",
-            "less",
             "objc",
             "objcpp",
             "ruby",
-            "scss",
-            "yaml",
         },
         command = "setlocal ts=2 sw=2",
         group = group,
@@ -99,7 +96,11 @@ configs["base_events"] = function()
         "CursorMoved",
         "CursorMovedI",
     }, {
-        command = "set cmdheight=0",
+        callback = function()
+            vim.schedule(function()
+                vim.cmd("set cmdheight=0")
+            end)
+        end,
         group = group,
     })
 end

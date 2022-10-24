@@ -613,7 +613,7 @@ modules["akinsho/flutter-tools.nvim"] = {
     },
 }
 
-modules["jose-elias-alvarez/nvim-lsp-ts-utils"] = {
+modules["jose-elias-alvarez/typescript.nvim"] = {
     commit = funcs.get_commit("nvim-lsp-ts-utils", plugins_snapshot),
     ft = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
     requires = {
@@ -626,14 +626,6 @@ modules["jose-elias-alvarez/nvim-lsp-ts-utils"] = {
             commit = funcs.get_commit("plenary.nvim", plugins_snapshot),
         },
     },
-}
-
-modules["Mofiqul/trld.nvim"] = {
-    commit = funcs.get_commit("trld.nvim", plugins_snapshot),
-    event = {
-        "BufRead",
-    },
-    config = languages_config.trld_nvim,
 }
 
 modules["kosayoda/nvim-lightbulb"] = {
