@@ -19,8 +19,177 @@ function config.lvim_colorscheme()
 end
 
 function config.nui_nvim()
-    vim.ui.input = require("configs.base.ui.input")
-    vim.ui.select = require("configs.base.ui.select")
+    local function get_prompt_text(prompt, default_prompt)
+        local prompt_text = prompt or default_prompt
+        if prompt_text:sub(-1) == ":" then
+            prompt_text = " " .. prompt_text:sub(1, -2) .. " "
+        end
+        return prompt_text
+    end
+    local Input = require("nui.input")
+    local Menu = require("nui.menu")
+    local event = require("nui.utils.autocmd").event
+    local function override_ui_input()
+        local calculate_popup_width = function(default, prompt)
+            local result = 40
+            if prompt ~= nil then
+                result = #prompt + 40
+            end
+            if default ~= nil then
+                if #default + 40 > result then
+                    result = #default + 40
+                end
+            end
+            return result
+        end
+        local UIInput = Input:extend("UIInput")
+        function UIInput:init(opts, on_done)
+            local border_top_text = get_prompt_text(opts.prompt, "Input")
+            local default_value
+            if opts.default ~= nil then
+                default_value = tostring(opts.default)
+            else
+                default_value = ""
+            end
+            UIInput.super.init(self, {
+                relative = "cursor",
+                position = {
+                    row = 1,
+                    col = 0,
+                },
+                size = {
+                    width = calculate_popup_width(default_value, border_top_text),
+                },
+                border = {
+                    highlight = "NuiBorder",
+                    style = { " ", " ", " ", " ", " ", " ", " ", " " },
+                    text = {
+                        top = border_top_text,
+                        top_align = "center",
+                    },
+                },
+                win_options = {
+                    winhighlight = "Normal:NuiBody",
+                },
+            }, {
+                prompt = "➤ ",
+                default_value = default_value,
+                on_close = function()
+                    on_done(nil)
+                end,
+                on_submit = function(value)
+                    on_done(value)
+                end,
+            })
+            self:on(event.BufLeave, function()
+                on_done(nil)
+            end, { once = true })
+            self:map("n", "<Esc>", function()
+                on_done(nil)
+            end, { noremap = true, nowait = true })
+        end
+        local input_ui
+        vim.ui.input = function(opts, on_confirm)
+            assert(type(on_confirm) == "function", "missing on_confirm function")
+            if input_ui then
+                vim.api.nvim_err_writeln("busy: another input is pending!")
+                return
+            end
+            input_ui = UIInput(opts, function(value)
+                if input_ui then
+                    input_ui:unmount()
+                end
+                on_confirm(value)
+                input_ui = nil
+            end)
+            input_ui:mount()
+        end
+    end
+    local function override_ui_select()
+        local UISelect = Menu:extend("UISelect")
+        function UISelect:init(items, opts, on_done)
+            local border_top_text = get_prompt_text(opts.prompt, "Select Item")
+            local kind = opts.kind or "unknown"
+            local format_item = opts.format_item
+                or function(item)
+                    return tostring(item.__raw_item or item)
+                end
+            local popup_options = {
+                relative = "editor",
+                position = "50%",
+                border = {
+                    highlight = "NuiBorder",
+                    style = { " ", " ", " ", " ", " ", " ", " ", " " },
+                    text = {
+                        top = border_top_text,
+                        top_align = "center",
+                    },
+                },
+                win_options = {
+                    winhighlight = "Normal:NuiBody",
+                },
+                zindex = 999,
+            }
+            if kind == "codeaction" then
+                popup_options.relative = "cursor"
+                popup_options.position = {
+                    row = 1,
+                    col = 0,
+                }
+            end
+            local max_width = popup_options.relative == "editor" and vim.o.columns - 4
+                or vim.api.nvim_win_get_width(0) - 4
+            local max_height = popup_options.relative == "editor" and math.floor(vim.o.lines * 80 / 100)
+                or vim.api.nvim_win_get_height(0)
+            local menu_items = {
+                UISelect.separator("", {
+                    char = " ",
+                }),
+            }
+            for index, item in ipairs(items) do
+                if type(item) ~= "table" then
+                    item = { __raw_item = item }
+                end
+                item.index = index
+                local item_text = string.sub(format_item(item), 0, max_width)
+                table.insert(menu_items, Menu.item(item_text, item))
+            end
+            local menu_options = {
+                min_width = vim.api.nvim_strwidth(border_top_text),
+                max_width = max_width,
+                max_height = max_height,
+                lines = menu_items,
+                on_close = function()
+                    on_done(nil, nil)
+                end,
+                on_submit = function(item)
+                    on_done(item.__raw_item or item, item.index)
+                end,
+            }
+            UISelect.super.init(self, popup_options, menu_options)
+            self:on(event.BufLeave, function()
+                on_done(nil, nil)
+            end, { once = true })
+        end
+        local select_ui = nil
+        vim.ui.select = function(items, opts, on_choice)
+            assert(type(on_choice) == "function", "missing on_choice function")
+            if select_ui then
+                vim.api.nvim_err_writeln("busy: another select is pending!")
+                return
+            end
+            select_ui = UISelect(items, opts, function(item, index)
+                if select_ui then
+                    select_ui:unmount()
+                end
+                on_choice(item, index)
+                select_ui = nil
+            end)
+            select_ui:mount()
+        end
+    end
+    override_ui_input()
+    override_ui_select()
 end
 
 function config.nvim_notify()
@@ -82,33 +251,107 @@ function config.noice_nvim()
             view = "cmdline_popup",
             opts = { buf_options = { filetype = "vim" } },
             format = {
-                cmdline = { pattern = "^:", icon = " " },
-                search = { pattern = "^[?/]", icon = " ", conceal = false },
-                filter = { pattern = "^:%s*!", icon = "$", opts = { buf_options = { filetype = "sh" } } },
-                lua = { pattern = "^:%s*lua%s+", icon = "", opts = { buf_options = { filetype = "lua" } } },
+                cmdline = { pattern = "^:", icon = " ", lang = "vim" },
+                search_down = { kind = "search", pattern = "^/", icon = " ", lang = "regex" },
+                search_up = { kind = "search", pattern = "^%?", icon = " ", lang = "regex" },
+                filter = { pattern = "^:%s*!", icon = "$", lang = "bash" },
+                lua = { pattern = "^:%s*lua%s+", icon = "", lang = "lua" },
+                help = { pattern = "^:%s*h%s+", icon = "" },
+                input = {},
             },
         },
         messages = {
             enabled = true,
+            view = "notify",
+            view_error = "notify",
+            view_warn = "notify",
+            view_history = "split",
+            view_search = false,
         },
         popupmenu = {
             enabled = true,
             backend = "nui",
+            kind_icons = {},
         },
-        history = {
-            view = "split",
-            opts = { enter = true },
-            filter = { event = "msg_show", ["not"] = { kind = { "search_count", "echo" } } },
+        commands = {
+            history = {
+                view = "split",
+                opts = { enter = true, format = "details" },
+                filter = { event = { "msg_show", "notify" }, ["not"] = { kind = { "search_count", "echo" } } },
+            },
+            last = {
+                view = "popup",
+                opts = { enter = true, format = "details" },
+                filter = { event = { "msg_show", "notify" }, ["not"] = { kind = { "search_count", "echo" } } },
+                filter_opts = { count = 1 },
+            },
+            errors = {
+                view = "popup",
+                opts = { enter = true, format = "details" },
+                filter = { error = true },
+                filter_opts = { reverse = true },
+            },
         },
         notify = {
             enabled = false,
+            view = "notify",
         },
         lsp_progress = {
+            progress = {
+                enabled = true,
+                format = "lsp_progress",
+                format_done = "lsp_progress_done",
+                throttle = 1000 / 30,
+                view = "mini",
+            },
+            hover = {
+                enabled = false,
+                view = nil,
+                opts = {},
+            },
+            signature = {
+                enabled = false,
+                auto_open = true,
+                view = nil,
+                opts = {},
+            },
+            documentation = {
+                view = "hover",
+                opts = {
+                    lang = "markdown",
+                    replace = true,
+                    render = "plain",
+                    format = { "{message}" },
+                    win_options = { concealcursor = "n", conceallevel = 3 },
+                },
+            },
+        },
+        markdown = {
+            hover = {
+                ["|(%S-)|"] = vim.cmd.help,
+                ["%[.-%]%((%S-)%)"] = require("noice.util").open,
+            },
+            highlights = {
+                ["|%S-|"] = "@text.reference",
+                ["@%S+"] = "@parameter",
+                ["^%s*(Parameters:)"] = "@text.title",
+                ["^%s*(Return:)"] = "@text.title",
+                ["^%s*(See also:)"] = "@text.title",
+                ["{%S-}"] = "@parameter",
+            },
+        },
+        health = {
+            checker = true,
+        },
+        smart_move = {
             enabled = true,
-            format = "lsp_progress",
-            format_done = "lsp_progress_done",
-            throttle = 1000 / 30,
-            view = "mini",
+            excluded_filetypes = { "cmp_menu", "cmp_docs", "notify" },
+        },
+        presets = {
+            bottom_search = false,
+            command_palette = false,
+            long_message_to_split = false,
+            inc_rename = false,
         },
         throttle = 1000 / 30,
         views = {
@@ -212,12 +455,12 @@ function config.noice_nvim()
                 timeout = 2000,
                 reverse = false,
                 position = {
-                    row = -1,
+                    row = -2,
                     col = "100%",
                 },
                 size = "auto",
                 border = {
-                    style = "none",
+                    style = { " ", " ", " ", " ", " ", " ", " ", " " },
                 },
                 zindex = 60,
                 win_options = {
@@ -226,6 +469,7 @@ function config.noice_nvim()
                         Normal = "NoiceBody",
                         IncSearch = "IncSearch",
                         Search = "Search",
+                        FloatBorder = "NoiceBody",
                     },
                 },
             },
@@ -865,6 +1109,7 @@ function config.which_key_nvim()
 end
 
 function config.heirline_nvim()
+    local funcs = require("core.funcs")
     local icons = require("configs.base.ui.icons")
     local heirline_status_ok, heirline = pcall(require, "heirline")
     if not heirline_status_ok then
@@ -1161,10 +1406,28 @@ function config.heirline_nvim()
         update = { "LspAttach", "LspDetach", "BufWinEnter" },
         provider = function()
             local names = {}
+            local null_ls = {}
             for _, server in pairs(vim.lsp.buf_get_clients(0)) do
-                table.insert(names, server.name)
+                if server.name == "null-ls" then
+                    local sources = require("null-ls.sources")
+                    local ft = vim.api.nvim_buf_get_option(vim.api.nvim_win_get_buf(0), "filetype")
+                    for _, source in ipairs(sources.get_available(ft)) do
+                        table.insert(null_ls, source.name)
+                    end
+                    null_ls = funcs.remove_duplicate(null_ls)
+                else
+                    table.insert(names, server.name)
+                end
             end
-            return "  " .. table.concat(names, ", ")
+            if next(null_ls) == nil then
+                return "  LSP [" .. table.concat(names, ", ") .. "]"
+            else
+                return "  LSP ["
+                    .. table.concat(names, ", ")
+                    .. "] | NULL-LS ["
+                    .. table.concat(null_ls, ", ")
+                    .. "]"
+            end
         end,
         hl = { fg = _G.LVIM_COLORS.color_05, bold = true },
         on_click = {

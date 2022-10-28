@@ -300,7 +300,6 @@ end
 
 M.get_capabilities = function()
     local capabilities = vim.lsp.protocol.make_client_capabilities()
-    capabilities.offsetEncoding = { "utf-16" }
     capabilities.textDocument.completion.completionItem.snippetSupport = true
     capabilities.textDocument.completion.completionItem.resolveSupport = {
         properties = {
@@ -313,6 +312,24 @@ M.get_capabilities = function()
     if status_ok then
         capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
     end
+    return capabilities
+end
+
+M.get_cpp_capabilities = function()
+    local capabilities = vim.lsp.protocol.make_client_capabilities()
+    capabilities.textDocument.completion.completionItem.snippetSupport = true
+    capabilities.textDocument.completion.completionItem.resolveSupport = {
+        properties = {
+            "documentation",
+            "detail",
+            "additionalTextEdits",
+        },
+    }
+    local status_ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
+    if status_ok then
+        capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
+    end
+    capabilities.offsetEncoding = "utf-16"
     return capabilities
 end
 

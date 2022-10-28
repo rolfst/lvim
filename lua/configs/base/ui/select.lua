@@ -19,8 +19,11 @@ end
 
 local format_entries = function(entries, formatter)
     local formatItem = formatter or tostring
-    local results = {}
-    results[1] = custom_select.separator(" ")
+    local results = {
+        custom_select.separator("", {
+            char = " ",
+        }),
+    }
     for _, entry in pairs(entries) do
         table.insert(results, custom_select.item(string.format("%s", formatItem(entry))))
     end
@@ -44,7 +47,7 @@ local function nui_select(entries, stuff, on_user_choice, position)
         }
     end
     local userChoice = function(choiceIndex)
-        on_user_choice(entries[choiceIndex["_index"] - 1])
+        on_user_choice(choiceIndex["text"])
     end
     local formatted_entries = format_entries(entries, stuff.format_item)
     local select_options = {

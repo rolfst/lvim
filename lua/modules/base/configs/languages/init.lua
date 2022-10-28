@@ -61,7 +61,6 @@ function config.null_ls_nvim()
     null_ls.setup({
         debug = false,
         on_attach = function(client, bufnr)
-            client.offset_encoding = "utf-16"
             if client.server_capabilities.documentFormattingProvider then
                 vim.api.nvim_create_autocmd("BufWritePre", {
                     group = "LvimIDE",
@@ -390,6 +389,7 @@ function config.nvim_dap_ui()
         linehl = "",
         numhl = "",
     })
+    vim.api.nvim_create_user_command("LuaDapLaunch", 'lua require"osv".run_this()', {})
     vim.api.nvim_create_user_command("DapToggleBreakpoint", 'lua require("dap").toggle_breakpoint()', {})
     vim.api.nvim_create_user_command("DapStartContinue", 'lua require"dap".continue()', {})
     vim.api.nvim_create_user_command("DapStepInto", 'lua require"dap".step_into()', {})
