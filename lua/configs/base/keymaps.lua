@@ -65,7 +65,7 @@ keymaps["normal"] = {
     { "gpp", ":LspPreviewCloseAll<CR>" }, -- Lsp close all
     { "gh", ":LspHover<CR>" }, -- Lsp hover
     { "K", ":LspHover<CR>" }, -- Lsp hover
-    { "gS", ":SnipRun<CR>" }, -- Snip run
+    { "sR", ":SnipRun<CR>" }, -- Snip run
     { "gP", ":hardcopy<CR>" }, -- Print file
     { "tn", ":tabn<CR>" }, -- Tab next
     { "tp", ":tabp<CR>" }, -- Tab prev
@@ -114,7 +114,7 @@ keymaps["visual"] = {
     { "*", "<Esc>/\\%V" }, -- Visual search /
     { "#", "<Esc>?\\%V" }, -- Visual search ?
     { "<A-u>", ":AnyJumpVisual<CR>" }, -- Any jump visual
-    { "gS", ":SnipRun<CR>" }, -- Snip run
+    { "sR", ":SnipRun<CR>" }, -- Snip run
 }
 
 return keymaps
