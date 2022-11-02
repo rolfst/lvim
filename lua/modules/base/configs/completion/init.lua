@@ -25,8 +25,8 @@ function config.nvim_cmp()
         mapping = {
             ["<C-p>"] = cmp.mapping.select_prev_item(),
             ["<C-n>"] = cmp.mapping.select_next_item(),
-            ["<C-d>"] = cmp.mapping.scroll_docs(-4),
-            ["<C-f>"] = cmp.mapping.scroll_docs(4),
+            ["<C-d>"] = cmp.mapping.scroll_docs(4),
+            ["<C-u>"] = cmp.mapping.scroll_docs(-4),
             ["<C-Space>"] = cmp.mapping.complete(),
             ["<C-e>"] = cmp.mapping.close(),
             ["<CR>"] = cmp.mapping.confirm({
@@ -105,14 +105,6 @@ function config.nvim_autopairs()
     if not nvim_autopairs_status_ok then
         return
     end
-    local rule_status_ok, rule = pcall(require, "nvim-autopairs.rule")
-    if not rule_status_ok then
-        return
-    end
-    local conds_status_ok, conds = pcall(require, "nvim-autopairs.conds")
-    if not conds_status_ok then
-        return
-    end
     nvim_autopairs.setup({
         check_ts = true,
         ts_config = {
@@ -125,27 +117,6 @@ function config.nvim_autopairs()
             java = false,
         },
     })
-    nvim_autopairs.add_rule(rule("$$", "$$", "tex"))
-    nvim_autopairs.add_rules({
-        rule("$", "$", { "tex", "latex" })
-            :with_pair(conds.not_after_regex_check("%%"))
-            :with_pair(conds.not_before_regex_check("xxx", 3))
-            :with_move(conds.none())
-            :with_del(conds.not_after_regex_check("xx"))
-            :with_cr(conds.none()),
-    })
-    nvim_autopairs.add_rules({
-        rule("$$", "$$", "tex"):with_pair(function(opts)
-            print(vim.inspect(opts))
-            if opts.line == "aa $$" then
-                return false
-            end
-        end),
-    })
-    local ts_conds_status_ok, ts_conds = pcall(require, "nvim-autopairs.ts-conds")
-    if not ts_conds_status_ok then
-        return
-    end
 end
 
 function config.nvim_ts_autotag()

@@ -43,6 +43,15 @@ modules["rcarriga/nvim-notify"] = {
     config = ui_config.nvim_notify,
 }
 
+modules["lvim-tech/lvim-select-input"] = {
+    requires = {
+        {
+            "MunifTanjim/nui.nvim",
+            commit = funcs.get_commit("nui.nvim", plugins_snapshot),
+        },
+    },
+}
+
 modules["folke/noice.nvim"] = {
     commit = funcs.get_commit("noice.nvim", plugins_snapshot),
     requires = {
@@ -70,7 +79,6 @@ modules["s1n7ax/nvim-window-picker"] = {
 }
 
 modules["nvim-neo-tree/neo-tree.nvim"] = {
-    branch = "v2.x",
     commit = funcs.get_commit("neo-tree.nvim", plugins_snapshot),
     requires = {
         {
@@ -109,22 +117,6 @@ modules["folke/which-key.nvim"] = {
 modules["rebelot/heirline.nvim"] = {
     commit = funcs.get_commit("heirline.nvim", plugins_snapshot),
     event = "VimEnter",
-    requires = {
-        {
-            "folke/noice.nvim",
-            requires = {
-                {
-                    "MunifTanjim/nui.nvim",
-                    commit = funcs.get_commit("nui.nvim", plugins_snapshot),
-                },
-                {
-                    "rcarriga/nvim-notify",
-                    commit = funcs.get_commit("nvim-notify", plugins_snapshot),
-                },
-            },
-            commit = funcs.get_commit("noice.nvim", plugins_snapshot),
-        },
-    },
     config = ui_config.heirline_nvim,
 }
 
@@ -134,14 +126,7 @@ modules["is0n/fm-nvim"] = {
 }
 
 modules["akinsho/toggleterm.nvim"] = {
-    tag = "v2.*",
     commit = funcs.get_commit("toggleterm.nvim", plugins_snapshot),
-    cmd = {
-        "TTFloat",
-        "TTOne",
-        "TTTwo",
-        "TTThree",
-    },
     config = ui_config.toggleterm_nvim,
 }
 
@@ -159,8 +144,10 @@ modules["folke/zen-mode.nvim"] = {
 
 modules["nyngwang/NeoZoom.lua"] = {
     commit = funcs.get_commit("NeoZoom.lua", plugins_snapshot),
+    event = {
+        "BufRead",
+    },
     config = ui_config.neozoom_lua,
-    cmd = "NeoZoomToggle",
 }
 
 modules["gbprod/stay-in-place.nvim"] = {
@@ -187,7 +174,6 @@ modules["lvim-tech/lvim-focus"] = {
 
 modules["lvim-tech/lvim-helper"] = {
     commit = funcs.get_commit("lvim-helper", plugins_snapshot),
-    cmd = "LvimHelper",
     config = ui_config.lvim_helper,
 }
 
@@ -199,11 +185,10 @@ local editor_config = require("modules.base.configs.editor")
 
 modules["vim-ctrlspace/vim-ctrlspace"] = {
     commit = funcs.get_commit("vim-ctrlspace", plugins_snapshot),
-    -- cmd = "CtrlSpace",
+    config = editor_config.vim_ctrlspace,
 }
 
 modules["nvim-telescope/telescope.nvim"] = {
-    branch = "0.1.x",
     commit = funcs.get_commit("telescope.nvim", plugins_snapshot),
     requires = {
         {
@@ -267,6 +252,7 @@ modules["https://gitlab.com/yorickpeterse/nvim-pqf"] = {
 
 modules["nanozuki/tabby.nvim"] = {
     commit = funcs.get_commit("tabby.nvim", plugins_snapshot),
+    after = "vim-ctrlspace",
     config = editor_config.tabby_nvim,
 }
 
@@ -315,12 +301,8 @@ modules["michaelb/sniprun"] = {
         commit = funcs.get_commit("nvim-lspconfig", plugins_snapshot),
     },
     run = "bash ./install.sh",
-    cmd = {
-        "SnipRun",
-        "SnipInfo",
-        "SnipReset",
-        "SnipReplMemoryClean",
-        "SnipClose",
+    event = {
+        "BufRead",
     },
     config = editor_config.sniprun,
 }
@@ -336,7 +318,9 @@ modules["CRAG666/code_runner.nvim"] = {
 
 modules["windwp/nvim-spectre"] = {
     commit = funcs.get_commit("nvim-spectre", plugins_snapshot),
-    cmd = "Spectre",
+    event = {
+        "BufRead",
+    },
     requires = {
         {
             "nvim-lua/popup.nvim",
@@ -363,6 +347,7 @@ modules["ton/vim-bufsurf"] = {
     event = {
         "BufRead",
     },
+    config = editor_config.vim_bufsurf,
 }
 
 modules["danymat/neogen"] = {
@@ -401,14 +386,6 @@ modules["lvim-tech/lvim-colorcolumn"] = {
     config = editor_config.lvim_colorcolumn,
 }
 
-modules["karb94/neoscroll.nvim"] = {
-    commit = funcs.get_commit("neoscroll.nvim", plugins_snapshot),
-    event = {
-        "BufRead",
-    },
-    config = editor_config.neoscroll_nvim,
-}
-
 modules["phaazon/hop.nvim"] = {
     branch = "v2",
     commit = funcs.get_commit("hop.nvim", plugins_snapshot),
@@ -444,7 +421,9 @@ modules["anuvyklack/pretty-fold.nvim"] = {
 
 modules["renerocksai/calendar-vim"] = {
     commit = funcs.get_commit("calendar-vim", plugins_snapshot),
-    cmd = { "Calendar", "CalendarH", "CalendarT", "CalendarVR" },
+    event = {
+        "BufRead",
+    },
     config = editor_config.calendar_vim,
 }
 
@@ -516,6 +495,7 @@ modules["mbbill/undotree"] = {
         "BufRead",
     },
     cmd = "UndotreeToggle",
+    config = version_control_config.undotree,
 }
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -538,20 +518,20 @@ modules["jose-elias-alvarez/null-ls.nvim"] = {
     config = languages_config.null_ls_nvim,
 }
 
+modules["smjonas/inc-rename.nvim"] = {
+    commit = funcs.get_commit("inc-rename.nvim", plugins_snapshot),
+    event = {
+        "BufRead",
+    },
+    config = languages_config.inc_rename_nvim,
+}
+
 modules["rmagatti/goto-preview"] = {
     commit = funcs.get_commit("goto-preview", plugins_snapshot),
     event = {
         "BufRead",
     },
     config = languages_config.goto_preview,
-}
-
-modules["lewis6991/hover.nvim"] = {
-    commit = funcs.get_commit("hover.nvim", plugins_snapshot),
-    event = {
-        "BufRead",
-    },
-    config = languages_config.hover_nvim,
 }
 
 modules["mfussenegger/nvim-jdtls"] = {
@@ -669,7 +649,9 @@ modules["pechorin/any-jump.vim"] = {
 
 modules["simrat39/symbols-outline.nvim"] = {
     commit = funcs.get_commit("symbols-outline.nvim", plugins_snapshot),
-    cmd = "SymbolsOutline",
+    event = {
+        "BufRead",
+    },
     config = languages_config.symbols_outline_nvim,
 }
 
@@ -760,6 +742,7 @@ modules["akinsho/pubspec-assist.nvim"] = {
 modules["davidgranstrom/nvim-markdown-preview"] = {
     commit = funcs.get_commit("nvim-markdown-preview", plugins_snapshot),
     ft = "markdown",
+    config = languages_config.nvim_markdown_preview,
 }
 
 modules["lervag/vimtex"] = {

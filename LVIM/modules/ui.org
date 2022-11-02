@@ -159,34 +159,124 @@
                 enabled = true,
                 view = "cmdline_popup",
                 opts = { buf_options = { filetype = "vim" } },
-                icons = {
-                    ["/"] = { icon = " ", hl_group = "DiagnosticWarn" },
-                    ["?"] = { icon = " ", hl_group = "DiagnosticWarn" },
-                    [":"] = { icon = " ", hl_group = "DiagnosticInfo", firstc = false },
+                format = {
+                    cmdline = { pattern = "^:", icon = "", lang = "vim" },
+                    search_down = { kind = "search", pattern = "^/", icon = " ", lang = "regex" },
+                    search_up = { kind = "search", pattern = "^%?", icon = " ", lang = "regex" },
+                    filter = { pattern = "^:%s*!", icon = "$", lang = "bash" },
+                    lua = { pattern = "^:%s*lua%s+", icon = "", lang = "lua" },
+                    help = { pattern = "^:%s*h%s+", icon = "" },
+                    input = {},
                 },
             },
             messages = {
                 enabled = true,
+                view = "notify",
+                view_error = "notify",
+                view_warn = "notify",
+                view_history = "split",
+                view_search = false,
             },
             popupmenu = {
                 enabled = true,
                 backend = "nui",
+                kind_icons = {},
             },
-            history = {
-                view = "split",
-                opts = { enter = true },
-                filter = { event = "msg_show", ["not"] = { kind = { "search_count", "echo" } } },
+            commands = {
+                history = {
+                    view = "split",
+                    opts = { enter = true, format = "details" },
+                    filter = { event = { "msg_show", "notify" }, ["not"] = { kind = { "search_count", "echo" } } },
+                },
+                last = {
+                    view = "popup",
+                    opts = { enter = true, format = "details" },
+                    filter = { event = { "msg_show", "notify" }, ["not"] = { kind = { "search_count", "echo" } } },
+                    filter_opts = { count = 1 },
+                },
+                errors = {
+                    view = "popup",
+                    opts = { enter = true, format = "details" },
+                    filter = { error = true },
+                    filter_opts = { reverse = true },
+                },
             },
             notify = {
                 enabled = false,
+                view = "notify",
             },
-            lsp_progress = {
+            lsp = {
+                progress = {
+                    enabled = true,
+                    format = "lsp_progress",
+                    format_done = "lsp_progress_done",
+                    throttle = 1000 / 30,
+                    view = "mini",
+                },
+                override = {
+                    ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+                    ["vim.lsp.util.stylize_markdown"] = true,
+                    ["cmp.entry.get_documentation"] = true,
+                },
+                hover = {
+                    enabled = true,
+                    view = nil,
+                    opts = {},
+                },
+                signature = {
+                    enabled = true,
+                    auto_open = {
+                        enabled = true,
+                        trigger = true,
+                        luasnip = true,
+                        throttle = 50,
+                    },
+                    view = nil,
+                    opts = {},
+                },
+                message = {
+                    enabled = true,
+                    view = "notify",
+                    opts = {},
+                },
+                documentation = {
+                    view = "hover",
+                    opts = {
+                        lang = "markdown",
+                        replace = true,
+                        render = "plain",
+                        format = { "{message}" },
+                        win_options = { concealcursor = "n", conceallevel = 3 },
+                    },
+                },
+            },
+            markdown = {
+                hover = {
+                    ["|(%S-)|"] = vim.cmd.help,
+                    ["%[.-%]%((%S-)%)"] = require("noice.util").open,
+                },
+                highlights = {
+                    ["|%S-|"] = "@text.reference",
+                    ["@%S+"] = "@parameter",
+                    ["^%s*(Parameters:)"] = "@text.title",
+                    ["^%s*(Return:)"] = "@text.title",
+                    ["^%s*(See also:)"] = "@text.title",
+                    ["{%S-}"] = "@parameter",
+                },
+            },
+            health = {
+                checker = true,
+            },
+            smart_move = {
                 enabled = true,
-                format = "lsp_progress",
-                format_done = "lsp_progress_done",
+                excluded_filetypes = { "cmp_menu", "cmp_docs", "notify" },
             },
-            hacks = {
-                skip_duplicate_messages = false,
+            presets = {
+                bottom_search = false,
+                command_palette = false,
+                long_message_to_split = false,
+                inc_rename = true,
+                lsp_doc_border = false,
             },
             views = {
                 popupmenu = {
@@ -242,21 +332,40 @@
                 },
                 popup = {
                     backend = "popup",
+                    relative = "editor",
                     close = {
                         events = { "BufLeave" },
-                        keys = { "q", "<esc>" },
+                        keys = { "q" },
                     },
                     enter = true,
                     border = {
-                        style = "single",
+                        style = "rounded",
                     },
                     position = "50%",
                     size = {
-                        width = "80%",
-                        height = "60%",
+                        width = "120",
+                        height = "20",
                     },
                     win_options = {
                         winhighlight = { Normal = "NoiceBody", FloatBorder = "NoiceBorder" },
+                    },
+                },
+                hover = {
+                    view = "popup",
+                    relative = "cursor",
+                    zindex = 45,
+                    enter = false,
+                    anchor = "auto",
+                    size = {
+                        width = "auto",
+                        height = "auto",
+                        max_height = 20,
+                        max_width = 120,
+                    },
+                    position = { row = 1, col = 0 },
+                    win_options = {
+                        wrap = true,
+                        linebreak = true,
                     },
                 },
                 cmdline = {
@@ -285,24 +394,25 @@
                 mini = {
                     backend = "mini",
                     relative = "editor",
-                    align = "right",
+                    align = "message-right",
                     timeout = 2000,
                     reverse = false,
                     position = {
-                        row = -1,
+                        row = -2,
                         col = "100%",
                     },
                     size = "auto",
                     border = {
-                        style = "none",
+                        style = { " ", " ", " ", " ", " ", " ", " ", " " },
                     },
-                    zindex = 1000,
+                    zindex = 60,
                     win_options = {
                         winblend = 0,
                         winhighlight = {
                             Normal = "NoiceBody",
                             IncSearch = "IncSearch",
                             Search = "Search",
+                            FloatBorder = "NoiceBody",
                         },
                     },
                 },
@@ -323,10 +433,7 @@
                     },
                     border = {
                         style = { " ", " ", " ", " ", " ", " ", " ", " " },
-                        padding = { 0, 1, 0, 1 },
-                        text = {
-                            top = " COMMAND LINE: ",
-                        },
+                        padding = { 0, 1 },
                     },
                     win_options = {
                         winhighlight = {
@@ -336,26 +443,6 @@
                             Search = "Search",
                         },
                         cursorline = false,
-                    },
-                    filter_options = {
-                        {
-                            filter = { event = "cmdline", find = "^%s*[/?]" },
-                            opts = {
-                                border = {
-                                    text = {
-                                        top = " SEARCH: ",
-                                    },
-                                },
-                                win_options = {
-                                    winhighlight = {
-                                        Normal = "NoiceBody",
-                                        FloatBorder = "NoiceBorder",
-                                        IncSearch = "IncSearch",
-                                        Search = "Search",
-                                    },
-                                },
-                            },
-                        },
                     },
                 },
                 confirm = {
@@ -384,12 +471,6 @@
                             FloatBorder = "NoiceBorder",
                         },
                     },
-                },
-                text = {
-                    hl_group = "NoiceText",
-                },
-                data = {
-                    hl_group = "NoiceData",
                 },
             },
             routes = {
@@ -426,29 +507,71 @@
                 {
                     view = "notify",
                     filter = {
-                        event = "noice",
-                        kind = { "stats", "debug" },
+                        event = "msg_show",
+                        kind = { "", "echo", "echomsg" },
                     },
-                    opts = { buf_options = { filetype = "lua" }, replace = true },
-                },
-                {
-                    view = "mini",
-                    filter = { event = "lsp" },
+                    opts = {
+                        replace = true,
+                        merge = true,
+                        title = "LVIM IDE",
+                    },
                 },
                 {
                     view = "notify",
-                    filter = {},
-                    opts = { title = "LVIM IDE" },
+                    filter = { error = true },
+                    opts = {
+                        title = "ERROR",
+                    },
+                },
+                {
+                    view = "notify",
+                    filter = { warning = true },
+                    opts = {
+                        title = "WARNING",
+                    },
+                },
+                {
+                    view = "notify",
+                    filter = { event = "notify" },
+                    opts = {
+                        title = "LVIM IDE",
+                    },
+                },
+                {
+                    view = "notify",
+                    filter = {
+                        event = "noice",
+                        kind = { "stats", "debug" },
+                    },
+                    opts = {
+                        buf_options = { filetype = "lua" },
+                        replace = true,
+                        title = "LVIM IDE",
+                    },
+                },
+                {
+                    view = "mini",
+                    filter = { event = "lsp", kind = "progress" },
+                },
+                {
+                    view = "notify",
+                    opts = {},
+                    filter = { event = "lsp", kind = "message" },
                 },
             },
+            status = {},
+            format = {},
         })
-        vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
-            pattern = { "noice" },
-            callback = function()
-                vim.opt_local.wrap = false
-            end,
-            group = "LvimIDE",
-        })
+        vim.keymap.set({ "n", "i" }, "<C-d>", function()
+            if not require("noice.lsp").scroll(4) then
+                return "<C-d>"
+            end
+        end, { silent = true, expr = true, desc = "Scroll Down" })
+        vim.keymap.set({ "n", "i" }, "<C-u>", function()
+            if not require("noice.lsp").scroll(-4) then
+                return "<C-u>"
+            end
+        end, { silent = true, expr = true, desc = "Scroll Up" })
     end
     #+end_src
 
@@ -547,6 +670,67 @@
     end
     #+end_src
 
+**   [[https://github.com/s1n7ax/nvim-window-picker][nvim-window-picker]]
+
+    + INIT
+
+    #+begin_src lua
+    modules["s1n7ax/nvim-window-picker"] = {
+        commit = funcs.get_commit("nvim-window-picker", plugins_snapshot),
+        config = ui_config.nvim_window_picker,
+    }
+    #+end_src
+
+    + CONFIG
+
+    #+begin_src lua
+    function config.nvim_window_picker()
+        local window_picker_status_ok, window_picker = pcall(require, "window-picker")
+        if not window_picker_status_ok then
+            return
+        end
+        local function focus_window()
+            local picked_window_id = window_picker.pick_window() or vim.api.nvim_get_current_win()
+            vim.api.nvim_set_current_win(picked_window_id)
+        end
+        local filters = window_picker.filter_windows
+        local function special_autoselect(windows)
+            windows = filters(windows)
+            if windows == nil then
+                windows = {}
+            end
+            if #windows > 1 then
+                return windows
+            end
+            local curr_win = vim.api.nvim_get_current_win()
+            for index, window in ipairs(windows) do
+                if window == curr_win then
+                    table.remove(windows, index)
+                end
+            end
+            return windows
+        end
+        window_picker.setup({
+            autoselect_one = false,
+            include_current_win = true,
+            filter_func = special_autoselect,
+            filter_rules = {
+                bo = {
+                    filetype = {},
+                    buftype = {},
+                },
+            },
+            fg_color = _G.LVIM_COLORS.bg,
+            current_win_hl_color = _G.LVIM_COLORS.bg,
+            other_win_hl_color = _G.LVIM_COLORS.color_01,
+        })
+        vim.api.nvim_create_user_command("WindowPicker", focus_window, {})
+        vim.keymap.set("n", "gw", function()
+            vim.cmd("WindowPicker")
+        end, { noremap = true, silent = true, desc = "WindowPicker" })
+    end
+    #+end_src
+
 **   [[https://github.com/nvim-neo-tree/neo-tree.nvim][neo-tree.nvim]]
 
     + REQUIRES:
@@ -558,7 +742,6 @@
 
     #+begin_src lua
     modules["nvim-neo-tree/neo-tree.nvim"] = {
-        branch = "v2.x",
         commit = funcs.get_commit("neo-tree.nvim", plugins_snapshot),
         requires = {
             "nvim-lua/plenary.nvim",
@@ -646,6 +829,21 @@
                 use_libuv_file_watcher = true,
             },
         })
+        vim.keymap.set("n", "<S-x>", function()
+            vim.cmd("Neotree filesystem left")
+        end, { noremap = true, silent = true, desc = "Neotree filesystem" })
+        vim.keymap.set("n", "<S-b>", function()
+            vim.cmd("Neotree buffers left")
+        end, { noremap = true, silent = true, desc = "Neotree buffers" })
+        vim.keymap.set("n", "<S-t>", function()
+            vim.cmd("Neotree git_status left")
+        end, { noremap = true, silent = true, desc = "Neotree git_status" })
+        vim.keymap.set("n", "<S-l>", function()
+            vim.cmd("Neotree diagnostics left")
+        end, { noremap = true, silent = true, desc = "Neotree diagnostics" })
+        vim.keymap.set("n", "<A-e>", function()
+            vim.cmd("Neotree diagnostics reveal bottom")
+        end, { noremap = true, silent = true, desc = "Neotree diagnostics bottom" })
     end
     #+end_src
 
@@ -1624,6 +1822,9 @@
                 vifm_cmd = "vifmrun",
             },
         })
+        vim.keymap.set("n", "<C-c>f", function()
+            vim.cmd("Vifm")
+        end, { noremap = true, silent = true, desc = "Vifm" })
     end
     #+end_src
 
@@ -1633,14 +1834,7 @@
 
     #+begin_src lua
     modules["akinsho/toggleterm.nvim"] = {
-        tag = "v2.*",
         commit = funcs.get_commit("toggleterm.nvim", plugins_snapshot),
-        cmd = {
-            "TTFloat",
-            "TTOne",
-            "TTTwo",
-            "TTThree",
-        },
         config = ui_config.toggleterm_nvim,
     }
     #+end_src
@@ -1653,36 +1847,6 @@
         if not toggleterm_terminal_status_ok then
             return
         end
-        local terminal_float = toggleterm_terminal.Terminal:new({
-            count = 4,
-            direction = "float",
-            float_opts = {
-                border = "single",
-                winblend = 0,
-                width = vim.o.columns - 20,
-                height = vim.o.lines - 9,
-                highlights = {
-                    border = "FloatBorder",
-                    background = "NormalFloat",
-                },
-            },
-            on_open = function(term)
-                vim.api.nvim_buf_set_keymap(term.bufnr, "n", "<Esc>", "<cmd>close<cr>", { noremap = true, silent = true })
-                vim.api.nvim_buf_set_keymap(
-                    term.bufnr,
-                    "t",
-                    "<Esc>",
-                    "<c-\\><c-n><cmd>close<cr><c-w><c-p>",
-                    { noremap = true }
-                )
-                vim.wo.cursorcolumn = false
-                vim.wo.cursorline = false
-                vim.cmd("startinsert!")
-            end,
-            on_close = function()
-                vim.cmd("quit!")
-            end,
-        })
         local terminal_one = toggleterm_terminal.Terminal:new({
             count = 1,
             direction = "horizontal",
@@ -1749,22 +1913,60 @@
                 vim.cmd("quit!")
             end,
         })
-        function _G.toggleterm_float_toggle()
-            terminal_float:toggle()
-        end
-        function _G.toggleterm_one_toggle()
+        local terminal_float = toggleterm_terminal.Terminal:new({
+            count = 4,
+            direction = "float",
+            float_opts = {
+                border = { " ", " ", " ", " ", " ", " ", " ", " " },
+                winblend = 0,
+                width = vim.o.columns - 20,
+                height = vim.o.lines - 9,
+                highlights = {
+                    border = "FloatBorder",
+                    background = "NormalFloat",
+                },
+            },
+            on_open = function(term)
+                vim.api.nvim_buf_set_keymap(term.bufnr, "n", "<Esc>", "<cmd>close<cr>", { noremap = true, silent = true })
+                vim.api.nvim_buf_set_keymap(
+                    term.bufnr,
+                    "t",
+                    "<Esc>",
+                    "<c-\\><c-n><cmd>close<cr><c-w><c-p>",
+                    { noremap = true }
+                )
+                vim.wo.cursorcolumn = false
+                vim.wo.cursorline = false
+                vim.cmd("startinsert!")
+            end,
+            on_close = function()
+                vim.cmd("quit!")
+            end,
+        })
+        vim.api.nvim_create_user_command("TermOne", function()
             terminal_one:toggle()
-        end
-        function _G.toggleterm_two_toggle()
+        end, {})
+        vim.api.nvim_create_user_command("TermTwo", function()
             terminal_two:toggle()
-        end
-        function _G.toggleterm_three_toggle()
+        end, {})
+        vim.api.nvim_create_user_command("TermThree", function()
             terminal_three:toggle()
-        end
-        vim.api.nvim_create_user_command("TTFloat", "lua _G.toggleterm_float_toggle()", {})
-        vim.api.nvim_create_user_command("TTOne", "lua _G.toggleterm_one_toggle()", {})
-        vim.api.nvim_create_user_command("TTTwo", "lua _G.toggleterm_two_toggle()", {})
-        vim.api.nvim_create_user_command("TTThree", "lua _G.toggleterm_three_toggle()", {})
+        end, {})
+        vim.api.nvim_create_user_command("TermFloat", function()
+            terminal_float:toggle()
+        end, {})
+        vim.keymap.set("n", "<F1>", function()
+            terminal_one:toggle()
+        end, { noremap = true, silent = true, desc = "Terminal One" })
+        vim.keymap.set("n", "<F2>", function()
+            terminal_two:toggle()
+        end, { noremap = true, silent = true, desc = "Terminal Two" })
+        vim.keymap.set("n", "<F3>", function()
+            terminal_three:toggle()
+        end, { noremap = true, silent = true, desc = "Terminal Three" })
+        vim.keymap.set("n", "<F4>", function()
+            terminal_float:toggle()
+        end, { noremap = true, silent = true, desc = "Terminal Float" })
     end
     #+end_src
 
@@ -1834,8 +2036,10 @@
     #+begin_src lua
     modules["nyngwang/NeoZoom.lua"] = {
         commit = funcs.get_commit("NeoZoom.lua", plugins_snapshot),
+        event = {
+            "BufRead",
+        },
         config = ui_config.neozoom_lua,
-        cmd = "NeoZoomToggle",
     }
     #+end_src
 
@@ -1847,10 +2051,15 @@
         if not neo_zoom_status_ok then
             return
         end
-        neo_zoom.setup({})
-        vim.keymap.set("n", "<C-z>", function()
-            vim.cmd("NeoZoomToggle")
-        end, NOREF_NOERR_TRUNC)
+        neo_zoom.setup({
+            left_ratio = 0,
+            top_ratio = 0,
+            width_ratio = 0.6,
+            height_ratio = 1,
+            border = "none",
+            scrolloff_on_zoom = 0,
+        })
+        vim.keymap.set("n", "<C-space>", require("neo-zoom").neo_zoom, { silent = true, nowait = true, desc = "NeoZoom" })
     end
     #+end_src
 
@@ -1948,6 +2157,20 @@
                 "nofile",
             },
         })
+        vim.keymap.set("n", "zo", "zo:IndentBlanklineRefresh<CR>", { noremap = true, silent = true })
+        vim.keymap.set("n", "zO", "zO:IndentBlanklineRefresh<CR>", { noremap = true, silent = true })
+        vim.keymap.set("n", "zc", "zc:IndentBlanklineRefresh<CR>", { noremap = true, silent = true })
+        vim.keymap.set("n", "zC", "zC:IndentBlanklineRefresh<CR>", { noremap = true, silent = true })
+        vim.keymap.set("n", "za", "za:IndentBlanklineRefresh<CR>", { noremap = true, silent = true })
+        vim.keymap.set("n", "zA", "zA:IndentBlanklineRefresh<CR>", { noremap = true, silent = true })
+        vim.keymap.set("n", "zv", "zv:IndentBlanklineRefresh<CR>", { noremap = true, silent = true })
+        vim.keymap.set("n", "zV", "zV:IndentBlanklineRefresh<CR>", { noremap = true, silent = true })
+        vim.keymap.set("n", "zx", "zx:IndentBlanklineRefresh<CR>", { noremap = true, silent = true })
+        vim.keymap.set("n", "zX", "zX:IndentBlanklineRefresh<CR>", { noremap = true, silent = true })
+        vim.keymap.set("n", "zm", "zm:IndentBlanklineRefresh<CR>", { noremap = true, silent = true })
+        vim.keymap.set("n", "zM", "zM:IndentBlanklineRefresh<CR>", { noremap = true, silent = true })
+        vim.keymap.set("n", "zr", "zr:IndentBlanklineRefresh<CR>", { noremap = true, silent = true })
+        vim.keymap.set("n", "zR", "zR:IndentBlanklineRefresh<CR>", { noremap = true, silent = true })
     end
     #+end_src
 
@@ -1967,7 +2190,11 @@
 
     #+begin_src lua
     function config.lvim_focus()
-        require("lvim-focus").setup({
+        local lvim_focus_status_ok, lvim_focus = pcall(require, "lvim-focus")
+        if not lvim_focus_status_ok then
+            return
+        end
+        lvim_focus.setup({
             colorcolumn = true,
             colorcolumn_value = "120",
         })
@@ -2019,5 +2246,8 @@
                 global.home .. "/.config/nvim/help/vim_cheat_sheet_diff.md",
             },
         })
+        vim.keymap.set("n", "<F11>", function()
+            vim.cmd("LvimHelper")
+        end, { noremap = true, silent = true, desc = "LvimHelper" })
     end
     #+end_src

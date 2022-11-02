@@ -1,13 +1,14 @@
 local config = {}
 
 function config.mason_nvim()
+    vim.api.nvim_create_user_command("LspHover", "lua vim.lsp.buf.hover()", {})
+    vim.api.nvim_create_user_command("LspRename", "lua vim.lsp.buf.rename()", {})
     vim.api.nvim_create_user_command("LspAddToWorkspaceFolder", "lua vim.lsp.buf.add_workspace_folder()", {})
     vim.api.nvim_create_user_command("LspListWorkspaceFolders", "lua vim.lsp.buf.list_workspace_folders()", {})
     vim.api.nvim_create_user_command("LspRemoveWorkspaceFolder", "lua vim.lsp.buf.remove_workspace_folder()", {})
     vim.api.nvim_create_user_command("LspWorkspaceSymbol", "lua vim.lsp.buf.workspace_symbol()", {})
     vim.api.nvim_create_user_command("LspDocumentSymbol", "lua vim.lsp.buf.document_symbol()", {})
     vim.api.nvim_create_user_command("LspCodeAction", "lua vim.lsp.buf.code_action()", {})
-    vim.api.nvim_create_user_command("LspRangeCodeAction", "lua vim.api.nvim_create_user_command()", {})
     vim.api.nvim_create_user_command("LspCodeLensRefresh", "lua vim.lsp.codelens.refresh()", {})
     vim.api.nvim_create_user_command("LspCodeLensRun", "lua vim.lsp.codelens.run()", {})
     vim.api.nvim_create_user_command("LspDeclaration", "lua vim.lsp.buf.declaration()", {})
@@ -19,7 +20,7 @@ function config.mason_nvim()
     vim.api.nvim_create_user_command("LspImplementation", "lua vim.lsp.buf.implementation()", {})
     vim.api.nvim_create_user_command("LspIncomingCalls", "lua vim.lsp.buf.incoming_calls()", {})
     vim.api.nvim_create_user_command("LspOutgoingCalls", "lua vim.lsp.buf.outgoing_calls()", {})
-    vim.api.nvim_create_user_command("LspFormatting", "lua vim.lsp.buf.format {async = true}", {})
+    vim.api.nvim_create_user_command("LspFormat", "lua vim.lsp.buf.format {async = true}", {})
     vim.api.nvim_create_user_command("LspRename", "lua vim.lsp.buf.rename()", {})
     vim.api.nvim_create_user_command("LspSignatureHelp", "lua vim.lsp.buf.signature_help()", {})
     vim.api.nvim_create_user_command(
@@ -37,6 +38,51 @@ function config.mason_nvim()
         "lua require('languages.base.utils.show_diagnostic').goto_prev()",
         {}
     )
+    vim.keymap.set("n", "gd", function()
+        vim.lsp.buf.definition()
+    end, { noremap = true, silent = true, desc = "LspDefinition" })
+    vim.keymap.set("n", "gt", function()
+        vim.lsp.buf.type_definition()
+    end, { noremap = true, silent = true, desc = "LspTypeDefinition" })
+    vim.keymap.set("n", "gr", function()
+        vim.lsp.buf.references()
+    end, { noremap = true, silent = true, desc = "LspReferences" })
+    vim.keymap.set("n", "gi", function()
+        vim.lsp.buf.implementation()
+    end, { noremap = true, silent = true, desc = "LspImplementation" })
+    vim.keymap.set("n", "ge", function()
+        vim.lsp.buf.rename()
+    end, { noremap = true, silent = true, desc = "LspRename" })
+    vim.keymap.set("n", "gf", function()
+        vim.lsp.buf.format({ async = true })
+    end, { noremap = true, silent = true, desc = "LspFormat" })
+    vim.keymap.set("n", "ga", function()
+        vim.lsp.buf.code_action()
+    end, { noremap = true, silent = true, desc = "LspCodeAction" })
+    vim.keymap.set("n", "gs", function()
+        vim.lsp.buf.signature_help()
+    end, { noremap = true, silent = true, desc = "LspSignatureHelp" })
+    vim.keymap.set("n", "gL", function()
+        vim.lsp.codelens.refresh()
+    end, { noremap = true, silent = true, desc = "LspCodeLensRefresh" })
+    vim.keymap.set("n", "gl", function()
+        vim.lsp.codelens.run()
+    end, { noremap = true, silent = true, desc = "LspCodeLensRun" })
+    vim.keymap.set("n", "gh", function()
+        vim.lsp.buf.hover()
+    end, { noremap = true, silent = true, desc = "LspHover" })
+    vim.keymap.set("n", "K", function()
+        vim.lsp.buf.hover()
+    end, { noremap = true, silent = true, desc = "LspHover" })
+    vim.keymap.set("n", "dc", function()
+        vim.cmd("LspShowDiagnosticCurrent")
+    end, { noremap = true, silent = true, desc = "LspShowDiagnosticCurrent" })
+    vim.keymap.set("n", "dn", function()
+        vim.cmd("LspShowDiagnosticNext")
+    end, { noremap = true, silent = true, desc = "LspShowDiagnosticNext" })
+    vim.keymap.set("n", "dp", function()
+        vim.cmd("LspShowDiagnosticPrev")
+    end, { noremap = true, silent = true, desc = "LspShowDiagnosticPrev" })
     local mason_status_ok, mason = pcall(require, "mason")
     if not mason_status_ok then
         return
@@ -70,6 +116,17 @@ function config.null_ls_nvim()
             end
         end,
     })
+end
+
+function config.inc_rename_nvim()
+    local inc_rename_status_ok, inc_rename = pcall(require, "inc_rename")
+    if not inc_rename_status_ok then
+        return
+    end
+    inc_rename.setup()
+    vim.keymap.set("n", "gE", function()
+        return ":IncRename " .. vim.fn.expand("<cword>")
+    end, { expr = true, desc = "IncRename" })
 end
 
 function config.goto_preview()
@@ -121,23 +178,21 @@ function config.goto_preview()
         {}
     )
     vim.api.nvim_create_user_command("LspPreviewCloseAll", "lua require('goto-preview').close_all_win()", {})
-end
-
-function config.hover_nvim()
-    local hover_status_ok, hover = pcall(require, "hover")
-    if not hover_status_ok then
-        return
-    end
-    hover.setup({
-        init = function()
-            require("hover.providers.lsp")
-        end,
-        preview_opts = {
-            border = nil,
-        },
-        title = false,
-    })
-    vim.api.nvim_create_user_command("LspHover", "lua require('hover').hover()", {})
+    vim.keymap.set("n", "gpd", function()
+        goto_preview.goto_preview_definition()
+    end, { noremap = true, silent = true, desc = "LspPreviewDefinition" })
+    vim.keymap.set("n", "gpt", function()
+        goto_preview.goto_preview_type_definition()
+    end, { noremap = true, silent = true, desc = "LspPreviewTypeDefinition" })
+    vim.keymap.set("n", "gpr", function()
+        goto_preview.goto_preview_references()
+    end, { noremap = true, silent = true, desc = "LspPreviewReferences" })
+    vim.keymap.set("n", "gpi", function()
+        goto_preview.goto_preview_implementation()
+    end, { noremap = true, silent = true, desc = "LspPreviewImplementation" })
+    vim.keymap.set("n", "gpp", function()
+        goto_preview.close_all_win()
+    end, { noremap = true, silent = true, desc = "LspPreviewCloseAll" })
 end
 
 function config.neodev_nvim()
@@ -291,6 +346,8 @@ end
 function config.any_jump_nvim()
     vim.g.any_jump_disable_default_keybindings = 1
     vim.g.any_jump_list_numbers = 1
+    vim.keymap.set("n", "<A-u>", ":AnyJump<CR>", { noremap = true, silent = true, desc = "AnyJump" })
+    vim.keymap.set("v", "<A-u>", ":AnyJumpVisual<CR>", { noremap = true, silent = true, desc = "AnyJumpVisual" })
 end
 
 function config.symbols_outline_nvim()
@@ -304,6 +361,9 @@ function config.symbols_outline_nvim()
         highlight_hovered_item = true,
         show_guides = true,
     })
+    vim.keymap.set("n", "<A-v>", function()
+        vim.cmd("SymbolsOutline")
+    end, { noremap = true, silent = true, desc = "SymbolsOutline" })
 end
 
 function config.nvim_dap_ui()
@@ -391,7 +451,7 @@ function config.nvim_dap_ui()
     })
     vim.api.nvim_create_user_command("LuaDapLaunch", 'lua require"osv".run_this()', {})
     vim.api.nvim_create_user_command("DapToggleBreakpoint", 'lua require("dap").toggle_breakpoint()', {})
-    vim.api.nvim_create_user_command("DapStartContinue", 'lua require"dap".continue()', {})
+    vim.api.nvim_create_user_command("DapContinue", 'lua require"dap".continue()', {})
     vim.api.nvim_create_user_command("DapStepInto", 'lua require"dap".step_into()', {})
     vim.api.nvim_create_user_command("DapStepOver", 'lua require"dap".step_over()', {})
     vim.api.nvim_create_user_command("DapStepOut", 'lua require"dap".step_out()', {})
@@ -415,6 +475,38 @@ function config.nvim_dap_ui()
         {}
     )
     vim.api.nvim_create_user_command("DapEval", 'lua require"dapui".eval(vim.fn.input "[DAP] Expression > ")', {})
+    vim.keymap.set("n", "<A-1>", function()
+        dap.toggle_breakpoint()
+    end, { noremap = true, silent = true, desc = "DapToggleBreakpoint" })
+    vim.keymap.set("n", "<A-2>", function()
+        dap.continue()
+    end, { noremap = true, silent = true, desc = "DapContinue" })
+    vim.keymap.set("n", "<A-3>", function()
+        dap.step_into()
+    end, { noremap = true, silent = true, desc = "DapStepInto" })
+    vim.keymap.set("n", "<A-4>", function()
+        dap.step_over()
+    end, { noremap = true, silent = true, desc = "DapStepOver" })
+    vim.keymap.set("n", "<A-5>", function()
+        dap.step_out()
+    end, { noremap = true, silent = true, desc = "DapStepOut" })
+    vim.keymap.set("n", "<A-6>", function()
+        dap.up()
+    end, { noremap = true, silent = true, desc = "DapUp" })
+    vim.keymap.set("n", "<A-7>", function()
+        dap.down()
+    end, { noremap = true, silent = true, desc = "DapDown" })
+    vim.keymap.set("n", "<A-8>", function()
+        dap.close()
+        dap.disconnect()
+        dapui.close()
+    end, { noremap = true, silent = true, desc = "DapUIClose" })
+    vim.keymap.set("n", "<A-9>", function()
+        dap.restart()
+    end, { noremap = true, silent = true, desc = "DapRestart" })
+    vim.keymap.set("n", "<A-0>", function()
+        dap.repl.toggle()
+    end, { noremap = true, silent = true, desc = "DapToggleRepl" })
 end
 
 function config.nvim_dap_vscode_js()
@@ -436,22 +528,6 @@ function config.vim_dadbod_ui()
     vim.g.db_ui_win_position = "left"
     vim.g.db_ui_use_nerd_fonts = 1
     vim.g.db_ui_winwidth = 35
-    vim.api.nvim_set_keymap("n", "<leader>Du", ":DBUIToggle<CR>", {
-        noremap = true,
-        silent = true,
-    })
-    vim.api.nvim_set_keymap("n", "<leader>Df", ":DBUIFindBuffer<CR>", {
-        noremap = true,
-        silent = true,
-    })
-    vim.api.nvim_set_keymap("n", "<leader>Dr", ":DBUIRenameBuffer<CR>", {
-        noremap = true,
-        silent = true,
-    })
-    vim.api.nvim_set_keymap("n", "<leader>Dl", ":DBUILastQueryInfo<CR>", {
-        noremap = true,
-        silent = true,
-    })
     vim.g.db_ui_auto_execute_table_helpers = true
 end
 
@@ -499,6 +575,12 @@ function config.pubspec_assist_nvim()
     pubspec_assist.setup({})
 end
 
+function config.nvim_markdown_preview()
+    vim.keymap.set("n", "<S-m>", function()
+        vim.cmd("MarkdownPreview")
+    end, { noremap = true, silent = true, desc = "MarkdownPreview" })
+end
+
 function config.vimtex()
     vim.g.vimtex_view_method = "zathura"
     vim.g.latex_view_general_viewer = "zathura"
@@ -520,6 +602,9 @@ function config.orgmode()
         org_agenda_files = { "$HOME/Org/**/*" },
         org_default_notes_file = "$HOME/Org/refile.org",
     })
+    vim.keymap.set("n", "to", function()
+        vim.cmd("e ~/Org/notes/notes.org")
+    end, { noremap = true, silent = true, desc = "Open org notes" })
 end
 
 function config.lvim_org_utils()

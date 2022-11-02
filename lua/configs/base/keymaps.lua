@@ -1,14 +1,7 @@
 local keymaps = {}
 
 keymaps["normal"] = {
-    { "<space><space>", ":CtrlSpace<CR>" }, -- CtrlSpace
-    { "<F1>", ":TTOne<CR>" }, -- Toggleterm one open
-    { "<F2>", ":TTTwo<CR>" }, -- Toggleterm two open
-    { "<F3>", ":TTThree<CR>" }, -- Toggleterm three open
-    { "<F4>", ":TTFloat<CR>" }, -- Toggleterm float open
-    { "<F5>", ":UndotreeToggle<CR>" }, -- UndoTree toggle
-    { "<F11>", ":LvimHelper<CR>" }, -- LvimHelper
-    { "<Esc>", "<Esc>:noh<CR>:SnipClose<CR>" }, -- Remove highlight after search
+    { "<Esc>", "<Esc>:noh<CR>" }, -- Remove highlight after search
     { "<C-c>n", ":enew<CR>" }, -- Create empty buffer
     { "<C-c>s", ":w<CR>" }, -- Save
     { "<C-c>a", ":wa<CR>" }, -- Save all
@@ -16,13 +9,6 @@ keymaps["normal"] = {
     { "<C-c>x", "<C-w>c" }, -- Close current window
     { "<C-c>o", "<C-w>o" }, -- Close other windows
     { "<C-c>d", ":bdelete<CR>" }, -- BDelete
-    { "<C-c>p", ":PickColor<CR>" }, -- Pick color
-    { "<C-c>P", ":PickColorInsert<CR>" }, -- Pick color insert
-    { "<C-n>", ":BufSurfForward<CR>" }, -- Next buffer
-    { "<C-p>", ":BufSurfBack<CR>" }, -- Previews buffer
-    { "<C-c>b", ":GitBlameToggle<CR>" }, -- Git blame toggle
-    { "<C-c>z", ":NeoZoomToggle<CR>" }, -- NeoZoom toggle
-    { "<C-c>f", ":Vifm<CR>" }, -- Vifm file explorer
     { "<C-h>", "<C-w>h" }, -- Move to window left
     { "<C-l>", "<C-w>l" }, -- Move to window right
     { "<C-j>", "<C-w>j" }, -- Move to window down
@@ -112,8 +98,6 @@ keymaps["normal"] = {
 keymaps["visual"] = {
     { "*", "<Esc>/\\%V" }, -- Visual search /
     { "#", "<Esc>?\\%V" }, -- Visual search ?
-    { "<A-u>", ":AnyJumpVisual<CR>" }, -- Any jump visual
-    { "sR", ":SnipRun<CR>" }, -- Snip run
 }
 
 return keymaps
