@@ -8,7 +8,7 @@
 
   * Debug support for c, cpp, dart, elixir, go, haskell, java, javascript/typescript, lua, php, python, ruby, rust
 
-  Current version - 2.5.02 (2022-11-11)
+  Current version - 2.5.12 (2022-11-13)
 
   121 plugins
 
@@ -47,6 +47,8 @@
   [[./LVIM/media/lvim-ide-screenshot_16.png]]
 
   [[./LVIM/media/lvim-ide-screenshot_17.png]]
+
+  [[./LVIM/media/lvim-ide-screenshot_18.png]]
 
 **  INTRODUCTION
 
@@ -93,9 +95,15 @@
     end
     #+end_src
 
-**  LVIM THEMES - Dark (default) and Light
+**  LVIM THEMES - Dark (default), DarkSoft and Light
 
-    + Command for choice theme: LvimTheme
+    + Command for choice theme:
+
+    #+begin_src bash
+
+    :LvimTheme
+
+    #+end_src
 
 **  SNAPSHOTS 
 

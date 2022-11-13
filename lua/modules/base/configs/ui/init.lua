@@ -781,7 +781,7 @@ config.nvim_window_picker = function()
         },
         fg_color = _G.LVIM_THEME.colors[_G.LVIM_THEME.theme].bg,
         current_win_hl_color = _G.LVIM_THEME.colors[_G.LVIM_THEME.theme].bg,
-        other_win_hl_color = _G.LVIM_THEME.colors[_G.LVIM_THEME.theme].bg_01,
+        other_win_hl_color = _G.LVIM_THEME.colors[_G.LVIM_THEME.theme].green_01,
     })
     vim.api.nvim_create_user_command("WindowPicker", focus_window, {})
     vim.keymap.set("n", "gw", function()
@@ -1218,15 +1218,15 @@ config.heirline_nvim = function()
                 i = theme_colors.red_02,
                 v = theme_colors.orange_02,
                 V = theme_colors.orange_02,
-                ["\22"] = theme_colors.orange_02_02,
+                ["\22"] = theme_colors.orange_02,
                 c = theme_colors.teal_01,
                 s = theme_colors.teal_01,
                 S = theme_colors.teal_01,
                 ["\19"] = theme_colors.teal_01,
-                R = theme_colors.cyan_02,
-                r = theme_colors.cyan_02,
-                ["!"] = theme_colors.cyan_02,
-                t = theme_colors.green_02,
+                R = theme_colors.cyan_01,
+                r = theme_colors.cyan_01,
+                ["!"] = theme_colors.cyan_01,
+                t = theme_colors.blue_01,
             },
         },
         provider = function(self)
@@ -1238,6 +1238,9 @@ config.heirline_nvim = function()
         end,
         update = {
             "ModeChanged",
+            "MenuPopup",
+            "CmdlineEnter",
+            "CmdlineLeave",
         },
     }
     local file_name_block = {
@@ -1256,7 +1259,7 @@ config.heirline_nvim = function()
             local trail = cwd:sub(-1) == "/" and "" or "/"
             return icon .. cwd .. trail
         end,
-        hl = { fg = theme_colors.blue_01, bold = true },
+        hl = { fg = theme_colors.fg_05, bold = true },
         on_click = {
             callback = function()
                 vim.cmd("Neotree position=left")
@@ -1301,24 +1304,6 @@ config.heirline_nvim = function()
             }
         end,
     }
-    local file_flags = {
-        {
-            provider = function()
-                if vim.bo.modified then
-                    return " "
-                end
-            end,
-            hl = { fg = theme_colors.red_01 },
-        },
-        {
-            provider = function()
-                if not vim.bo.modifiable or vim.bo.readonly then
-                    return "  "
-                end
-            end,
-            hl = { fg = theme_colors.blue_01 },
-        },
-    }
     local file_size = {
         provider = function()
             local fsize = vim.fn.getfsize(vim.api.nvim_buf_get_name(0))
@@ -1327,9 +1312,27 @@ config.heirline_nvim = function()
                 return
             end
             local file_size = require("core.funcs").file_size(fsize)
-            return "  " .. file_size
+            return " " .. file_size
         end,
         hl = { fg = theme_colors.blue_01 },
+    }
+    local file_flags = {
+        {
+            provider = function()
+                if vim.bo.modified then
+                    return "  "
+                end
+            end,
+            hl = { fg = theme_colors.red_01 },
+        },
+        {
+            provider = function()
+                if not vim.bo.modifiable or vim.bo.readonly then
+                    return "  "
+                end
+            end,
+            hl = { fg = theme_colors.red_01 },
+        },
     }
     file_name_block = heirline_utils.insert(
         file_name_block,
@@ -1351,11 +1354,8 @@ config.heirline_nvim = function()
         end,
         hl = { fg = theme_colors.orange_02 },
         {
-            provider = "  ",
-        },
-        {
             provider = function(self)
-                return " " .. self.status_dict.head .. " "
+                return "   " .. self.status_dict.head .. " "
             end,
             hl = { bold = true },
         },
@@ -1431,7 +1431,7 @@ config.heirline_nvim = function()
             provider = function(self)
                 return self.hints > 0 and (self.hint_icon .. self.hints .. " ")
             end,
-            hl = { fg = theme_colors.blue_01 },
+            hl = { fg = theme_colors.fg_05 },
         },
         on_click = {
             callback = function()
@@ -1492,19 +1492,11 @@ config.heirline_nvim = function()
         end,
         hl = { fg = theme_colors.green_01, bold = true },
     }
-    local is_lsp_active = {
-        condition = heirline_conditions.lsp_attached,
-        update = { "LspAttach", "LspDetach" },
-        provider = function()
-            return "  "
-        end,
-        hl = { fg = theme_colors.orange_02, bold = true },
-    }
     local file_type = {
         provider = function()
             local filetype = vim.bo.filetype
             if filetype ~= "" then
-                return string.upper(filetype)
+                return "  " .. string.upper(filetype)
             end
         end,
         hl = { fg = theme_colors.orange_02, bold = true },
@@ -1516,28 +1508,40 @@ config.heirline_nvim = function()
                 return " " .. enc:upper()
             end
         end,
-        hl = { fg = theme_colors.teal_01, bold = true },
+        hl = { fg = theme_colors.orange_02, bold = true },
     }
     local file_format = {
         provider = function()
             local format = vim.bo.fileformat
             if format ~= "" then
                 local symbols = {
-                    unix = " ",
-                    dos = " ",
-                    mac = " ",
+                    unix = "  ",
+                    dos = "  ",
+                    mac = "  ",
                 }
                 return symbols[format]
             end
         end,
-        hl = { fg = theme_colors.teal_01, bold = true },
+        hl = { fg = theme_colors.orange_02, bold = true },
     }
     local spell = {
         condition = require("lvim-linguistics.status").spell_has,
         provider = function()
             local status = require("lvim-linguistics.status").spell_get()
-            return "  SPELL: " .. status
+            return " SPELL: " .. status
         end,
+        hl = { fg = theme_colors.green_02, bold = true },
+    }
+    local statistic = {
+        provider = function()
+            local words = vim.fn.wordcount().words
+            local chars = vim.fn.wordcount().chars
+            return " " .. words .. " W | " .. chars .. " Ch"
+        end,
+        hl = { fg = theme_colors.fg_05, bold = true },
+    }
+    local ruler = {
+        provider = "  %7(%l (%3L%)) | %2c %P",
         hl = { fg = theme_colors.red_02, bold = true },
     }
     local scroll_bar = {
@@ -1680,11 +1684,12 @@ config.heirline_nvim = function()
             diagnostics,
             -- lsp_progress,
             lsp_active,
-            is_lsp_active,
             file_type,
             file_encoding,
             file_format,
             spell,
+            statistic,
+            ruler,
             scroll_bar,
         },
     }
