@@ -56,20 +56,20 @@ modules["lvim-tech/lvim-ui-config"] = {
     },
 }
 
-modules["folke/noice.nvim"] = {
-    commit = funcs.get_commit("noice.nvim", plugins_snapshot),
-    requires = {
-        {
-            "MunifTanjim/nui.nvim",
-            commit = funcs.get_commit("nui.nvim", plugins_snapshot),
-        },
-        {
-            "rcarriga/nvim-notify",
-            commit = funcs.get_commit("nvim-notify", plugins_snapshot),
-        },
-    },
-    config = ui_config.noice_nvim,
-}
+-- modules["folke/noice.nvim"] = {
+--     commit = funcs.get_commit("noice.nvim", plugins_snapshot),
+--     requires = {
+--         {
+--             "MunifTanjim/nui.nvim",
+--             commit = funcs.get_commit("nui.nvim", plugins_snapshot),
+--         },
+--         {
+--             "rcarriga/nvim-notify",
+--             commit = funcs.get_commit("nvim-notify", plugins_snapshot),
+--         },
+--     },
+--     config = ui_config.noice_nvim,
+-- }
 
 modules["goolord/alpha-nvim"] = {
     commit = funcs.get_commit("alpha-nvim", plugins_snapshot),
@@ -602,6 +602,14 @@ modules["nvim-neotest/neotest"] = {
             "sidlatau/neotest-dart",
             commit = funcs.get_commit("neotest-dart", plugins_snapshot),
         },
+        {
+            "nvim-neotest/vim-test",
+            requires = {
+                { "vim-test/vim-test" },
+            },
+        },
+        { "haydenmeade/neotest-jest" },
+        { "" },
     },
     config = languages_config.neotest,
 }

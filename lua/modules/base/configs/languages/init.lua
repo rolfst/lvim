@@ -53,9 +53,6 @@ config.mason_nvim = function()
     vim.keymap.set("n", "ge", function()
         vim.lsp.buf.rename()
     end, { noremap = true, silent = true, desc = "LspRename" })
-    vim.keymap.set("n", "gf", function()
-        vim.lsp.buf.format({ async = true })
-    end, { noremap = true, silent = true, desc = "LspFormat" })
     vim.keymap.set("n", "ga", function()
         vim.lsp.buf.code_action()
     end, { noremap = true, silent = true, desc = "LspCodeAction" })
@@ -146,9 +143,13 @@ config.neotest = function()
             }),
             require("neotest-haskell"),
             require("neotest-elixir"),
-            require("neotest-dart")({
-                command = "flutter",
-                use_lsp = true,
+            -- require("neotest-dart")({
+            --     command = "flutter",
+            --     use_lsp = true,
+            -- }),
+            require("neotest-go"),
+            require("neotest-vim-test")({
+                allow_file_types = { "javascript", "typescript" },
             }),
         },
     })

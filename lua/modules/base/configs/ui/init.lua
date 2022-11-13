@@ -240,429 +240,429 @@ config.nvim_notify = function()
     vim.notify = notify
 end
 
-config.noice_nvim = function()
-    local noice_status_ok, noice = pcall(require, "noice")
-    if not noice_status_ok then
-        return
-    end
-    noice.setup({
-        cmdline = {
-            enabled = true,
-            view = "cmdline_popup",
-            opts = { buf_options = { filetype = "vim" } },
-            format = {
-                cmdline = { pattern = "^:", icon = "", lang = "vim" },
-                search_down = { kind = "search", pattern = "^/", icon = " ", lang = "regex" },
-                search_up = { kind = "search", pattern = "^%?", icon = " ", lang = "regex" },
-                filter = { pattern = "^:%s*!", icon = "$", lang = "bash" },
-                lua = { pattern = "^:%s*lua%s+", icon = "", lang = "lua" },
-                help = { pattern = "^:%s*h%s+", icon = "" },
-                input = {},
-            },
-        },
-        messages = {
-            enabled = true,
-            view = "notify",
-            view_error = "notify",
-            view_warn = "notify",
-            view_history = "split",
-            view_search = false,
-        },
-        popupmenu = {
-            enabled = true,
-            backend = "nui",
-            kind_icons = {},
-        },
-        commands = {
-            history = {
-                view = "split",
-                opts = { enter = true, format = "details" },
-                filter = { event = { "msg_show", "notify" }, ["not"] = { kind = { "search_count", "echo" } } },
-            },
-            last = {
-                view = "popup",
-                opts = { enter = true, format = "details" },
-                filter = { event = { "msg_show", "notify" }, ["not"] = { kind = { "search_count", "echo" } } },
-                filter_opts = { count = 1 },
-            },
-            errors = {
-                view = "popup",
-                opts = { enter = true, format = "details" },
-                filter = { error = true },
-                filter_opts = { reverse = true },
-            },
-        },
-        notify = {
-            enabled = false,
-            view = "notify",
-        },
-        lsp = {
-            progress = {
-                enabled = true,
-                format = "lsp_progress",
-                format_done = "lsp_progress_done",
-                throttle = 1000 / 30,
-                view = "mini",
-            },
-            override = {
-                ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-                ["vim.lsp.util.stylize_markdown"] = true,
-                ["cmp.entry.get_documentation"] = false,
-            },
-            hover = {
-                enabled = true,
-                view = nil,
-                opts = {},
-            },
-            signature = {
-                enabled = true,
-                auto_open = {
-                    enabled = true,
-                    trigger = true,
-                    luasnip = true,
-                    throttle = 50,
-                },
-                view = nil,
-                opts = {},
-            },
-            message = {
-                enabled = true,
-                view = "notify",
-                opts = {},
-            },
-            documentation = {
-                view = "hover",
-                opts = {
-                    lang = "markdown",
-                    replace = true,
-                    render = "plain",
-                    format = { "{message}" },
-                    win_options = { concealcursor = "n", conceallevel = 3 },
-                },
-            },
-        },
-        markdown = {
-            hover = {
-                ["|(%S-)|"] = vim.cmd.help,
-                ["%[.-%]%((%S-)%)"] = require("noice.util").open,
-            },
-            highlights = {
-                ["|%S-|"] = "@text.reference",
-                ["@%S+"] = "@parameter",
-                ["^%s*(Parameters:)"] = "@text.title",
-                ["^%s*(Return:)"] = "@text.title",
-                ["^%s*(See also:)"] = "@text.title",
-                ["{%S-}"] = "@parameter",
-            },
-        },
-        health = {
-            checker = true,
-        },
-        smart_move = {
-            enabled = true,
-            excluded_filetypes = { "cmp_menu", "cmp_docs", "notify" },
-        },
-        presets = {
-            bottom_search = false,
-            command_palette = false,
-            long_message_to_split = false,
-            inc_rename = true,
-            lsp_doc_border = false,
-        },
-        views = {
-            popupmenu = {
-                zindex = 65,
-                position = "auto",
-                size = {
-                    width = "auto",
-                },
-                win_options = {
-                    winhighlight = {
-                        Normal = "NoiceBody",
-                        FloatBorder = "NoiceBorder",
-                        CursorLine = "PmenuSel",
-                        PmenuMatch = "Special",
-                    },
-                },
-                border = {
-                    padding = { 0, 1 },
-                },
-            },
-            notify = {
-                backend = "notify",
-                replace = true,
-                format = "notify",
-            },
-            split = {
-                backend = "split",
-                enter = false,
-                relative = "editor",
-                position = "bottom",
-                size = "20%",
-                close = {
-                    keys = { "q", "<esc>" },
-                },
-                win_options = {
-                    winhighlight = { Normal = "NoiceBody", FloatBorder = "NoiceBorder" },
-                    wrap = true,
-                },
-            },
-            vsplit = {
-                backend = "split",
-                enter = false,
-                relative = "editor",
-                position = "right",
-                size = "20%",
-                close = {
-                    keys = { "q", "<esc>" },
-                },
-                win_options = {
-                    winhighlight = { Normal = "NoiceBody", FloatBorder = "NoiceBorder" },
-                },
-            },
-            popup = {
-                backend = "popup",
-                relative = "editor",
-                close = {
-                    events = { "BufLeave" },
-                    keys = { "q" },
-                },
-                enter = true,
-                border = {
-                    style = "rounded",
-                },
-                position = "50%",
-                size = {
-                    width = "120",
-                    height = "20",
-                },
-                win_options = {
-                    winhighlight = { Normal = "NoiceBody", FloatBorder = "NoiceBorder" },
-                },
-            },
-            hover = {
-                view = "popup",
-                relative = "cursor",
-                zindex = 45,
-                enter = false,
-                anchor = "auto",
-                size = {
-                    width = "auto",
-                    height = "auto",
-                    max_height = 20,
-                    max_width = 120,
-                },
-                position = { row = 1, col = 0 },
-                win_options = {
-                    wrap = true,
-                    linebreak = true,
-                },
-            },
-            cmdline = {
-                backend = "popup",
-                relative = "editor",
-                position = {
-                    row = "100%",
-                    col = 0,
-                },
-                size = {
-                    height = "auto",
-                    width = "100%",
-                },
-                border = {
-                    style = "none",
-                },
-                win_options = {
-                    winhighlight = {
-                        Normal = "NoiceBody",
-                        FloatBorder = "NoiceBorder",
-                        IncSearch = "IncSearch",
-                        Search = "Search",
-                    },
-                },
-            },
-            mini = {
-                backend = "mini",
-                relative = "editor",
-                align = "message-right",
-                timeout = 2000,
-                reverse = false,
-                position = {
-                    row = -2,
-                    col = "100%",
-                },
-                size = "auto",
-                border = {
-                    style = { " ", " ", " ", " ", " ", " ", " ", " " },
-                },
-                zindex = 60,
-                win_options = {
-                    winblend = 0,
-                    winhighlight = {
-                        Normal = "NoiceBody",
-                        IncSearch = "IncSearch",
-                        Search = "Search",
-                        FloatBorder = "NoiceBody",
-                    },
-                },
-            },
-            cmdline_popup = {
-                backend = "popup",
-                relative = "editor",
-                focusable = false,
-                enter = false,
-                zindex = 60,
-                position = {
-                    row = "50%",
-                    col = "50%",
-                },
-                size = {
-                    min_width = 60,
-                    width = "auto",
-                    height = "auto",
-                },
-                border = {
-                    style = { " ", " ", " ", " ", " ", " ", " ", " " },
-                    padding = { 0, 1 },
-                },
-                win_options = {
-                    winhighlight = {
-                        Normal = "NoiceBody",
-                        FloatBorder = "NoiceBorder",
-                        IncSearch = "IncSearch",
-                        Search = "Search",
-                    },
-                    cursorline = false,
-                },
-            },
-            confirm = {
-                backend = "popup",
-                relative = "editor",
-                focusable = false,
-                align = "center",
-                enter = false,
-                zindex = 60,
-                format = { "{confirm}" },
-                position = {
-                    row = "50%",
-                    col = "50%",
-                },
-                size = "auto",
-                border = {
-                    style = { " ", " ", " ", " ", " ", " ", " ", " " },
-                    padding = { 0, 1, 0, 1 },
-                    text = {
-                        top = " CONFIRM: ",
-                    },
-                },
-                win_options = {
-                    winhighlight = {
-                        Normal = "NoiceBody",
-                        FloatBorder = "NoiceBorder",
-                    },
-                },
-            },
-        },
-        routes = {
-            {
-                view = "cmdline_popup",
-                filter = { event = "cmdline" },
-            },
-            {
-                view = "confirm",
-                filter = {
-                    any = {
-                        { event = "msg_show", kind = "confirm" },
-                        { event = "msg_show", kind = "confirm_sub" },
-                    },
-                },
-            },
-            {
-                view = "split",
-                filter = {
-                    any = {
-                        { event = "msg_history_show" },
-                    },
-                },
-            },
-            {
-                filter = {
-                    any = {
-                        { event = { "msg_showmode", "msg_showcmd", "msg_ruler" } },
-                        { event = "msg_show", kind = "search_count" },
-                    },
-                },
-                opts = { skip = true },
-            },
-            {
-                view = "notify",
-                filter = {
-                    event = "msg_show",
-                    kind = { "", "echo", "echomsg" },
-                },
-                opts = {
-                    replace = true,
-                    merge = true,
-                    title = "LVIM IDE",
-                },
-            },
-            {
-                view = "notify",
-                filter = { error = true },
-                opts = {
-                    title = "ERROR",
-                },
-            },
-            {
-                view = "notify",
-                filter = { warning = true },
-                opts = {
-                    title = "WARNING",
-                },
-            },
-            {
-                view = "notify",
-                filter = { event = "notify" },
-                opts = {
-                    title = "LVIM IDE",
-                },
-            },
-            {
-                view = "notify",
-                filter = {
-                    event = "noice",
-                    kind = { "stats", "debug" },
-                },
-                opts = {
-                    buf_options = { filetype = "lua" },
-                    replace = true,
-                    title = "LVIM IDE",
-                },
-            },
-            {
-                view = "mini",
-                filter = { event = "lsp", kind = "progress" },
-            },
-            {
-                view = "notify",
-                opts = {},
-                filter = { event = "lsp", kind = "message" },
-            },
-        },
-        status = {},
-        format = {},
-    })
-    vim.keymap.set({ "n", "i" }, "<C-d>", function()
-        if not require("noice.lsp").scroll(4) then
-            return "<C-d>"
-        end
-    end, { silent = true, expr = true, desc = "Scroll Down" })
-    vim.keymap.set({ "n", "i" }, "<C-u>", function()
-        if not require("noice.lsp").scroll(-4) then
-            return "<C-u>"
-        end
-    end, { silent = true, expr = true, desc = "Scroll Up" })
-end
+-- config.noice_nvim = function()
+--     local noice_status_ok, noice = pcall(require, "noice")
+--     if not noice_status_ok then
+--         return
+--     end
+--     noice.setup({
+--         cmdline = {
+--             enabled = false,
+--             view = "cmdline_popup",
+--             opts = { buf_options = { filetype = "vim" } },
+--             format = {
+--                 cmdline = { pattern = "^:", icon = "", lang = "vim" },
+--                 search_down = { kind = "search", pattern = "^/", icon = " ", lang = "regex" },
+--                 search_up = { kind = "search", pattern = "^%?", icon = " ", lang = "regex" },
+--                 filter = { pattern = "^:%s*!", icon = "$", lang = "bash" },
+--                 lua = { pattern = "^:%s*lua%s+", icon = "", lang = "lua" },
+--                 help = { pattern = "^:%s*h%s+", icon = "" },
+--                 input = {},
+--             },
+--         },
+--         messages = {
+--             enabled = true,
+--             view = "notify",
+--             view_error = "notify",
+--             view_warn = "notify",
+--             view_history = "split",
+--             view_search = false,
+--         },
+--         popupmenu = {
+--             enabled = true,
+--             backend = "nui",
+--             kind_icons = {},
+--         },
+--         commands = {
+--             history = {
+--                 view = "split",
+--                 opts = { enter = true, format = "details" },
+--                 filter = { event = { "msg_show", "notify" }, ["not"] = { kind = { "search_count", "echo" } } },
+--             },
+--             last = {
+--                 view = "popup",
+--                 opts = { enter = true, format = "details" },
+--                 filter = { event = { "msg_show", "notify" }, ["not"] = { kind = { "search_count", "echo" } } },
+--                 filter_opts = { count = 1 },
+--             },
+--             errors = {
+--                 view = "popup",
+--                 opts = { enter = true, format = "details" },
+--                 filter = { error = true },
+--                 filter_opts = { reverse = true },
+--             },
+--         },
+--         notify = {
+--             enabled = false,
+--             view = "notify",
+--         },
+--         lsp = {
+--             progress = {
+--                 enabled = true,
+--                 format = "lsp_progress",
+--                 format_done = "lsp_progress_done",
+--                 throttle = 1000 / 30,
+--                 view = "mini",
+--             },
+--             override = {
+--                 ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+--                 ["vim.lsp.util.stylize_markdown"] = true,
+--                 ["cmp.entry.get_documentation"] = false,
+--             },
+--             hover = {
+--                 enabled = true,
+--                 view = nil,
+--                 opts = {},
+--             },
+--             signature = {
+--                 enabled = true,
+--                 auto_open = {
+--                     enabled = true,
+--                     trigger = true,
+--                     luasnip = true,
+--                     throttle = 50,
+--                 },
+--                 view = nil,
+--                 opts = {},
+--             },
+--             message = {
+--                 enabled = true,
+--                 view = "notify",
+--                 opts = {},
+--             },
+--             documentation = {
+--                 view = "hover",
+--                 opts = {
+--                     lang = "markdown",
+--                     replace = true,
+--                     render = "plain",
+--                     format = { "{message}" },
+--                     win_options = { concealcursor = "n", conceallevel = 3 },
+--                 },
+--             },
+--         },
+--         markdown = {
+--             hover = {
+--                 ["|(%S-)|"] = vim.cmd.help,
+--                 ["%[.-%]%((%S-)%)"] = require("noice.util").open,
+--             },
+--             highlights = {
+--                 ["|%S-|"] = "@text.reference",
+--                 ["@%S+"] = "@parameter",
+--                 ["^%s*(Parameters:)"] = "@text.title",
+--                 ["^%s*(Return:)"] = "@text.title",
+--                 ["^%s*(See also:)"] = "@text.title",
+--                 ["{%S-}"] = "@parameter",
+--             },
+--         },
+--         health = {
+--             checker = true,
+--         },
+--         smart_move = {
+--             enabled = true,
+--             excluded_filetypes = { "cmp_menu", "cmp_docs", "notify" },
+--         },
+--         presets = {
+--             bottom_search = false,
+--             command_palette = false,
+--             long_message_to_split = false,
+--             inc_rename = true,
+--             lsp_doc_border = false,
+--         },
+--         views = {
+--             popupmenu = {
+--                 zindex = 65,
+--                 position = "auto",
+--                 size = {
+--                     width = "auto",
+--                 },
+--                 win_options = {
+--                     winhighlight = {
+--                         Normal = "NoiceBody",
+--                         FloatBorder = "NoiceBorder",
+--                         CursorLine = "PmenuSel",
+--                         PmenuMatch = "Special",
+--                     },
+--                 },
+--                 border = {
+--                     padding = { 0, 1 },
+--                 },
+--             },
+--             notify = {
+--                 backend = "notify",
+--                 replace = true,
+--                 format = "notify",
+--             },
+--             split = {
+--                 backend = "split",
+--                 enter = false,
+--                 relative = "editor",
+--                 position = "bottom",
+--                 size = "20%",
+--                 close = {
+--                     keys = { "q", "<esc>" },
+--                 },
+--                 win_options = {
+--                     winhighlight = { Normal = "NoiceBody", FloatBorder = "NoiceBorder" },
+--                     wrap = true,
+--                 },
+--             },
+--             vsplit = {
+--                 backend = "split",
+--                 enter = false,
+--                 relative = "editor",
+--                 position = "right",
+--                 size = "20%",
+--                 close = {
+--                     keys = { "q", "<esc>" },
+--                 },
+--                 win_options = {
+--                     winhighlight = { Normal = "NoiceBody", FloatBorder = "NoiceBorder" },
+--                 },
+--             },
+--             popup = {
+--                 backend = "popup",
+--                 relative = "editor",
+--                 close = {
+--                     events = { "BufLeave" },
+--                     keys = { "q" },
+--                 },
+--                 enter = true,
+--                 border = {
+--                     style = "rounded",
+--                 },
+--                 position = "50%",
+--                 size = {
+--                     width = "120",
+--                     height = "20",
+--                 },
+--                 win_options = {
+--                     winhighlight = { Normal = "NoiceBody", FloatBorder = "NoiceBorder" },
+--                 },
+--             },
+--             hover = {
+--                 view = "popup",
+--                 relative = "cursor",
+--                 zindex = 45,
+--                 enter = false,
+--                 anchor = "auto",
+--                 size = {
+--                     width = "auto",
+--                     height = "auto",
+--                     max_height = 20,
+--                     max_width = 120,
+--                 },
+--                 position = { row = 1, col = 0 },
+--                 win_options = {
+--                     wrap = true,
+--                     linebreak = true,
+--                 },
+--             },
+--             cmdline = {
+--                 backend = "popup",
+--                 relative = "editor",
+--                 position = {
+--                     row = "100%",
+--                     col = 0,
+--                 },
+--                 size = {
+--                     height = "auto",
+--                     width = "100%",
+--                 },
+--                 border = {
+--                     style = "none",
+--                 },
+--                 win_options = {
+--                     winhighlight = {
+--                         Normal = "NoiceBody",
+--                         FloatBorder = "NoiceBorder",
+--                         IncSearch = "IncSearch",
+--                         Search = "Search",
+--                     },
+--                 },
+--             },
+--             mini = {
+--                 backend = "mini",
+--                 relative = "editor",
+--                 align = "message-right",
+--                 timeout = 2000,
+--                 reverse = false,
+--                 position = {
+--                     row = -2,
+--                     col = "100%",
+--                 },
+--                 size = "auto",
+--                 border = {
+--                     style = { " ", " ", " ", " ", " ", " ", " ", " " },
+--                 },
+--                 zindex = 60,
+--                 win_options = {
+--                     winblend = 0,
+--                     winhighlight = {
+--                         Normal = "NoiceBody",
+--                         IncSearch = "IncSearch",
+--                         Search = "Search",
+--                         FloatBorder = "NoiceBody",
+--                     },
+--                 },
+--             },
+--             cmdline_popup = {
+--                 backend = "popup",
+--                 relative = "editor",
+--                 focusable = false,
+--                 enter = false,
+--                 zindex = 60,
+--                 position = {
+--                     row = "50%",
+--                     col = "50%",
+--                 },
+--                 size = {
+--                     min_width = 60,
+--                     width = "auto",
+--                     height = "auto",
+--                 },
+--                 border = {
+--                     style = { " ", " ", " ", " ", " ", " ", " ", " " },
+--                     padding = { 0, 1 },
+--                 },
+--                 win_options = {
+--                     winhighlight = {
+--                         Normal = "NoiceBody",
+--                         FloatBorder = "NoiceBorder",
+--                         IncSearch = "IncSearch",
+--                         Search = "Search",
+--                     },
+--                     cursorline = false,
+--                 },
+--             },
+--             confirm = {
+--                 backend = "popup",
+--                 relative = "editor",
+--                 focusable = false,
+--                 align = "center",
+--                 enter = false,
+--                 zindex = 60,
+--                 format = { "{confirm}" },
+--                 position = {
+--                     row = "50%",
+--                     col = "50%",
+--                 },
+--                 size = "auto",
+--                 border = {
+--                     style = { " ", " ", " ", " ", " ", " ", " ", " " },
+--                     padding = { 0, 1, 0, 1 },
+--                     text = {
+--                         top = " CONFIRM: ",
+--                     },
+--                 },
+--                 win_options = {
+--                     winhighlight = {
+--                         Normal = "NoiceBody",
+--                         FloatBorder = "NoiceBorder",
+--                     },
+--                 },
+--             },
+--         },
+--         routes = {
+--             {
+--                 view = "cmdline_popup",
+--                 filter = { event = "cmdline" },
+--             },
+--             {
+--                 view = "confirm",
+--                 filter = {
+--                     any = {
+--                         { event = "msg_show", kind = "confirm" },
+--                         { event = "msg_show", kind = "confirm_sub" },
+--                     },
+--                 },
+--             },
+--             {
+--                 view = "split",
+--                 filter = {
+--                     any = {
+--                         { event = "msg_history_show" },
+--                     },
+--                 },
+--             },
+--             {
+--                 filter = {
+--                     any = {
+--                         { event = { "msg_showmode", "msg_showcmd", "msg_ruler" } },
+--                         { event = "msg_show", kind = "search_count" },
+--                     },
+--                 },
+--                 opts = { skip = true },
+--             },
+--             {
+--                 view = "notify",
+--                 filter = {
+--                     event = "msg_show",
+--                     kind = { "", "echo", "echomsg" },
+--                 },
+--                 opts = {
+--                     replace = true,
+--                     merge = true,
+--                     title = "LVIM IDE",
+--                 },
+--             },
+--             {
+--                 view = "notify",
+--                 filter = { error = true },
+--                 opts = {
+--                     title = "ERROR",
+--                 },
+--             },
+--             {
+--                 view = "notify",
+--                 filter = { warning = true },
+--                 opts = {
+--                     title = "WARNING",
+--                 },
+--             },
+--             {
+--                 view = "notify",
+--                 filter = { event = "notify" },
+--                 opts = {
+--                     title = "LVIM IDE",
+--                 },
+--             },
+--             {
+--                 view = "notify",
+--                 filter = {
+--                     event = "noice",
+--                     kind = { "stats", "debug" },
+--                 },
+--                 opts = {
+--                     buf_options = { filetype = "lua" },
+--                     replace = true,
+--                     title = "LVIM IDE",
+--                 },
+--             },
+--             {
+--                 view = "mini",
+--                 filter = { event = "lsp", kind = "progress" },
+--             },
+--             {
+--                 view = "notify",
+--                 opts = {},
+--                 filter = { event = "lsp", kind = "message" },
+--             },
+--         },
+--         status = {},
+--         format = {},
+--     })
+--     vim.keymap.set({ "n", "i" }, "<C-d>", function()
+--         if not require("noice.lsp").scroll(4) then
+--             return "<C-d>"
+--         end
+--     end, { silent = true, expr = true, desc = "Scroll Down" })
+--     vim.keymap.set({ "n", "i" }, "<C-u>", function()
+--         if not require("noice.lsp").scroll(-4) then
+--             return "<C-u>"
+--         end
+--     end, { silent = true, expr = true, desc = "Scroll Up" })
+-- end
 
 config.alpha_nvim = function()
     local alpha_status_ok, alpha = pcall(require, "alpha")
@@ -1120,19 +1120,21 @@ config.which_key_nvim = function()
         t = {
             name = "Telescope",
             b = { "<Cmd>Telescope file_browser<CR>", "File browser" },
-            f = { "<Cmd>Telescope find_files<CR>", "Find files" },
-            w = { "<Cmd>Telescope live_grep<CR>", "Live grep" },
-            u = { "<Cmd>Telescope buffers<CR>", "Buffers" },
-            m = { "<Cmd>Telescope marks<CR>", "Marks" },
-            o = { "<Cmd>Telescope commands<CR>", "Commands" },
-            y = { "<Cmd>Telescope symbols<CR>", "Symbols" },
-            n = { "<Cmd>Telescope quickfix<CR>", "Quickfix" },
-            c = { "<Cmd>Telescope git_commits<CR>", "Git commits" },
             B = { "<Cmd>Telescope git_bcommits<CR>", "Git bcommits" },
+            c = { "<Cmd>Telescope commands<CR>", "Commands" },
+            f = { "<Cmd>Telescope find_files<CR>", "Find files" },
+            g = { "<Cmd>Telescope git_commits<CR>", "Git commits" },
+            i = { "<Cmd>Telescope git_files<CR>", "Git files" },
+            k = { "<Cmd>Telescope keymaps<CR>", "key mappings" },
+            m = { "<Cmd>Telescope marks<CR>", "Marks" },
+            n = { "<Cmd>Telescope quickfix<CR>", "Quickfix" },
+            o = { "<Cmd>Telescope oldfiles<CR>", "Recent files" },
             r = { "<Cmd>Telescope git_branches<CR>", "Git branches" },
             s = { "<Cmd>Telescope git_status<CR>", "Git status" },
             S = { "<Cmd>Telescope git_stash<CR>", "Git stash" },
-            i = { "<Cmd>Telescope git_files<CR>", "Git files" },
+            u = { "<Cmd>Telescope buffers<CR>", "Buffers" },
+            w = { "<Cmd>Telescope live_grep<CR>", "Live grep" },
+            y = { "<Cmd>Telescope symbols<CR>", "Symbols" },
         },
     }
     local vmappings = {
@@ -1387,11 +1389,11 @@ config.heirline_nvim = function()
             name = "heirline_git",
         },
     }
-    local noice_mode = {
-        condition = require("noice").api.status.mode.has,
-        provider = require("noice").api.status.mode.get,
-        hl = { fg = theme_colors.red_02, bold = true },
-    }
+    -- local noice_mode = {
+    --     condition = require("noice").api.status.mode.has,
+    --     provider = require("noice").api.status.mode.get,
+    --     hl = { fg = theme_colors.red_02, bold = true },
+    -- }
     local diagnostics = {
         condition = heirline_conditions.has_diagnostics,
         static = {
@@ -1673,7 +1675,7 @@ config.heirline_nvim = function()
             file_name_block,
             git,
             space,
-            noice_mode,
+            -- noice_mode,
             align,
             diagnostics,
             -- lsp_progress,

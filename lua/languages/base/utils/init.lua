@@ -55,6 +55,7 @@ local null_ls_builtins = {
     }),
     shfmt = formatting.shfmt,
     stylua = formatting.stylua,
+    yapf = formatting.yapf,
 }
 
 M.setup_languages = function(packages_data)

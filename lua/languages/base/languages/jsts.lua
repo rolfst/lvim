@@ -65,6 +65,13 @@ language_configs["dap"] = function()
         {
             type = "pwa-node",
             request = "launch",
+            name = "Launch current",
+            program = "${file}",
+            cwd = "${workspaceFolder}",
+        },
+        {
+            type = "pwa-node",
+            request = "launch",
             name = "Launch file",
             program = function()
                 return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
@@ -112,17 +119,29 @@ language_configs["dap"] = function()
         {
             type = "pwa-node",
             request = "launch",
+            name = "Launch current",
+            program = "${file}",
+            runtimeArgs = { "-r", "ts-node/register" },
+            cwd = "${workspaceFolder}",
+        },
+        {
+            type = "pwa-node",
+            request = "launch",
             name = "Launch file",
             program = function()
                 return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
             end,
+            runtimeArgs = { "-r", "ts-node/register" },
+            sourceMaps = true,
             cwd = "${workspaceFolder}",
         },
         {
             type = "pwa-node",
             request = "attach",
             name = "Attach",
+            runtimeArgs = { "-r", "ts-node/register" },
             processId = require("dap.utils").pick_process,
+            sourceMaps = true,
             cwd = "${workspaceFolder}",
         },
         {
@@ -132,12 +151,15 @@ language_configs["dap"] = function()
             trace = true, -- include debugger info
             runtimeExecutable = "node",
             runtimeArgs = {
+                "-r",
+                "ts-node/register",
                 "./node_modules/jest/bin/jest.js",
                 "--runInBand",
             },
             rootPath = "${workspaceFolder}",
             cwd = "${workspaceFolder}",
             console = "integratedTerminal",
+            sourceMaps = true,
             internalConsoleOptions = "neverOpen",
         },
         {

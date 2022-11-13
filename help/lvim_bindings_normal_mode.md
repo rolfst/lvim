@@ -24,7 +24,7 @@ Normal mode
 | `<C-c>P`         | `:PickColorInsert<CR>`          | Pick color insert                     |
 | `<C-n>`          | `:BufSurfForward<CR>`           | Bnext buffer                          |
 | `<C-p>`          | `:BufSurfBack<CR>`              | Bprev buffer                          |
-| `<C-c>b`         | `:GitBlameToggle<CR>`           | GitBlame toggle                       |
+| `<C-g>b`         | `:GitBlameToggle<CR>`           | GitBlame toggle                       |
 | `<C-space>`      | `:NeoZoom<CR>`                  | Zoom toggle                           |
 | `<C-c>f`         | `:Vifm<CR>`                     | Vifm                                  |
 | `<C-h>`          | `<C-w>h`                        | Move to window left                   |
@@ -47,6 +47,7 @@ Normal mode
 | `<A-.>`          | `:Telescope live_grep<CR>`      | Search word with Telescope            |
 | `<A-b>`          | `:Telescope buffers<CR>`        | Telescope buffers                     |
 | `<A-/>`          | `:Telescope file_browser<CR>`   | Telescope file browser                |
+| `<A-o>`          | `:Telescope oldfiles<CR>`       | Telescope recent files                |
 | `<A-u>`          | `:AnyJump<CR>`                  | Any jump                              |
 | `<A-v>`          | `:SymbolsOutline<CR>`           | Symbols outline                       |
 | `<A-]>`          | `:GitSignsNextHunk<CR>`         | Git signs next hunk                   |
@@ -60,7 +61,6 @@ Normal mode
 | `gi`             | `:LspImplementation<CR>`        | Lsp implementation                    |
 | `ge`             | `:IncRename<CR>`                | Inc rename                            |
 | `gE`             | `:LspRename<CR>`                | Lsp rename                            |
-| `gf`             | `:LspFormatting<CR>`            | Lsp format code                       |
 | `ga`             | `:LspCodeAction<CR>`            | Lsp code action                       |
 | `gs`             | `:LspSignatureHelp<CR>`         | Lsp signature help                    |
 | `gL`             | `:LspCodeLensRefresh<CR>`       | Lsp code lens refresh                 |
