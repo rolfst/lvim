@@ -561,12 +561,12 @@ modules["jose-elias-alvarez/null-ls.nvim"] = {
 }
 
 -- modules["vim-test/vim-test"] = {}
-modules["rcarriga/vim-ultest"] = {
-    requires = {
-        "vim-test/vim-test",
-    },
-    config = languages_config.ultest,
-}
+-- modules["rcarriga/vim-ultest"] = {
+--     requires = {
+--         "vim-test/vim-test",
+--     },
+--     config = languages_config.ultest,
+-- }
 modules["nvim-neotest/neotest"] = {
     requires = {
         {
