@@ -148,9 +148,10 @@ config.neotest = function()
             --     use_lsp = true,
             -- }),
             require("neotest-go"),
-            require("neotest-vim-test")({
-                allow_file_types = { "javascript", "typescript" },
-            }),
+            -- require("vim-test")({
+            --     allow_file_types = { "javascript", "typescript" },
+            -- }),
+            require("neotest-mocha"),
         },
     })
     vim.api.nvim_create_user_command("NeotestRun", require("neotest").run.run, {})

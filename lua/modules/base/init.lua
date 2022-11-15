@@ -560,6 +560,13 @@ modules["jose-elias-alvarez/null-ls.nvim"] = {
     config = languages_config.null_ls_nvim,
 }
 
+-- modules["vim-test/vim-test"] = {}
+modules["rcarriga/vim-ultest"] = {
+    requires = {
+        "vim-test/vim-test",
+    },
+    config = languages_config.ultest,
+}
 modules["nvim-neotest/neotest"] = {
     requires = {
         {
@@ -602,14 +609,14 @@ modules["nvim-neotest/neotest"] = {
             "sidlatau/neotest-dart",
             commit = funcs.get_commit("neotest-dart", plugins_snapshot),
         },
-        {
-            "nvim-neotest/vim-test",
-            requires = {
-                { "vim-test/vim-test" },
-            },
-        },
+        -- {
+        --     "nvim-neotest/vim-test",
+        --     requires = {
+        --         { "vim-test/vim-test" },
+        --     },
+        -- },
         { "haydenmeade/neotest-jest" },
-        { "" },
+        { "adrigzr/neotest-mocha" },
     },
     config = languages_config.neotest,
 }
