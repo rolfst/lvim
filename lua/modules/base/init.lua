@@ -2,9 +2,9 @@ local funcs = require("core.funcs")
 local modules = {}
 local plugins_snapshot = {}
 
-local read_json_file = funcs.read_json_file(_G.LVIM_SNAPSHOT)
-if read_json_file ~= nil then
-    plugins_snapshot = read_json_file
+local file_content = funcs.read_file(_G.LVIM_SNAPSHOT)
+if file_content ~= nil then
+    plugins_snapshot = file_content
 end
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 -- UTILS -----------------------------------------------------------
@@ -24,13 +24,18 @@ modules["lewis6991/impatient.nvim"] = {
 
 local ui_config = require("modules.base.configs.ui")
 
-modules[_G.LVIM_THEME.theme_plugin] = {
-    commit = funcs.get_commit(_G.LVIM_THEME.theme_name, plugins_snapshot),
+modules[_G.LVIM_SETTINGS.colorschemes.theme_plugin] = {
+    commit = funcs.get_commit(_G.LVIM_SETTINGS.colorschemes.theme_name, plugins_snapshot),
     config = ui_config.lvim_colorscheme,
 }
 
 modules["nvim-lua/popup.nvim"] = {
     commit = funcs.get_commit("popup.nvim", plugins_snapshot),
+}
+
+modules["nvim-tree/nvim-web-devicons"] = {
+    commit = funcs.get_commit("nvim-web-devicons", plugins_snapshot),
+    config = ui_config.nvim_web_devicons,
 }
 
 modules["MunifTanjim/nui.nvim"] = {
@@ -90,7 +95,7 @@ modules["nvim-neo-tree/neo-tree.nvim"] = {
             commit = funcs.get_commit("plenary.nvim", plugins_snapshot),
         },
         {
-            "kyazdani42/nvim-web-devicons",
+            "nvim-tree/nvim-web-devicons",
             commit = funcs.get_commit("nvim-web-devicons", plugins_snapshot),
         },
         {
@@ -120,7 +125,6 @@ modules["folke/which-key.nvim"] = {
 
 modules["rebelot/heirline.nvim"] = {
     commit = funcs.get_commit("heirline.nvim", plugins_snapshot),
-    event = "VimEnter",
     config = ui_config.heirline_nvim,
 }
 
@@ -187,6 +191,11 @@ modules["lvim-tech/lvim-helper"] = {
 
 local editor_config = require("modules.base.configs.editor")
 
+modules["gpanders/editorconfig.nvim"] = {
+    commit = funcs.get_commit("editorconfig.nvim", plugins_snapshot),
+    config = editor_config.editorconfig_nvim,
+}
+
 modules["vim-ctrlspace/vim-ctrlspace"] = {
     commit = funcs.get_commit("vim-ctrlspace", plugins_snapshot),
     config = editor_config.vim_ctrlspace,
@@ -234,12 +243,6 @@ modules["lvim-tech/lvim-linguistics"] = {
         {
             "lvim-tech/lvim-ui-config",
             commit = funcs.get_commit("lvim-ui-config", plugins_snapshot),
-        },
-    },
-    rocks = {
-        {
-            "lunajson",
-            server = "http://rocks.moonscript.org",
         },
     },
     config = editor_config.lvim_linguistics,
@@ -315,6 +318,7 @@ modules["nvim-treesitter/nvim-treesitter-context"] = {
         "nvim-treesitter/nvim-treesitter",
         commit = funcs.get_commit("nvim-treesitter", plugins_snapshot),
     },
+    after = "nvim-treesitter",
     config = editor_config.nvim_treesitter_context,
 }
 
@@ -524,7 +528,7 @@ modules["pwntester/octo.nvim"] = {
             commit = funcs.get_commit("telescope.nvim", plugins_snapshot),
         },
         {
-            "kyazdani42/nvim-web-devicons",
+            "nvim-tree/nvim-web-devicons",
             commit = funcs.get_commit("nvim-web-devicons", plugins_snapshot),
         },
     },
@@ -545,6 +549,10 @@ modules["mbbill/undotree"] = {
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 local languages_config = require("modules.base.configs.languages")
+
+modules["folke/neoconf.nvim"] = {
+    commit = funcs.get_commit("neoconf.nvim", plugins_snapshot),
+}
 
 modules["williamboman/mason.nvim"] = {
     commit = funcs.get_commit("mason.nvim", plugins_snapshot),
@@ -715,6 +723,10 @@ modules["kosayoda/nvim-lightbulb"] = {
 
 modules["nvim-treesitter/nvim-treesitter"] = {
     commit = funcs.get_commit("nvim-treesitter", plugins_snapshot),
+    run = function()
+        local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
+        ts_update()
+    end,
     config = languages_config.nvim_treesitter,
 }
 

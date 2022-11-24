@@ -1,5 +1,4 @@
 local global = require("core.global")
-local rust_tools = require("rust-tools")
 local languages_setup = require("languages.base.utils")
 local nvim_lsp_util = require("lspconfig/util")
 local navic = require("nvim-navic")
@@ -9,6 +8,7 @@ local dap = require("dap")
 local language_configs = {}
 
 local function start_server_tools()
+    local rust_tools = require("rust-tools")
     rust_tools.setup({
         tools = {
             inlay_hints = {
@@ -34,7 +34,6 @@ local function start_server_tools()
             autostart = true,
             filetypes = { "rust" },
             on_attach = function(client, bufnr)
-                table.insert(global["languages"]["rust"]["pid"], client.rpc.pid)
                 languages_setup.omni(client, bufnr)
                 languages_setup.tag(client, bufnr)
                 languages_setup.document_highlight(client, bufnr)
@@ -48,6 +47,8 @@ local function start_server_tools()
         },
     })
 end
+
+language_configs["dependencies"] = { "rust-analyzer", "cpptools" }
 
 language_configs["lsp"] = function()
     languages_setup.setup_languages({
@@ -63,7 +64,7 @@ language_configs["lsp"] = function()
         else
             vim.defer_fn(function()
                 check_status()
-            end, 1000)
+            end, 3100)
         end
     end
 

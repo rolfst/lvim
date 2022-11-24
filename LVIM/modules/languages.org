@@ -1,5 +1,15 @@
 *  LANGUAGES
 
+**   [[https://github.com/folke/neoconf.nvim][folke/neoconf.nvim]]
+
+    + INIT
+
+    #+begin_src lua
+    modules["folke/neoconf.nvim"] = {
+        commit = funcs.get_commit("neoconf.nvim", plugins_snapshot),
+    }
+    #+end_src
+
 **   [[https://github.com/williamboman/mason.nvim][mason.nvim]]
 
    + REQUIRES:
@@ -473,6 +483,10 @@
     #+begin_src lua
     modules["nvim-treesitter/nvim-treesitter"] = {
         commit = funcs.get_commit("nvim-treesitter", plugins_snapshot),
+        run = function()
+            local ts_update = require("nvim-treesitter.install").update({ with_sync = true })
+            ts_update()
+        end,
         config = languages_config.nvim_treesitter,
     }
     #+end_src
@@ -929,8 +943,8 @@
         end
         package_info.setup({
             colors = {
-                up_to_date = _G.LVIM_THEME.colors[_G.LVIM_THEME.theme].green_01,
-                outdated = _G.LVIM_THEME.colors[_G.LVIM_THEME.theme].red_01,
+                up_to_date = _G.LVIM_SETTINGS.colorscheme.colors[_G.LVIM_SETTINGS.colorscheme.theme].green_01,
+                outdated = _G.LVIM_SETTINGS.colorscheme.colors[_G.LVIM_SETTINGS.colorscheme.theme].red_01,
             },
         })
     end

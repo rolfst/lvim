@@ -15,7 +15,11 @@ config.lvim_colorscheme = function()
             "neo-tree",
         },
     })
-    vim.cmd("colorscheme lvim-" .. _G.LVIM_THEME.theme)
+    vim.cmd("colorscheme lvim-" .. _G.LVIM_SETTINGS.colorschemes.theme)
+end
+
+config.nvim_web_devicons = function()
+    require("nvim-web-devicons").setup()
 end
 
 config.nui_nvim = function()
@@ -61,7 +65,7 @@ config.nui_nvim = function()
                     width = calculate_popup_width(default_value, border_top_text),
                 },
                 border = {
-                    highlight = "NuiBorder",
+                    highlight = "LvimInputBorder",
                     style = { " ", " ", " ", " ", " ", " ", " ", " " },
                     text = {
                         top = border_top_text,
@@ -69,7 +73,7 @@ config.nui_nvim = function()
                     },
                 },
                 win_options = {
-                    winhighlight = "Normal:NuiBody",
+                    winhighlight = "Normal:LvimInputNormal",
                 },
             }, {
                 prompt = "➤ ",
@@ -118,7 +122,7 @@ config.nui_nvim = function()
                 relative = "editor",
                 position = "50%",
                 border = {
-                    highlight = "NuiBorder",
+                    highlight = "LvimSelectBorder",
                     style = { " ", " ", " ", " ", " ", " ", " ", " " },
                     text = {
                         top = border_top_text,
@@ -126,7 +130,7 @@ config.nui_nvim = function()
                     },
                 },
                 win_options = {
-                    winhighlight = "Normal:NuiBody",
+                    winhighlight = "Normal:LvimSelectNormal",
                 },
                 zindex = 999,
             }
@@ -199,7 +203,7 @@ config.nvim_notify = function()
     end
     notify.setup({
         minimum_width = 80,
-        background_colour = _G.LVIM_THEME.colors[_G.LVIM_THEME.theme].bg,
+        background_colour = _G.LVIM_SETTINGS.colorschemes.colors[_G.LVIM_SETTINGS.colorschemes.theme].bg,
         icons = {
             DEBUG = " ",
             ERROR = " ",
@@ -779,9 +783,9 @@ config.nvim_window_picker = function()
                 buftype = {},
             },
         },
-        fg_color = _G.LVIM_THEME.colors[_G.LVIM_THEME.theme].bg,
-        current_win_hl_color = _G.LVIM_THEME.colors[_G.LVIM_THEME.theme].bg,
-        other_win_hl_color = _G.LVIM_THEME.colors[_G.LVIM_THEME.theme].green_01,
+        fg_color = _G.LVIM_SETTINGS.colorschemes.colors[_G.LVIM_SETTINGS.colorschemes.theme].bg,
+        current_win_hl_color = _G.LVIM_SETTINGS.colorschemes.colors[_G.LVIM_SETTINGS.colorschemes.theme].bg,
+        other_win_hl_color = _G.LVIM_SETTINGS.colorschemes.colors[_G.LVIM_SETTINGS.colorschemes.theme].green_01,
     })
     vim.api.nvim_create_user_command("WindowPicker", focus_window, {})
     vim.keymap.set("n", "gw", function()
@@ -852,6 +856,7 @@ config.neo_tree_nvim = function()
             width = 40,
             mappings = {
                 ["Z"] = "expand_all_nodes",
+                ["<space>"] = false,
             },
         },
         filesystem = {
@@ -1162,7 +1167,7 @@ config.heirline_nvim = function()
     if not heirline_utils_status_ok then
         return
     end
-    local theme_colors = _G.LVIM_THEME.colors[_G.LVIM_THEME.theme]
+    local theme_colors = _G.LVIM_SETTINGS.colorschemes.colors[_G.LVIM_SETTINGS.colorschemes.theme]
     local align = { provider = "%=" }
     local space = { provider = " " }
     local mode
@@ -1803,7 +1808,7 @@ config.heirline_nvim = function()
     vim.api.nvim_create_augroup("Heirline", { clear = true })
     vim.api.nvim_create_autocmd("ColorScheme", {
         callback = function()
-            heirline_utils.on_colorscheme(_G.LVIM_THEME.colors[_G.LVIM_THEME.theme])
+            heirline_utils.on_colorscheme(_G.LVIM_SETTINGS.colorschemes.colors[_G.LVIM_SETTINGS.colorschemes.theme])
         end,
         group = "Heirline",
     })
@@ -2101,30 +2106,141 @@ config.lvim_helper = function()
     end
     local global = require("core.global")
     lvim_helper.setup({
-        files = {
-            global.home .. "/.config/nvim/help/lvim_bindings_normal_mode.md",
-            global.home .. "/.config/nvim/help/lvim_bindings_visual_mode.md",
-            global.home .. "/.config/nvim/help/lvim_bindings_debug_dap.md",
-            global.home .. "/.config/nvim/help/vim_cheat_sheet_global.md",
-            global.home .. "/.config/nvim/help/vim_cheat_sheet_cursor_movement.md",
-            global.home .. "/.config/nvim/help/vim_cheat_sheet_visual_mode.md",
-            global.home .. "/.config/nvim/help/vim_cheat_sheet_visual_commands.md",
-            global.home .. "/.config/nvim/help/vim_cheat_sheet_insert_mode.md",
-            global.home .. "/.config/nvim/help/vim_cheat_sheet_editing.md",
-            global.home .. "/.config/nvim/help/vim_cheat_sheet_registers.md",
-            global.home .. "/.config/nvim/help/vim_cheat_sheet_marks_and_positions.md",
-            global.home .. "/.config/nvim/help/vim_cheat_sheet_macros.md",
-            global.home .. "/.config/nvim/help/vim_cheat_sheet_cut_and_paste.md",
-            global.home .. "/.config/nvim/help/vim_cheat_sheet_indent_text.md",
-            global.home .. "/.config/nvim/help/vim_cheat_sheet_exiting.md",
-            global.home .. "/.config/nvim/help/vim_cheat_sheet_search_and_replace.md",
-            global.home .. "/.config/nvim/help/vim_cheat_sheet_search_in_multiple_files.md",
-            global.home .. "/.config/nvim/help/vim_cheat_sheet_tabs.md",
-            global.home .. "/.config/nvim/help/vim_cheat_sheet_working_with_multiple_files.md",
-            global.home .. "/.config/nvim/help/vim_cheat_sheet_diff.md",
+        content = {
+            {
+                type = "separator",
+                title = " LVIM IDE KEYS ",
+            },
+            {
+                type = "link",
+                title = "  Normal Mode  ",
+                file = global.home .. "/.config/nvim/help/lvim_bindings_normal_mode.md",
+                file_type = "markdown",
+            },
+            {
+                type = "link",
+                title = "  Visual Mode  ",
+                file = global.home .. "/.config/nvim/help/lvim_bindings_visual_mode.md",
+                file_type = "markdown",
+            },
+            {
+                type = "link",
+                title = "  DAP  ",
+                file = global.home .. "/.config/nvim/help/lvim_bindings_debug_dap.md",
+                file_type = "markdown",
+            },
+            {
+                type = "separator",
+                title = " VIM KEYS AND COMMANDS ",
+            },
+            {
+                type = "link",
+                title = "  Global  ",
+                file = global.home .. "/.config/nvim/help/vim_cheat_sheet_global.md",
+                file_type = "markdown",
+            },
+            {
+                type = "link",
+                title = "  Cursor Movement  ",
+                file = global.home .. "/.config/nvim/help/vim_cheat_sheet_cursor_movement.md",
+                file_type = "markdown",
+            },
+            {
+                type = "link",
+                title = "  Visual Mode  ",
+                file = global.home .. "/.config/nvim/help/vim_cheat_sheet_visual_mode.md",
+                file_type = "markdown",
+            },
+            {
+                type = "link",
+                title = "  Visual Commands  ",
+                file = global.home .. "/.config/nvim/help/vim_cheat_sheet_visual_commands.md",
+                file_type = "markdown",
+            },
+            {
+                type = "link",
+                title = "  Insert Mode  ",
+                file = global.home .. "/.config/nvim/help/vim_cheat_sheet_insert_mode.md",
+                file_type = "markdown",
+            },
+            {
+                type = "link",
+                title = "  Editing  ",
+                file = global.home .. "/.config/nvim/help/vim_cheat_sheet_editing.md",
+                file_type = "markdown",
+            },
+            {
+                type = "link",
+                title = "  Registers  ",
+                file = global.home .. "/.config/nvim/help/vim_cheat_sheet_registers.md",
+                file_type = "markdown",
+            },
+            {
+                type = "link",
+                title = "  Marks and Positions  ",
+                file = global.home .. "/.config/nvim/help/vim_cheat_sheet_marks_and_positions.md",
+                file_type = "markdown",
+            },
+            {
+                type = "link",
+                title = "  Macros  ",
+                file = global.home .. "/.config/nvim/help/vim_cheat_sheet_macros.md",
+                file_type = "markdown",
+            },
+            {
+                type = "link",
+                title = "  Cut and Paste  ",
+                file = global.home .. "/.config/nvim/help/vim_cheat_sheet_cut_and_paste.md",
+                file_type = "markdown",
+            },
+            {
+                type = "link",
+                title = "  Indent Text  ",
+                file = global.home .. "/.config/nvim/help/vim_cheat_sheet_indent_text.md",
+                file_type = "markdown",
+            },
+            {
+                type = "link",
+                title = "  Exiting  ",
+                file = global.home .. "/.config/nvim/help/vim_cheat_sheet_exiting.md",
+                file_type = "markdown",
+            },
+            {
+                type = "link",
+                title = "  Search and Replace  ",
+                file = global.home .. "/.config/nvim/help/vim_cheat_sheet_search_and_replace.md",
+                file_type = "markdown",
+            },
+            {
+                type = "link",
+                title = "  Search in Multiple Files  ",
+                file = global.home .. "/.config/nvim/help/vim_cheat_sheet_search_in_multiple_files.md",
+                file_type = "markdown",
+            },
+            {
+                type = "link",
+                title = "  Tabs  ",
+                file = global.home .. "/.config/nvim/help/vim_cheat_sheet_tabs.md",
+                file_type = "markdown",
+            },
+            {
+                type = "link",
+                title = "  Working with Multiple Files  ",
+                file = global.home .. "/.config/nvim/help/vim_cheat_sheet_working_with_multiple_files.md",
+                file_type = "markdown",
+            },
+            {
+                type = "link",
+                title = "  Diff  ",
+                file = global.home .. "/.config/nvim/help/vim_cheat_sheet_diff.md",
+                file_type = "markdown",
+            },
         },
     })
     vim.keymap.set("n", "<F11>", function()
+        vim.cmd("LvimHelper")
+    end, { noremap = true, silent = true, desc = "LvimHelper" })
+    vim.keymap.set("n", "<C-c>h", function()
         vim.cmd("LvimHelper")
     end, { noremap = true, silent = true, desc = "LvimHelper" })
 end

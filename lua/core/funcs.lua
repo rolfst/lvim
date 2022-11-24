@@ -1,6 +1,4 @@
 local global = require("core.global")
-local select = require("lvim-ui-config.select")
-local notify = require("lvim-ui-config.notify")
 
 local M = {}
 
@@ -51,7 +49,7 @@ M.remove_duplicate = function(tbl)
     local res = {}
     for _, v in ipairs(tbl) do
         if not hash[v] then
-            res[#res + 1] = v -- you could print here instead of saving to result table if you wanted
+            res[#res + 1] = v
             hash[v] = true
         end
     end
@@ -59,6 +57,7 @@ M.remove_duplicate = function(tbl)
 end
 
 M.sudo_exec = function(cmd)
+    local notify = require("lvim-ui-config.notify")
     vim.fn.inputsave()
     local password = vim.fn.inputsecret("Password: ")
     vim.fn.inputrestore()
@@ -79,6 +78,7 @@ M.sudo_exec = function(cmd)
 end
 
 M.sudo_write = function(tmpfile, filepath)
+    local notify = require("lvim-ui-config.notify")
     if not tmpfile then
         tmpfile = vim.fn.tempname()
     end
@@ -111,44 +111,34 @@ M.dir_exists = function(path)
     return M.file_exists(path)
 end
 
-M.read_json_file = function(file)
+M.read_file = function(file)
     local content
     local file_content_ok, _ = pcall(function()
         content = vim.fn.readfile(file)
     end)
-    if file_content_ok or type(content) == "table" then
+    if not file_content_ok then
+        return nil
+    end
+    if type(content) == "table" then
         return vim.fn.json_decode(content)
     else
         return nil
     end
 end
 
-M.read_file = function(f)
-    local file = io.open(f, "rb")
-    if file ~= nil then
-        local content = file:read("*a")
-        file:close()
-        return content
-    end
-end
-
-M.get_line = function(filename, line_number)
-    local i = 0
-    for line in io.lines(filename) do
-        i = i + 1
-        if i == line_number then
-            return line
+M.write_file = function(file, content)
+    local f = io.open(file, "w")
+    if f ~= nil then
+        if type(content) == "table" then
+            content = vim.fn.json_encode(content)
         end
+        f:write(content)
+        f:close()
     end
-    return nil -- line not found
 end
 
-M.write_file = function(f, content)
-    local file = io.open(f, "w")
-    if file ~= nil then
-        file:write(content)
-        file:close()
-    end
+M.copy_file = function(file, dest)
+    os.execute("cp " .. file .. " " .. dest)
 end
 
 M.delete_file = function(f)
@@ -273,10 +263,10 @@ M.file_size = function(size, options)
 end
 
 M.get_snapshot = function()
-    local read_json_file = M.read_json_file(global.cache_path .. "/.lvim_snapshot")
-    if read_json_file ~= nil then
-        if read_json_file["snapshot"] ~= nil then
-            return read_json_file["snapshot"]
+    local file_content = M.read_file(global.cache_path .. "/.lvim_snapshot")
+    if file_content ~= nil then
+        if file_content["snapshot"] ~= nil then
+            return file_content["snapshot"]
         end
     end
     return global.snapshot_path .. "/default"
@@ -292,25 +282,8 @@ M.get_commit = function(plugin, plugins_snapshot)
     end
 end
 
-M.get_highlight = function(hlname)
-    local hl = vim.api.nvim_get_hl_by_name(hlname, true)
-    setmetatable(hl, {
-        __index = function(t, k)
-            if k == "fg" then
-                return t.foreground
-            elseif k == "bg" then
-                return t.background
-            elseif k == "sp" then
-                return t.special
-            else
-                return rawget(t, k)
-            end
-        end,
-    })
-    return hl
-end
-
 M.quit = function()
+    local select = require("lvim-ui-config.select")
     local status = true
     for _, v in ipairs(vim.api.nvim_list_bufs()) do
         if vim.bo[v].modified then

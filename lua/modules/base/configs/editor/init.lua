@@ -1,5 +1,14 @@
 local config = {}
 
+config.editorconfig_nvim = function()
+    local global = require("core.global")
+    vim.api.nvim_create_user_command(
+        "EditorConfigCreate",
+        "lua require'core.funcs'.copy_file(require'core.global'.lvim_path .. '/.configs/templates/.editorconfig', vim.fn.getcwd() .. '/.editorconfig')",
+        {}
+    )
+end
+
 config.vim_ctrlspace = function()
     vim.keymap.set("n", "<space><space>", function()
         vim.cmd("CtrlSpace")
@@ -262,12 +271,12 @@ config.tabby_nvim = function()
     if not tabby_filename_status_ok then
         return
     end
-    local theme = _G.LVIM_THEME.theme
+    local theme = _G.LVIM_SETTINGS.colorschemes.theme
     local hl_tabline = {
-        color_01 = _G.LVIM_THEME.colors[theme].bg_01,
-        color_02 = _G.LVIM_THEME.colors[theme].bg_03,
-        color_03 = _G.LVIM_THEME.colors[theme].green_01,
-        color_04 = _G.LVIM_THEME.colors[theme].green_02,
+        color_01 = _G.LVIM_SETTINGS.colorschemes.colors[theme].bg_01,
+        color_02 = _G.LVIM_SETTINGS.colorschemes.colors[theme].bg_03,
+        color_03 = _G.LVIM_SETTINGS.colorschemes.colors[theme].green_01,
+        color_04 = _G.LVIM_SETTINGS.colorschemes.colors[theme].green_02,
     }
     local get_tab_label = function(tab_number)
         local s, v = pcall(function()

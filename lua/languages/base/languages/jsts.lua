@@ -1,5 +1,4 @@
 local global = require("core.global")
-local typescript = require("typescript")
 local languages_setup = require("languages.base.utils")
 local nvim_lsp_util = require("lspconfig/util")
 local navic = require("nvim-navic")
@@ -9,6 +8,7 @@ local dap = require("dap")
 local language_configs = {}
 
 local function start_server_tools()
+    local typescript = require("typescript")
     typescript.setup({
         disable_commands = false, -- prevent the plugin from creating Vim commands
         debug = false, -- enable debug logging for commands
@@ -22,7 +22,6 @@ local function start_server_tools()
             autostart = true,
             filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
             on_attach = function(client, bufnr)
-                table.insert(global["languages"]["jsts"]["pid"], client.rpc.pid)
                 languages_setup.omni(client, bufnr)
                 languages_setup.tag(client, bufnr)
                 languages_setup.document_highlight(client, bufnr)
@@ -36,6 +35,8 @@ local function start_server_tools()
     })
 end
 
+language_configs["dependencies"] = { "typescript-language-server", "js-debug-adapter", "prettierd" }
+
 language_configs["lsp"] = function()
     languages_setup.setup_languages({
         ["language"] = "js-ts",
@@ -45,7 +46,6 @@ language_configs["lsp"] = function()
             "prettierd",
         },
     })
-
     local function check_status()
         if global.install_proccess == false then
             start_server_tools()
@@ -53,7 +53,7 @@ language_configs["lsp"] = function()
         else
             vim.defer_fn(function()
                 check_status()
-            end, 1000)
+            end, 3100)
         end
     end
 
