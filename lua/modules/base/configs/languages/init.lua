@@ -132,25 +132,23 @@ config.neotest = function()
         },
     }, neotest_ns)
     neotest.setup({
+        log_level= "trace",
         adapters = {
-            require("neotest-phpunit"),
-            require("neotest-rust"),
-            require("neotest-go"),
+            -- require("neotest-phpunit"),
+            -- require("neotest-rust"),
+            -- require("neotest-go"),
             require("neotest-python")({
                 dap = { justMyCode = false },
                 args = { "--log-level", "DEBUG" },
                 runner = "pytest",
             }),
-            require("neotest-haskell"),
-            require("neotest-elixir"),
+            -- require("neotest-haskell"),
+            -- require("neotest-elixir"),
             -- require("neotest-dart")({
             --     command = "flutter",
             --     use_lsp = true,
             -- }),
-            require("neotest-go"),
-            -- require("vim-test")({
-            --     allow_file_types = { "javascript", "typescript" },
-            -- }),
+            -- require("neotest-go"),
             require("neotest-mocha"),
         },
     })

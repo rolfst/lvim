@@ -609,12 +609,6 @@ modules["nvim-neotest/neotest"] = {
             "sidlatau/neotest-dart",
             commit = funcs.get_commit("neotest-dart", plugins_snapshot),
         },
-        -- {
-        --     "nvim-neotest/vim-test",
-        --     requires = {
-        --         { "vim-test/vim-test" },
-        --     },
-        -- },
         { "haydenmeade/neotest-jest" },
         { "adrigzr/neotest-mocha" },
     },
